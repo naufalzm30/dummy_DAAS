@@ -4,22 +4,16 @@
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
     <span class="d-none">
-      {{ stations }}
+      {{ stations}}
       <hr />
       {{ backupStat }}
     </span>
     <div class="box" v-if="!loading_i">
+      {{ arr_stations }}
+      <hr>
       <!-- TAB -->
       <ul class="nav nav-tabs red" id="tabs-tab" role="tablist">
-        <li class="nav-item" role="presentation" v-if="total_awlr >= 1">
-          <button class="nav-link d-flex flex-row py-1 px-2" :class="{ active: total_awlr >= 1 }" id="tabs-AWLR-tab"
-            data-bs-toggle="pill" data-bs-target="#tabs-AWLR" type="button" role="tab" aria-controls="tabs-AWLR"
-            aria-selected="true">
-            <img :src="awlr_i" class="rounded mx-auto d-inline imgSZ" />
-
-            <span>AWLR</span>
-          </button>
-        </li>
+   
         <li class="nav-item" role="presentation" v-if="total_arr >= 1">
           <button class="nav-link d-flex flex-row py-1 px-2" :class="{ active: total_arr >= 1 && total_awlr < 1 }"
             id="tabs-ARR-tab" data-bs-toggle="pill" data-bs-target="#tabs-ARR" type="button" role="tab"
@@ -28,80 +22,11 @@
             <span>ARR</span>
           </button>
         </li>
-        <li class="nav-item" role="presentation" v-if="total_aws >= 1">
-          <button class="nav-link d-flex flex-row py-1 px-2" :class="{
-            active: total_aws >= 1 && total_arr < 1 && total_awlr < 1,
-          }" id="tabs-AWS-tab" data-bs-toggle="pill" data-bs-target="#tabs-AWS" type="button" role="tab"
-            aria-controls="tabs-AWS" aria-selected="false">
-            <img :src="aws_i" class="rounded mx-auto d-inline imgSZ" />
-            <span>AWS</span>
-          </button>
-        </li>
+  
       </ul>
 
       <div class="tab-content station-list" id="tabs-tabContent">
-        <!-- AWLR -->
-        <div v-if="total_awlr >= 1" class="tableFixHead tab-pane fade" :class="{
-          active: total_awlr >= 1,
-          show: total_awlr >= 1,
-          h100: ava_width <= 850,
-        }" id="tabs-AWLR" role="tabpanel" aria-labelledby="tabs-AWLR-tab">
-          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
-            <thead class="table-light">
-              <tr>
-                <th v-for="(head, index) in awlr_head" :key="index" :class="{ thClass: index >= 0, sticky: index === 2 }">
-                  {{ head }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(station, index) in awlr_stations" :key="station[0].id">
-                <td>{{ index + 1 }}</td>
-                <td>
-                  <span v-if="station[1].table.siaga == []"> </span>
-                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ" />
-                  </span>
-                </td>
-                <td>
-                  {{ station[0].station_name }}
-                </td>
-                <td>
-                  {{ station[0].sungai }}
-                </td>
-                <td>
-                  {{ formatDate(station[1].table.date) }}
-                </td>
-                <td>
-                  {{ formatTime(station[1].table.date) }}
-                </td>
-                <td v-for="(sensor, index) in conf_2(
-                  station[1].table.weather_data,
-                  station[1].table.array_act_symbol
-                )" :key="index">
-                  {{ sensor.data }} {{ sensor.symbol }}
-                </td>
 
-                <td v-if="getYear(station[1].table.maint_date) >= 2020">
-                  {{ formatDate(station[1].table.maint_date) }}
-                </td>
-                <td v-else></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
         <!-- ARR -->
         <div v-if="total_arr >= 1" class="tableFixHead tab-pane fade" :class="{
           active: total_arr >= 1 && total_awlr < 1,
@@ -148,68 +73,7 @@
                   {{ formatTime(station[1].table.date) }}
                 </td>
                 <td v-for="(sensor, index) in conf_2(
-                  station[1].table.weather_data,
-                  station[1].table.array_act_symbol
-                )" :key="index">
-                  {{ sensor.data }} {{ sensor.symbol }}
-                </td>
-
-                <td v-if="getYear(station[1].table.maint_date) >= 2020">
-                  {{ formatDate(station[1].table.maint_date) }}
-                </td>
-                <td v-else></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- AWS -->
-        <div v-if="total_aws >= 1" class="tableFixHead tab-pane fade" :class="{
-          active: total_aws >= 1 && total_arr < 1 && total_awlr < 1,
-          show: total_aws >= 1 && total_arr < 1 && total_awlr < 1,
-          h100: ava_width <= 850,
-        }" id="tabs-AWS" role="tabpanel" aria-labelledby="tabs-AWS-tab">
-          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
-            <thead class="table-light">
-              <tr>
-                <th v-for="(head, index) in aws_head" :key="index" :class="{ thClass: index >= 0, sticky: index === 2 }">
-                  {{ head }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(station, index) in aws_stations" :key="station[0].id">
-                <td>{{ index + 1 }}</td>
-                <td>
-                  <span v-if="station[1].table.siaga == []"> </span>
-                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ" />
-                  </span>
-                </td>
-
-                <td>
-                  {{ station[0].station_name }}
-                </td>
-
-                <td>
-                  {{ formatDate(station[1].table.date) }}
-                </td>
-                <td>
-                  {{ formatTime(station[1].table.date) }}
-                </td>
-                <td v-for="(sensor, index) in conf_2(
-                  station[1].table.weather_data,
+                  station[1].table.sensor_data,
                   station[1].table.array_act_symbol
                 )" :key="index">
                   {{ sensor.data }} {{ sensor.symbol }}
@@ -224,6 +88,7 @@
           </table>
         </div>
       </div>
+      {{ stations }}
     </div>
   </div>
 </template>
@@ -323,7 +188,8 @@ export default {
 
     async loadStations() {
       await axios
-        .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
+        .get(`${this.$baseURL}/home-data/`)
         .then((r) => {
           this.stations = r.data;
           if (r.status == 200) {
@@ -350,7 +216,7 @@ export default {
       // setInterval(
       //   function () {
       //     axios
-      //       .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+      //       .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
       //       .then((r) => {
       //         this.stations = r.data;
       //       })
@@ -440,7 +306,7 @@ export default {
 
 
       const labels = this.aws_head_pre[0];
-      const values = this.stations[38][1].table.weather_data
+      const values = this.stations[3][1].table.sensor_data
       const combinedArray = labels.map((label, index) => `${label} : ${values[index]}`);
       console.log(combinedArray);
 
@@ -449,7 +315,8 @@ export default {
       setInterval(
         function () {
           axios
-            .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+            // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
+            .get(`${this.$baseURL}/home-data/`)
             .then((r) => {
               this.stations = r.data;
             })

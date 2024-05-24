@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-12">
+      <!-- <div class="col-12">
         <StationMap
           :stations="stations"
           :status="status"
@@ -9,9 +9,17 @@
           class="mx-auto mt-2 shadow-sm border"
           style="border-radius: 15px"
         />
-      </div>
+      </div> -->
       <div class="col-12">
         <Stations
+          :stations="stations"
+          :loading_i="loading_i"
+          @mouse-over-station="mouseOverstation"
+          @mouse-left-station="mouseLeftstation"
+          class="shadow-sm border mt-2 bg-white"
+          style="border-radius: 15px"
+        />
+        <StationsT
           :stations="stations"
           :loading_i="loading_i"
           @mouse-over-station="mouseOverstation"
@@ -26,15 +34,17 @@
 
 <script>
 import axios from "axios";
-import StationMap from "@/components/Map/StationMap";
+// import StationMap from "@/components/Map/StationMap";
 import Stations from "@/components/Map/Stations";
+import StationsT from "@/components/Map/StationsT";
 
 export default {
   name: "Map",
 
   components: {
-    StationMap,
+    // StationMap,
     Stations,
+    StationsT,
   },
   data() {
     return {
@@ -58,7 +68,8 @@ export default {
     },
     async loadData() {
       await axios
-        .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        // .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        .get(`${this.$baseURL}/home-data/`)
         .then((r) => {
           this.stations = r.data.map((r) => {
             r[0].iconSize = this.normalIcon;
@@ -70,7 +81,8 @@ export default {
         });
 
       await axios
-        .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        // .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        .get(`${this.$baseURL}/home-data/`)
         .then((r) => {
           this.status = r.data;
           // console.log(this.status);
@@ -98,4 +110,3 @@ export default {
   },
 };
 </script>
-

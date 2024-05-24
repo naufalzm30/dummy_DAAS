@@ -19,7 +19,14 @@ Vue.config.productionTip = false;
 Vue.directive("inactivity", inactivityDirective);
 Vue.use(HighchartsVue);
 // Vue.prototype.$baseURL = 'http://127.0.0.1:8000'
-Vue.prototype.$baseURL = "https://weatherapi.blitztechnology.tech";
+Vue.prototype.$baseURL = "http://pdamsby.blitztechnology.tech/api";
+// Vue.prototype.$baseURL = "https://weatherapi.blitztechnology.tech";
+
+//PROXY
+Vue.prototype.$proxyBaseUrl = "https://weatherapi.blitztechnology.tech"
+Vue.prototype.$proxyFixedBalai = 6
+//
+
 Vue.prototype.$app_title = document.title;
 
 if (document.title == "BBWS SUMATERA VIII") {

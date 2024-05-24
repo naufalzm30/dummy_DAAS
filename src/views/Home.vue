@@ -6,6 +6,7 @@
         <div class="icon-container">
           <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
         </div>
+
         <p class="mt-3">Fetching data, please wait...</p>
       </div>
     </div>
@@ -71,9 +72,9 @@
         <div class="col" :class="{ 'col-6': ava_width > 768 }">
           <Map />
         </div>
-        <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
+        <!-- <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
           <Slider :ava_width="ava_width" />
-        </div>
+        </div> -->
       </div>
       <Footer />
     </div>
@@ -87,7 +88,7 @@ import logoBT from "@/assets/icons/logo-bt.svg";
 
 import MarqueeText from "@/assets/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
-import Slider from "@/components/Chart/Slider.vue";
+// import Slider from "@/components/Chart/Slider.vue";
 import axios from "axios";
 
 export default {
@@ -95,7 +96,7 @@ export default {
     Header,
     MarqueeText,
     Map,
-    Slider,
+    // Slider,
   },
   data() {
     return {
@@ -112,6 +113,8 @@ export default {
       balai_name: "",
       custom_duration: null,
       showCarousel: true,
+      proxyUrl: null,
+      proxyFixedBalai: null
     };
   },
   methods: {
@@ -148,8 +151,11 @@ export default {
       var sensor_length = null;
 
       await axios
-        .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
+        .get(`${this.$baseURL}/home-data/`)
+
         .then((r) => {
+        
           r.data.forEach((e) => {
             st_name.push(e[0].station_name.length);
             sensor.push(
@@ -173,6 +179,7 @@ export default {
           if (r.status == 200) {
             this.loading_i = false;
           }
+
         });
 
       let currentIndex = 0;
@@ -192,17 +199,24 @@ export default {
     },
   },
   async created() {
+
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
 
+    // this.$proxyBaseUrl = "https://weatherapi.blitztechnology.tech"
+    // this.$proxyFixedBalai = 1
+
     if (typeof user == "object") {
-      this.balai = this.$fixedBalai;
+      this.balai = this.$proxyFixedBalai;
 
       await axios
-        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
+        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.balai}`)
         .then((r) => {
           this.detBalai = r.data[0];
         });
+
+       
+      
       this.text_duration = this.detBalai.text_duration;
       this.text_repeat = this.detBalai.text_repeat;
       this.homeData();
@@ -213,7 +227,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$baseURL}/balai/${this.balai}`, {
+        .get(`${this.$proxyBaseUrl}/balai/${this.balai}`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },

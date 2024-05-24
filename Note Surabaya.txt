@@ -10,3 +10,8 @@ user: superadmin, pass: superadmin, station: null
 user: station1_user, pass: station1_user
 
 Cursor sh
+
+weather_data -> sensor data
+https://weatherapi.blitztechnology.tech/home-data/non-auth/1
+->
+http://pdamsby.blitztechnology.tech/api/station/

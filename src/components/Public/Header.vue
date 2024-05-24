@@ -232,9 +232,9 @@ export default {
   async created() {
     let user = localStorage.getItem("user-info") || {};
     if (typeof user == "object") {
-      this.balai = this.$fixedBalai;
+      this.balai = this.$proxyFixedBalai;
       await axios
-        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
+        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.balai}`)
         .then((r) => {
           this.detBalai = r.data[0];
         })
@@ -253,7 +253,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$baseURL}/balai/${this.balai}`, {
+        .get(`${this.$proxyBaseUrl}/balai/${this.balai}`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },
