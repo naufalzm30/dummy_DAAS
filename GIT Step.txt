@@ -1,0 +1,26 @@
+COPY .htaccess
+ADD file date_tracker
+git remote show origin
+
+bbws url: 
+git remote add origin https://github.com/AgusRaharja69/weather_client_bbws8.git
+git remote set-url origin https://github.com/AgusRaharja69/weather_client_bbws8.git
+
+
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/AgusRaharja69/weather_client_bbws8.git
+git push -u origin main
+git push -f origin main
+
+CHANGE URL
+git remote set-url origin https://github.com/AgusRaharja69/weather_client_bbws8.git
+
+Force Push
+git push -f origin main
+
+npm run build
+npm install workbox-cli --global
+workbox generateSW workbox-config.js

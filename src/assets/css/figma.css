@@ -1,0 +1,42 @@
+.btn-success {
+  color: #fff;
+  background-color: #13c296;
+  border-color: #13c296;
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #0f9b78;
+  border-color: #0f9b78;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #3056d3;
+  border-color: #3056d3;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #2644a8;
+  border-color: #2644a8;
+}
+
+.thLight {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.card {
+  margin-top: 10px;
+}
+
+.card-header {
+  background: white;
+  font-weight: 500;
+}
