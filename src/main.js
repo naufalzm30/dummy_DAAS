@@ -19,7 +19,7 @@ Vue.config.productionTip = false;
 Vue.directive("inactivity", inactivityDirective);
 Vue.use(HighchartsVue);
 // Vue.prototype.$baseURL = 'http://127.0.0.1:8000'
-Vue.prototype.$baseURL = "http://pdamsby.blitztechnology.tech/api";
+Vue.prototype.$baseURL = "https://pdamsby.blitztechnology.tech/api";
 // Vue.prototype.$baseURL = "https://weatherapi.blitztechnology.tech";
 
 //PROXY

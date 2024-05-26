@@ -49,10 +49,11 @@
             <button
               v-if="role == 'is_superuser'"
               type="button"
-              class="btn btn-sm btn-success"
+              class="btn btn-sm btn-success d-none"
               data-bs-toggle="modal"
               style="font-size: 0.8rem"
               data-bs-target="#staticBackdrop"
+
             >
               <span>CSV</span>
             </button>
@@ -162,14 +163,14 @@
             class="col-md-2 d-flex justify-content-end"
             style="margin-top: 1rem"
           >
-            <div class="dropdown">
+    
               <button
                 class="btn btn-sm btn-primary dropdown-toggle"
                 type="button"
-                id="dropdownMenuButton1"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
+
+                @click.prevent="download"
+                
+                
                 title="Download sesuai filter tanggal"
                 style="font-size: 0.8rem"
               >
@@ -180,47 +181,11 @@
                 ></i>
 
                 <span>Download</span>
+              
               </button>
 
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="downloadV22"
-                    style="font-size: 0.9rem"
-                    >Data Jam 7,12,17,24</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="downloadV21"
-                    style="font-size: 0.9rem"
-                    >Data per 3 Jam</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="downloadV20"
-                    style="font-size: 0.9rem"
-                    >Data per jam</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="download"
-                    style="font-size: 0.9rem"
-                    >Semua Data</a
-                  >
-                </li>
-              </ul>
-            </div>
+            
+        
           </div>
         </div>
         <p v-if="csv_code">File status: {{ csv_code }}</p>

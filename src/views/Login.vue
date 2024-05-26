@@ -37,7 +37,7 @@
             </router-link>
             <div>
               <p class="bws">{{ $app_title }}</p>
-              <p class="bws">WEATHER APP</p>
+              <p class="bws">WATER MONITORING APP</p>
             </div>
           </div>
         </div>
