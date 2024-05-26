@@ -7,9 +7,9 @@
       <div class="row">
         <div class="col-md-4 p-0 imgSZ">
           <img
-            :src="`${$baseURL}${stations[0].image}`"
+            :src="`${$imageURL}${stations[0].image}`"
             class="img-fluid"
-            alt="test"
+            alt="station-img"
             style="
               object-fit: cover;
               border-radius: 10px 0px 0px 10px;

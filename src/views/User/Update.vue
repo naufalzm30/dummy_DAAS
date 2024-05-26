@@ -49,25 +49,19 @@
 
           <div class="col-md-6">
             <div class="card">
-              <div class="card-header">Data Balai</div>
+              <div class="card-header">Data Station</div>
+              
               <div class="card-body">
                 <div class="col-md pb-3" v-if="role == 'is_superuser'">
-                  <label for="floatingInput">Balai*</label>
-                  <select class="form-select" v-model="item.balai" required>
-                    <option v-for="item in balais" :key="item.id" :value="item.id">
-                      {{ item.balai }}
+                  <label for="floatingInput">Station*</label>
+                  <select class="form-select" v-model="item.station" required>
+                    <option v-for="item in stations" :key="item.id" :value="item.id">
+                      {{ item.station_name }}
                     </option>
                   </select>
                 </div>
 
-                <div class="col-md pb-3" v-if="role == 'is_superuser'">
-                  <label for="floatingInput">Provinsi*</label>
-                  <select class="form-select" v-model="item.provinsi" required>
-                    <option v-for="item in provinsis" :key="item.id" :value="item.id">
-                      {{ item.provinsi }}
-                    </option>
-                  </select>
-                </div>
+               
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputPhone">Phone</label>
@@ -95,16 +89,16 @@ export default {
   },
   data() {
     return {
-      balais: [],
-      provinsis: [],
+      stations: [],
+      
       item: {
         user: "",
         password: "",
         role: null,
         text: "",
         phone: "",
-        provinsi: null,
-        balai: null,
+        itemStation: null,
+        station: null,
         created_by: null,
       },
     };
@@ -113,7 +107,7 @@ export default {
     async updateBalai() {
       await axios
         .put(
-          `${this.$baseURL}/user/${this.balai}/${this.$route.params.id}`,
+          `${this.$baseURL}/user/${this.itemStation}/${this.$route.params.id}`,
           this.item,
           {
             headers: {
@@ -145,26 +139,29 @@ export default {
     },
   },
   async mounted() {
-    if (this.$route.params.balai_id != this.balai) {
+    if (this.$route.params.balai_id != 0) {
       localStorage.clear();
       this.$router.push({ name: "Login" });
     }
 
     await axios
-      .get(`${this.$baseURL}/user/${this.balai}/${this.$route.params.id}`, {
+      .get(`${this.$baseURL}/user/0/${this.$route.params.id}`, {
         headers: {
           Authorization: `Token ${this.token}`,
         },
       })
       .then((r) => {
         this.item = r.data[0];
+  
+  this.itemStation = this.item.station
+  console.log(this.itemStation);
       });
+  
   },
 
   async created() {
     this.gAuthUser();
-    this.gBalai();
-    this.gProvinsi();
+    this.stations = await this.fetchData(`${this.$baseURL}/station/0`);
   },
 };
 </script>

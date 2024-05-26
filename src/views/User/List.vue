@@ -24,7 +24,7 @@
         v-slot="{ ds }"
         :ds-data="users"
         :ds-sortby="sortBy"
-        :ds-search-in="['user', 'balai', 'provinsi', 'created_by', 'phone']"
+        :ds-search-in="['user', 'created_by', 'phone']"
       >
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
@@ -64,20 +64,8 @@
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.user }}</td>
                       <td>{{ row.phone }}</td>
-                      <td>
-                        <span v-for="item in provinsis" :key="item.id">
-                          <span v-if="item.id == row.provinsi">
-                            {{ item.provinsi }}
-                          </span>
-                        </span>
-                      </td>
-                      <td v-if="role == 'is_superuser'">
-                        <span v-for="item in balais" :key="item.id">
-                          <span v-if="item.id == row.balai">
-                            {{ item.balai }}
-                          </span>
-                        </span>
-                      </td>
+                   
+                 
                       <td v-if="role == 'is_superuser'">
                         <span v-if="row.is_superuser"> superadmin </span>
                         <span v-else-if="row.is_staff"> admin </span>
@@ -92,10 +80,11 @@
                       </td>
                       <td>
                         <span>
+                          
                           <router-link
                             type="button"
                             class="btn btn-success btn-sm mx-1"
-                            :to="`/user/update/${balai}/${row.id} `"
+                            :to="`/user/update/0/${row.id} `"
                             >Edit</router-link
                           >
                           <button
@@ -166,14 +155,10 @@ export default {
           name: "Phone",
           field: "phone",
         },
-        {
-          name: "Provinsi",
-        },
+    
       ],
       colSuper: [
-        {
-          name: "Balai",
-        },
+  
         {
           name: "Role",
         },
@@ -291,7 +276,7 @@ export default {
     this.loadData();
   },
   async mounted() {
-    this.gBalai();
+    // this.gBalai();
     this.gProvinsi();
     await axios
       .get(`${this.$baseURL}/user/${this.balai}`, {

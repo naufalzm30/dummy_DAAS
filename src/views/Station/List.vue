@@ -2,30 +2,21 @@
   <div>
     <Header />
     <div class="mobile-width d-flex justify-content-between align-items-center">
+      <!-- {{ profile.station }}
+      {{ profile.user.username }}, {{ profile.station.station_name }} -->
       <div class="bwsTitle mobile-top">
         {{ $app_title }}
       </div>
     </div>
     <div class="mobile-width">
       <div class="d-flex justify-content-between align-items-center">
-        <div class="subTitle">Daftar Pos</div>
+        <div class="subTitle">Daftar Stasiun</div>
         <div>
-          <router-link
-            v-if="role === 'is_superuser'"
-            :to="{ name: 'AddStation' }"
-            type="button"
-            class="btn btn-primary float-right my-2"
-            style="padding: 5px 10px"
-            >Tambah Data</router-link
-          >
+          <router-link v-if="role === 'is_superuser'" :to="{ name: 'AddStation' }" type="button"
+            class="btn btn-primary float-right my-2" style="padding: 5px 10px">Tambah Data</router-link>
         </div>
       </div>
-      <dataset
-        v-slot="{ ds }"
-        :ds-data="stations"
-        :ds-sortby="sortBy"
-        :ds-search-in="['station_name']"
-      >
+      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name']">
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
         </div>
@@ -33,31 +24,18 @@
         <div class="row mt-2">
           <div class="col-md-12">
             <div class="table-responsive">
-              <table
-                class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white"
-              >
+              <table class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white">
                 <thead class="table-light">
                   <tr>
                     <th scope="col">#</th>
-                    <th
-                      v-for="(th, index) in cols"
-                      :key="th.field"
-                      :class="['sort', th.sort]"
-                      @click="click($event, index)"
-                      class="thLight"
-                    >
+                    <th v-for="(th, index) in cols" :key="th.field" :class="['sort', th.sort]"
+                      @click="click($event, index)" class="thLight">
                       {{ th.name }} <i class="gg-select float-right"></i>
                     </th>
                   </tr>
                 </thead>
-                <div
-                  v-if="loading_i"
-                  class="d-flex flex-column justify-content-center align-items-center"
-                >
-                  <i
-                    class="zmdi zmdi-spinner zmdi-hc-spin"
-                    style="font-size: 1.5rem"
-                  ></i>
+                <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center">
+                  <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
                 </div>
                 <dataset-item tag="tbody">
                   <template #default="{ row, rowIndex }">
@@ -76,23 +54,12 @@
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
                       <td>
-                        <router-link
-                          type="button"
-                          class="btn btn-primary btn-sm mx-1"
-                          :to="{
-                            path: '/station/data/' + row.id + '/1',
-                          }"
-                          >Data</router-link
-                        >
-                        <span
-                          v-if="role == 'is_staff' || role == 'is_superuser'"
-                        >
-                          <router-link
-                            type="button"
-                            class="btn btn-success btn-sm mx-1"
-                            :to="`/station/update/6/${row.id}`"
-                            >Edit</router-link
-                          >
+                        <router-link type="button" class="btn btn-primary btn-sm mx-1" :to="{
+          path: '/station/data/' + row.id + '/1',
+        }">Data</router-link>
+                        <span v-if="role == 'is_staff' || role == 'is_superuser'">
+                          <router-link type="button" class="btn btn-success btn-sm mx-1"
+                            :to="`/station/update/0/${row.id}`">Edit</router-link>
                         </span>
                       </td>
                     </tr>
@@ -102,9 +69,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="d-flex flex-md-row flex-column justify-content-between align-items-center"
-        >
+        <div class="d-flex flex-md-row flex-column justify-content-between align-items-center">
           <dataset-info class="mb-2 mb-md-0" />
           <dataset-pager />
         </div>
@@ -143,7 +108,7 @@ export default {
       loading_i: true,
       balais: [],
       role: null,
-      station:0,
+      station: 0,
       balai: null,
       nama_pos: "",
       cols: [
@@ -168,7 +133,7 @@ export default {
         {
           name: "Nama Pos",
         },
-       
+
         {
           name: "Lokasi",
         },
@@ -218,8 +183,13 @@ export default {
       sortEl.sort = toset;
     },
     async loadData() {
-      console.log('role: ', this.role);
-      
+      // console.log('role: ', this.role);
+      if (this.role == "is_superuser") {
+        this.cols = this.colSuper;
+        this.station = 0
+      } else {
+        this.station = this.profile.station.id
+      }
       await axios
         .get(`${this.$baseURL}/station/${this.station}`, {
           headers: {
@@ -227,7 +197,13 @@ export default {
           },
         })
         .then((r) => {
-          this.stations = r.data;
+
+          if (r.data.length > 1) {
+            this.stations = r.data;
+          } else {
+            this.stations = [r.data];
+          }
+
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -235,18 +211,16 @@ export default {
     },
   },
   created() {
+    this.extractUserInfo()
     this.gAuthStation();
     this.loadData();
-    if (this.role == "is_superuser") {
-      this.cols = this.colSuper;
-      this.station = 0
-    }
+
+
   },
   mounted() {
-    this.gBalai();
+    // this.gBalai();
   },
 };
 </script>
 
-<style scoped src="@/assets/css/figma.css">
-</style>
+<style scoped src="@/assets/css/figma.css"></style>

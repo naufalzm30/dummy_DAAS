@@ -20,6 +20,7 @@ Vue.directive("inactivity", inactivityDirective);
 Vue.use(HighchartsVue);
 // Vue.prototype.$baseURL = 'http://127.0.0.1:8000'
 Vue.prototype.$baseURL = "https://pdamsby.blitztechnology.tech/api";
+Vue.prototype.$imageURL = "https://pdamsby.blitztechnology.tech";
 // Vue.prototype.$baseURL = "https://weatherapi.blitztechnology.tech";
 
 //PROXY
@@ -93,29 +94,30 @@ Vue.mixin({
         this.user && this.user.profile && this.user.profile.created_by;
       this.role = this.user && this.user.profile && this.user.profile.role;
       this.token = this.user && this.user.token;
+      this.profile = this.user && this.user.profile
     },
-    async gBalai() {
-      this.balais = await this.fetchData(`${this.$baseURL}/balai/`);
-    },
-    async gProvinsi() {
-      this.provinsis = await this.fetchData(`${this.$baseURL}/provinsi/`);
-    },
+    // async gBalai() {
+    //   this.balais = await this.fetchData(`${this.$baseURL}/balai/`);
+    // },
+    // async gProvinsi() {
+    //   this.provinsis = await this.fetchData(`${this.$baseURL}/provinsi/`);
+    // },
     async gIcons() {
       this.icons = await this.fetchData(`${this.$baseURL}/icon/`);
     },
-    async gStType() {
-      this.stationTypes = await this.fetchData(
-        `${this.$baseURL}/station-type/`
-      );
-    },
-    async gSensor() {
-      this.sensorTypes = await this.fetchData(`${this.$baseURL}/sensor-type/`);
-    },
-    async gStation() {
-      this.stations = await this.fetchData(
-        `${this.$baseURL}/station-sensor/${this.balai}`
-      );
-    },
+    // async gStType() {
+    //   this.stationTypes = await this.fetchData(
+    //     `${this.$baseURL}/station-type/`
+    //   );
+    // },
+    // async gSensor() {
+    //   this.sensorTypes = await this.fetchData(`${this.$baseURL}/sensor-type/`);
+    // },
+    // async gStation() {
+    //   this.stations = await this.fetchData(
+    //     `${this.$baseURL}/station-sensor/${this.balai}`
+    //   );
+    // },
     async fetchData(url) {
       try {
         if (!this.token) {

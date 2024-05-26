@@ -3,71 +3,33 @@
     <span v-for="item in stations" :key="item.id">
       <div v-if="item.id == $route.params.id" class="row">
         <div class="left-container" :class="{ p012: item.station_type == 3 }">
-          <TableMap
-            :stations="item"
-            :status="status"
-            :loading_i="loading_i"
-            class="mx-auto comShadow border"
-            style="border-radius: 15px"
-          />
+          <TableMap :stations="item" :status="status" :loading_i="loading_i" class="mx-auto comShadow border"
+            style="border-radius: 15px" />
         </div>
         <div v-if="item.station_type == 3" class="right-container">
-          <WindRoseChart
-            style="border-radius: 15px"
-            class="box comShadow"
-            v-if="computedWindData.length && stations.length > 0"
-            :sampleData="computedWindData"
-            :stations="stations"
-            :startDate="startDate"
-            :endDate="endDate"
-          />
+          <WindRoseChart style="border-radius: 15px" class="box comShadow"
+            v-if="computedWindData.length && stations.length > 0" :sampleData="computedWindData" :stations="stations"
+            :startDate="startDate" :endDate="endDate" />
         </div>
       </div>
     </span>
 
     <div style="border-radius: 15px" class="mt-2">
-      <dataset
-        class="box comShadow px-3"
-        v-slot="{ ds }"
-        :ds-data="filterData"
-        :ds-sortby="sortBy"
-      >
+      <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
         <div class="row" :data-page-count="ds.dsPagecount">
-          <div
-            v-if="loading_i && role == 'is_guess'"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <i
-              class="zmdi zmdi-spinner zmdi-hc-spin"
-              style="font-size: 1.5rem"
-            ></i>
+          <div v-if="loading_i && role == 'is_guess'"
+            class="d-flex flex-column justify-content-center align-items-center">
+            <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
           </div>
-          <div
-            class="col-md-1 d-flex justify-content-start"
-            style="margin: 1rem 0 1rem 0"
-          >
-            <button
-              v-if="role == 'is_superuser'"
-              type="button"
-              class="btn btn-sm btn-success d-none"
-              data-bs-toggle="modal"
-              style="font-size: 0.8rem"
-              data-bs-target="#staticBackdrop"
-
-            >
+          <div class="col-md-1 d-flex justify-content-start" style="margin: 1rem 0 1rem 0">
+            <button v-if="role == 'is_superuser'" type="button" class="btn btn-sm btn-success d-none"
+              data-bs-toggle="modal" style="font-size: 0.8rem" data-bs-target="#staticBackdrop">
               <span>CSV</span>
             </button>
           </div>
 
-          <div
-            class="modal fade"
-            id="staticBackdrop"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
-            tabindex="-1"
-            aria-labelledby="staticBackdropLabel"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <form @submit.prevent="modified">
@@ -80,37 +42,20 @@
                         </span>
                       </span>
                     </h5>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div>
                       <label>
-                        <input
-                          type="file"
-                          id="file"
-                          v-on:change="onChangeFileUpload($event)"
-                        />
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
                       </label>
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                       Close
                     </button>
-                    <button
-                      type="submit"
-                      class="btn btn-primary"
-                      data-bs-dismiss="modal"
-                    >
+                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
                       Upload
                     </button>
                   </div>
@@ -119,73 +64,32 @@
             </div>
           </div>
 
-          <div
-            class="col-md-9 d-flex justify-content-end"
-            style="margin-top: 1rem"
-          >
+          <div class="col-md-9 d-flex justify-content-end" style="margin-top: 1rem">
             <div v-if="role != 'is_guess'">
-              <i
-                v-if="loading_data"
-                class="zmdi zmdi-spinner zmdi-hc-spin mx-2"
-                style="font-size: 1.2rem"
-              ></i>
-              <i
-                v-if="loading_date_data"
-                class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
-                style="font-size: 1.2rem"
-              ></i>
-              <input
-                name="from"
-                type="date"
-                v-model="startDate"
-                @change="search"
-                title="Data Awal"
-                style="font-size: 0.8rem"
-              />
-              <label
-                for="to"
-                class="px-3"
-                style="font-size: 0.8rem; font-weight: normal"
-                >s.d</label
-              >
-              <input
-                name=""
-                type="date"
-                v-model="endDate"
-                @change="search"
-                title="Data Akhir"
-                style="font-size: 0.8rem"
-              />
+              <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
+              <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
+                style="font-size: 1.2rem"></i>
+              <input name="from" type="date" v-model="startDate" @change="search" title="Data Awal"
+                style="font-size: 0.8rem" />
+              <label for="to" class="px-3" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+              <input name="" type="date" v-model="endDate" @change="search" title="Data Akhir"
+                style="font-size: 0.8rem" />
             </div>
           </div>
 
-          <div
-            class="col-md-2 d-flex justify-content-end"
-            style="margin-top: 1rem"
-          >
-    
-              <button
-                class="btn btn-sm btn-primary dropdown-toggle"
-                type="button"
+          <div class="col-md-2 d-flex justify-content-end" style="margin-top: 1rem">
 
-                @click.prevent="download"
-                
-                
-                title="Download sesuai filter tanggal"
-                style="font-size: 0.8rem"
-              >
-                <i
-                  v-if="loading_dw"
-                  class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"
-                ></i>
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" @click.prevent="download"
+              title="Download sesuai filter tanggal" style="font-size: 0.8rem">
+              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>
 
-                <span>Download</span>
-              
-              </button>
+              <span>Download</span>
 
-            
-        
+            </button>
+
+
+
           </div>
         </div>
         <p v-if="csv_code">File status: {{ csv_code }}</p>
@@ -193,18 +97,12 @@
           <div class="col-md-12">
             <div class="table-responsive">
               <table
-                class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white table-bordered"
-              >
+                class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white table-bordered">
                 <thead class="table-light">
                   <tr>
                     <th scope="col" class="thClass">#</th>
-                    <th
-                      v-for="(th, index) in cols"
-                      :key="th.field"
-                      :class="['sort', th.sort]"
-                      @click="click($event, index)"
-                      class="thClass"
-                    >
+                    <th v-for="(th, index) in cols" :key="th.field" :class="['sort', th.sort]"
+                      @click="click($event, index)" class="thClass">
                       {{ th.name }} <i class="gg-select float-right"></i>
                     </th>
                   </tr>
@@ -215,13 +113,10 @@
                       <td scope="row">{{ index + 1 }}</td>
                       <td>{{ formatDate(row.waktu) }}</td>
                       <td>{{ formatTime(row.waktu) }}</td>
-                      <td
-                        v-for="(item, index) in conf_2(
-                          row.weather_data,
-                          row.symbol
-                        )"
-                        :key="index"
-                      >
+                      <td v-for="(item, index) in conf_2(
+      row.weather_data,
+      row.symbol
+    )" :key="index">
                         {{ item.data }} {{ item.symbol }}
                       </td>
                       <td v-if="balai == 0">{{ row.bat.toFixed(2) }} v</td>
@@ -234,9 +129,7 @@
           </div>
         </div>
 
-        <div
-          class="d-flex flex-md-row flex-column justify-content-end align-items-center"
-        >
+        <div class="d-flex flex-md-row flex-column justify-content-end align-items-center">
           <dataset-pager style="font-size: 0.9rem" />
         </div>
       </dataset>
@@ -1598,10 +1491,10 @@ export default {
         const totalPercentageInDirection =
           totalDataCount > 0
             ? windDirectionData[index].cells
-                .slice(1, windSpeedInterval.length)
-                .map((cell) => parseFloat(cell.value))
-                .reduce((acc, value) => acc + value, 0)
-                .toFixed(2)
+              .slice(1, windSpeedInterval.length)
+              .map((cell) => parseFloat(cell.value))
+              .reduce((acc, value) => acc + value, 0)
+              .toFixed(2)
             : "0.00";
 
         windDirectionData[index].cells.push({
@@ -1611,8 +1504,8 @@ export default {
           rawData:
             totalDataCount > 0
               ? windDirectionData[index].cells
-                  .slice(1, windSpeedInterval.length)
-                  .flatMap((cell) => cell.rawData)
+                .slice(1, windSpeedInterval.length)
+                .flatMap((cell) => cell.rawData)
               : [],
         });
       });
@@ -1828,10 +1721,20 @@ export default {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute(
-              "download",
-              `Laporan Pembacaan Sensor ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
-            );
+
+
+            if (this.startDate && this.endDate) {
+              link.setAttribute(
+                "download",
+                `Laporan Pembacaan Sensor ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+              );
+            } else {
+              link.setAttribute(
+                "download",
+                `Laporan Pembacaan Sensor ${this.nama}.xlsx`
+              );
+            }
+
             document.body.appendChild(link);
             link.click();
 
@@ -2189,8 +2092,7 @@ export default {
   },
 };
 </script>
-<style scoped src="@/assets/css/figma.css">
-</style>
+<style scoped src="@/assets/css/figma.css"></style>
 <style scoped>
 select,
 input,
@@ -2219,12 +2121,15 @@ td {
 }
 
 .row {
-  display: flex; /* Use flexbox to create a row layout */
-  align-items: flex-start; /* Align items at the top of the container */
+  display: flex;
+  /* Use flexbox to create a row layout */
+  align-items: flex-start;
+  /* Align items at the top of the container */
 }
 
 .left-container {
-  flex: 1; /* Allow the container to take up available space */
+  flex: 1;
+  /* Allow the container to take up available space */
   /* padding: 0 5px; */
 }
 
@@ -2233,12 +2138,15 @@ td {
 }
 
 .right-container {
-  flex: 1; /* Allow the container to take up available space */
-  margin-left: 0px; /* Add some spacing between the left and right containers */
+  flex: 1;
+  /* Allow the container to take up available space */
+  margin-left: 0px;
+  /* Add some spacing between the left and right containers */
   /* padding: 0 5px; */
 }
 
 .table-bordered td {
-  border: 1px solid #dee2e6; /* Add the desired border style */
+  border: 1px solid #dee2e6;
+  /* Add the desired border style */
 }
 </style>

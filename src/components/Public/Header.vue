@@ -16,7 +16,7 @@
         <li class="centered-image">
           <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" />
           <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
-          <img v-else :src="logoPU" class="mobile-icon" style="max-width: 50px" />
+          <img v-else :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
 
         </li>
 
@@ -41,7 +41,7 @@
           </li>
         </div>
 
-        <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
+        <!-- <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
           <a href="#collapseTwo" data-bs-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
             aria-controls="collapseTwo" class="collapsible" style="display: flex; flex-direction: row">
             <img :src="data_i" class="mr-4" /><span>Data</span>
@@ -76,7 +76,7 @@
               </ul>
             </div>
           </div>
-        </li>
+        </li> -->
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'Station',
@@ -89,7 +89,7 @@
           <router-link :to="{
             name: 'User',
             params: { balai_id: balai },
-          }" style="display: flex; flex-direction: row" v-if="role == 'is_staff' || role == 'is_superuser'">
+          }" style="display: flex; flex-direction: row" v-if="role == 'is_superuser'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
         </li>
@@ -201,8 +201,8 @@
 import { mapState } from "vuex";
 import axios from "axios";
 // import $ from "jquery";
-import logoPU from "@/assets/icons/pupr.svg";
-import logoBT from "@/assets/icons/logo-bt.svg";
+import logoPU from "@/assets/icons/logo-pdam.png";
+import logoBT from "@/assets/icons/logo-pdam.png";
 import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import dash_i from "@/assets/icons/menu/dashboard.svg";

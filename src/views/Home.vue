@@ -1,6 +1,7 @@
 <template>
   <div class="mobile-width">
     <Header />
+    
     <div v-if="loading_i" class="center-container mt-2">
       <div class="content-container">
         <div class="icon-container">
@@ -11,8 +12,10 @@
       </div>
     </div>
     <div v-else>
+      
       <div class="bwsTitle mobile-top">
-        {{ balai_name }}
+        {{ balai_name }} 
+        
       </div>
       <div
         v-if="loading_i"
@@ -118,7 +121,8 @@ export default {
       custom_duration: null,
       showCarousel: true,
       proxyUrl: null,
-      proxyFixedBalai: null
+      proxyFixedBalai: null,
+      
     };
   },
   methods: {
@@ -203,7 +207,7 @@ export default {
     },
   },
   async created() {
-
+  
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
 

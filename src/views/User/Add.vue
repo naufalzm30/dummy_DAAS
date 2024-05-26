@@ -52,22 +52,15 @@
               <div class="card-header">Data Balai</div>
               <div class="card-body">
                 <div class="col-md pb-3" v-if="role == 'is_superuser'">
-                  <label for="floatingInput">Balai*</label>
-                  <select class="form-select" v-model="balaiUser" required>
-                    <option v-for="item in balais" :key="item.id" :value="item.id">
-                      {{ item.balai }}
+                  <label for="floatingInput">Station*</label>
+                  <select class="form-select" v-model="stationUser" required>
+                    <option v-for="item in stations" :key="item.id" :value="item.id">
+                      {{ item.station_name }}
                     </option>
                   </select>
                 </div>
 
-                <div class="col-md pb-3">
-                  <label for="floatingInput">Provinsi*</label>
-                  <select class="form-select" v-model="provinsi" required>
-                    <option v-for="item in provinsis" :key="item.id" :value="item.id">
-                      {{ item.provinsi }}
-                    </option>
-                  </select>
-                </div>
+             
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputPhone">Phone</label>
@@ -94,28 +87,28 @@ export default {
   },
   data() {
     return {
-      balais: [],
-      provinsis: [],
+      stations: [],
+      
       userData: "",
       password: "",
       roleUser: null,
       phone: null,
       provinsi: null,
-      balaiUser: null,
+      stationUser: null,
     };
   },
   methods: {
     async submitData() {
       await axios
         .post(
-          `${this.$baseURL}/user/${this.balai}`,
+          `${this.$baseURL}/user/0`,
           {
-            balai: this.balaiUser,
+            station: this.stationUser,
             user: this.userData,
             password: this.password,
             role: this.roleUser,
             phone: this.phone,
-            provinsi: this.provinsi,
+            
             created_by: this.user_id,
           },
           {
@@ -145,14 +138,10 @@ export default {
   },
   created() {
     this.gAuthUser();
-    if (this.role == "is_staff") {
-      this.roleUser = "is_guess";
-      this.balaiUser = this.balai;
-    }
+  
   },
   async mounted() {
-    this.gBalai();
-    this.gProvinsi();
+    this.stations = await this.fetchData(`${this.$baseURL}/station/0`);
   },
 };
 </script>

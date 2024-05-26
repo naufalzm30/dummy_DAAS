@@ -13,7 +13,7 @@
           <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
             <div class="row">
               <div class="col-md-4 p-0 imgSZ">
-                <img :src="`${$baseURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
+                <img :src="`${$imageURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
                     object-fit: cover;
                     border-radius: 10px 0px 0px 10px;
                     margin-left: 14px;
