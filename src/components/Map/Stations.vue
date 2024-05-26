@@ -9,10 +9,10 @@
       {{ backupStat }}
     </span>
     <div class="box" v-if="!loading_i">
-      {{ arr_stations }}
-      <hr>
+      
+      <!-- <hr> -->
       <!-- TAB -->
-      <ul class="nav nav-tabs red" id="tabs-tab" role="tablist">
+      <!-- <ul class="nav nav-tabs red" id="tabs-tab" role="tablist">
    
         <li class="nav-item" role="presentation" v-if="total_arr >= 1">
           <button class="nav-link d-flex flex-row py-1 px-2" :class="{ active: total_arr >= 1 && total_awlr < 1 }"
@@ -23,16 +23,17 @@
           </button>
         </li>
   
-      </ul>
+      </ul> -->
 
       <div class="tab-content station-list" id="tabs-tabContent">
-
+        
         <!-- ARR -->
         <div v-if="total_arr >= 1" class="tableFixHead tab-pane fade" :class="{
           active: total_arr >= 1 && total_awlr < 1,
           show: total_arr >= 1 && total_awlr < 1,
           h100: ava_width <= 850,
         }" id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+        <!-- {{ stations[0][1] }} -->
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
@@ -41,8 +42,9 @@
                 </th>
               </tr>
             </thead>
+            
             <tbody>
-              <tr v-for="(station, index) in arr_stations" :key="station[0].id">
+              <tr v-for="(station, index) in stations" :key="station[0].id">
                 <td>{{ index + 1 }}</td>
                 <td>
                   <span v-if="station[1].table.siaga == []"> </span>
@@ -72,23 +74,27 @@
                 <td>
                   {{ formatTime(station[1].table.date) }}
                 </td>
+                <!-- {{ stations[0][1] }} -->
                 <td v-for="(sensor, index) in conf_2(
                   station[1].table.sensor_data,
-                  station[1].table.array_act_symbol
+                  station[1].table.array_table_symbol
+
                 )" :key="index">
-                  {{ sensor.data }} {{ sensor.symbol }}
+                  {{ sensor.data }} 
+                  {{ sensor.symbol }}
+                  
                 </td>
 
-                <td v-if="getYear(station[1].table.maint_date) >= 2020">
+                <!-- <td v-if="getYear(station[1].table.maint_date) >= 2020">
                   {{ formatDate(station[1].table.maint_date) }}
                 </td>
-                <td v-else></td>
+                <td v-else></td> -->
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-      {{ stations }}
+      
     </div>
   </div>
 </template>
@@ -199,18 +205,18 @@ export default {
         .catch(function (e) {
           console.log(e);
         });
-
+// console.log(this.stations);
       // Check Station TAB
       for (let i = 0; i < this.stations.length; i++) {
-        if (this.stations[i][0].station_type == 2) {
-          this.awlr_stations.push(this.stations[i]);
-        }
+        // if (this.stations[i][0].station_type == 2) {
+        //   this.awlr_stations.push(this.stations[i]);
+        // }
         if (this.stations[i][0].station_type == 1) {
           this.arr_stations.push(this.stations[i]);
         }
-        if (this.stations[i][0].station_type == 3) {
-          this.aws_stations.push(this.stations[i]);
-        }
+        // if (this.stations[i][0].station_type == 3) {
+        //   this.aws_stations.push(this.stations[i]);
+        // }
       }
 
       // setInterval(
@@ -254,54 +260,54 @@ export default {
       //   15000
       // );
 
-      let total_awlr = this.stations
-        .map((x) => x[0].station_type)
-        .filter((x) => x == 2).length;
+      // let total_awlr = this.stations
+      //   .map((x) => x[0].station_type)
+      //   .filter((x) => x == 2).length;
       let total_arr = this.stations
         .map((x) => x[0].station_type)
         .filter((x) => x == 1).length;
-      let total_aws = this.stations
-        .map((x) => x[0].station_type)
-        .filter((x) => x == 3).length;
-      this.total_awlr = total_awlr;
+      // let total_aws = this.stations
+      //   .map((x) => x[0].station_type)
+      //   .filter((x) => x == 3).length;
+      // this.total_awlr = total_awlr;
       this.total_arr = total_arr;
-      this.total_aws = total_aws;
+      // this.total_aws = total_aws;
 
       // Set Table Head
-      this.awlr_head = [
-        "No",
-        "Status",
-        "Nama Stasiun",
-        "Nama Sungai",
-        "Tanggal",
-        "Waktu",
-      ];
+      // this.awlr_head = [
+      //   "No",
+      //   "Status",
+      //   "Nama Stasiun",
+      //   "Nama Sungai",
+      //   "Tanggal",
+      //   "Waktu",
+      // ];
 
       this.arr_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
-      this.aws_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
+      // this.aws_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
 
       for (let i = 0; i < this.stations.length; i++) {
-        if (this.stations[i][0].station_type == 2) {
-          this.awlr_head_pre.push(this.stations[i][1].table.array_table_label);
-        }
+        // if (this.stations[i][0].station_type == 2) {
+        //   this.awlr_head_pre.push(this.stations[i][1].table.array_table_label);
+        // }
         if (this.stations[i][0].station_type == 1) {
           this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
         }
-        if (this.stations[i][0].station_type == 3) {
-          this.aws_head_pre.push(this.stations[i][1].table.array_table_label);
-        }
+        // if (this.stations[i][0].station_type == 3) {
+        //   this.aws_head_pre.push(this.stations[i][1].table.array_table_label);
+        // }
       }
-      let awlr_uniq = Array.from(new Set(this.awlr_head_pre[0]));
-      this.awlr_head.splice.apply(this.awlr_head, [6, 0].concat(awlr_uniq));
-      this.awlr_head.push("Maintenance");
+      // let awlr_uniq = Array.from(new Set(this.awlr_head_pre[0]));
+      // this.awlr_head.splice.apply(this.awlr_head, [6, 0].concat(awlr_uniq));
+      // this.awlr_head.push("Maintenance");
 
       let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
       this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
-      this.arr_head.push("Maintenance");
+      // this.arr_head.push("Maintenance");
 
-      let aws_uniq = Array.from(new Set(this.aws_head_pre[0]));
-      this.aws_head.splice.apply(this.aws_head, [5, 0].concat(aws_uniq));
-      this.aws_head.push("Maintenance");
+      // let aws_uniq = Array.from(new Set(this.aws_head_pre[0]));
+      // this.aws_head.splice.apply(this.aws_head, [5, 0].concat(aws_uniq));
+      // this.aws_head.push("Maintenance");
 
 
 
@@ -454,7 +460,7 @@ console.log('before interval');
 <style scoped>
 .tableFixHead {
   overflow-y: scroll;
-  height: 31vh;
+  height: 35vh;
 }
 
 .tableFixHead table {

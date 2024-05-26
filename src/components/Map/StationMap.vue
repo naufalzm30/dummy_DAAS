@@ -23,14 +23,14 @@
       <v-tilelayer :url="url" :attribution="attribution"></v-tilelayer>
       <v-control
         class="example-custom-control m-2"
-        style="border-radius: 10px; opacity: 75%"
+        style="border-radius: 5px; opacity: 75%"
         :position="'bottomright'"
       >
-        <div class="py-2 px-2" style="font-weight: bold">
-          <div class="px-1 pb-1">Legenda</div>
-          <div><img :src="awlr_im" class="px-1 pb-1" />AWLR</div>
-          <div><img :src="arr_im" class="px-1 py-1" />ARR</div>
-          <div><img :src="aws_im" class="px-1 pt-1" />AWS</div>
+        <div class="py-1 px-1" style="font-weight: bold">
+          <!-- <div class="px-1 pb-1">Legenda</div> -->
+          <!-- <div><img :src="awlr_im" class="px-1 pb-1" />AWLR</div> -->
+          <div><img :src="arr_im" class="px-1 py-0" />Stasiun</div>
+          <!-- <div><img :src="aws_im" class="px-1 pt-1" />AWS</div> -->
         </div>
       </v-control>
       <!-- <v-marker-cluster @clusterclick="click()" @ready="ready"> -->
@@ -268,11 +268,11 @@ export default {
       this.balai = this.$fixedBalai;
 
       await axios
-        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
+        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.$proxyFixedBalai}`)
         .then((r) => {
           this.detBalai = r.data[0];
         });
-
+// console.log(this.detBalai);
       this.zoom = this.detBalai.map_zoom;
       this.center = [this.detBalai.latitude, this.detBalai.longitude];
     } else if (typeof user == "string") {
@@ -282,7 +282,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$baseURL}/balai/${this.balai}`, {
+        .get(`${this.$proxyBaseUrl}/balai/${this.$proxyFixedBalai}`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },
@@ -290,6 +290,8 @@ export default {
         .then((r) => {
           this.detBalai = r.data;
         });
+// console.log(this.detBalai);
+
       this.zoom = this.detBalai.map_zoom;
       this.center = [this.detBalai.latitude, this.detBalai.longitude];
     }

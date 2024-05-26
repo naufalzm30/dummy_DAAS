@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <!-- <div class="col-12">
+      <div class="col-12">
         <StationMap
           :stations="stations"
           :status="status"
@@ -9,8 +9,16 @@
           class="mx-auto mt-2 shadow-sm border"
           style="border-radius: 15px"
         />
-      </div> -->
+      </div>
       <div class="col-12">
+        <!-- <StationsT
+          :stations="stations"
+          :loading_i="loading_i"
+          @mouse-over-station="mouseOverstation"
+          @mouse-left-station="mouseLeftstation"
+          class="shadow-sm border mt-2 bg-white"
+          style="border-radius: 15px"
+        /> -->
         <Stations
           :stations="stations"
           :loading_i="loading_i"
@@ -19,14 +27,7 @@
           class="shadow-sm border mt-2 bg-white"
           style="border-radius: 15px"
         />
-        <StationsT
-          :stations="stations"
-          :loading_i="loading_i"
-          @mouse-over-station="mouseOverstation"
-          @mouse-left-station="mouseLeftstation"
-          class="shadow-sm border mt-2 bg-white"
-          style="border-radius: 15px"
-        />
+       
       </div>
     </div>
   </div>
@@ -34,17 +35,17 @@
 
 <script>
 import axios from "axios";
-// import StationMap from "@/components/Map/StationMap";
+import StationMap from "@/components/Map/StationMap";
 import Stations from "@/components/Map/Stations";
-import StationsT from "@/components/Map/StationsT";
+// import StationsT from "@/components/Map/StationsT";
 
 export default {
   name: "Map",
 
   components: {
-    // StationMap,
+    StationMap,
     Stations,
-    StationsT,
+    // StationsT,
   },
   data() {
     return {

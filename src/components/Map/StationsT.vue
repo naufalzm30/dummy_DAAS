@@ -8,6 +8,7 @@
       <hr />
       {{ backupStat }}
     </span>
+    <!-- {{ stations }} -->
     <div class="box" v-if="!loading_i">
       <!-- TAB -->
       <ul class="nav nav-tabs red" id="tabs-tab" role="tablist">

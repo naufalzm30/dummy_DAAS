@@ -72,9 +72,9 @@
         <div class="col" :class="{ 'col-6': ava_width > 768 }">
           <Map />
         </div>
-        <!-- <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
+        <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
           <Slider :ava_width="ava_width" />
-        </div> -->
+        </div>
       </div>
       <Footer />
     </div>
@@ -88,7 +88,7 @@ import logoBT from "@/assets/icons/logo-bt.svg";
 
 import MarqueeText from "@/assets/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
-// import Slider from "@/components/Chart/Slider.vue";
+import Slider from "@/components/Chart/Slider.vue";
 import axios from "axios";
 
 export default {
@@ -96,7 +96,7 @@ export default {
     Header,
     MarqueeText,
     Map,
-    // Slider,
+    Slider,
   },
   data() {
     return {
