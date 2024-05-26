@@ -107,7 +107,7 @@ export default {
         });
 
       await axios
-        .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
+        .get(`${this.$baseURL}/home-data/`)
         .then((r) => {
           this.status = r.data;
           // console.log(this.status);

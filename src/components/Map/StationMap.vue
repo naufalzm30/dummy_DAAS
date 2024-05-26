@@ -282,7 +282,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/${this.$proxyFixedBalai}`, {
+        .get(`${this.$baseURL}/balai/6`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },

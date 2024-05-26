@@ -24,7 +24,7 @@
         v-slot="{ ds }"
         :ds-data="stations"
         :ds-sortby="sortBy"
-        :ds-search-in="['station_name', 'balai']"
+        :ds-search-in="['station_name']"
       >
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
@@ -65,13 +65,13 @@
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.station_name }}</td>
 
-                      <td v-if="role == 'is_superuser'">
+                      <!-- <td v-if="role == 'is_superuser'">
                         <span v-for="item in balais" :key="item.id">
                           <span v-if="item.id == row.balai">
                             {{ item.balai }}
                           </span>
                         </span>
-                      </td>
+                      </td> -->
                       <td>{{ row.location }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
@@ -90,7 +90,7 @@
                           <router-link
                             type="button"
                             class="btn btn-success btn-sm mx-1"
-                            :to="`/station/update/${balai}/${row.id}`"
+                            :to="`/station/update/6/${row.id}`"
                             >Edit</router-link
                           >
                         </span>
@@ -143,6 +143,7 @@ export default {
       loading_i: true,
       balais: [],
       role: null,
+      station:0,
       balai: null,
       nama_pos: "",
       cols: [
@@ -167,9 +168,7 @@ export default {
         {
           name: "Nama Pos",
         },
-        {
-          name: "Balai",
-        },
+       
         {
           name: "Lokasi",
         },
@@ -219,8 +218,10 @@ export default {
       sortEl.sort = toset;
     },
     async loadData() {
+      console.log('role: ', this.role);
+      
       await axios
-        .get(`${this.$baseURL}/station-sensor/${this.balai}`, {
+        .get(`${this.$baseURL}/station/${this.station}`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },
@@ -238,6 +239,7 @@ export default {
     this.loadData();
     if (this.role == "is_superuser") {
       this.cols = this.colSuper;
+      this.station = 0
     }
   },
   mounted() {

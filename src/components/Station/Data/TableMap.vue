@@ -13,10 +13,10 @@
       <v-control class="example-custom-control m-2" style="border-radius: 10px; opacity: 75%" :position="'bottomright'"
         v-if="stations.station_type != 3">
         <div class="py-2 px-2" style="font-weight: bold">
-          <div class="px-1 pb-1">Legenda</div>
-          <div><img :src="awlr_im" class="px-1 pb-1" />AWLR</div>
-          <div><img :src="arr_im" class="px-1 py-1" />ARR</div>
-          <div><img :src="aws_im" class="px-1 pt-1" />AWS</div>
+          <!-- <div class="px-1 pb-1">Legenda</div> -->
+          <!-- <div><img :src="awlr_im" class="px-1 pb-1" />AWLR</div> -->
+          <div><img :src="arr_im" class="px-1" />Stasiun</div>
+          <!-- <div><img :src="aws_im" class="px-1 pt-1" />AWS</div> -->
         </div>
       </v-control>
       <v-marker-cluster :options="clusterOptions" @clusterclick="click()" @ready="ready">

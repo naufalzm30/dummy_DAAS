@@ -30,7 +30,7 @@
           :repeat="text_repeat"
           :duration="custom_duration"
           :paused="isPaused"
-          class="card mt-2 pb-1 box custom-col-md"
+          class="card mt-0 pb-1 box custom-col-md"
           @mouseenter="isPaused = !isPaused"
           @mouseleave="isPaused = false"
         >
@@ -63,6 +63,8 @@
               </span>
             </span>
             <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" style="width: 20px" class="mx-3 my-1" />
+            <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" style="width: 20px" class="mx-3 my-1" />
+
             <img v-else :src="logoPU" style="width: 20px" class="mx-3 my-1" />
           </span>
         </marquee-text>
@@ -85,6 +87,7 @@
 import Header from "@/components/Public/Header";
 import logoPU from "@/assets/logo_pupr.svg";
 import logoBT from "@/assets/icons/logo-bt.svg";
+import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import MarqueeText from "@/assets/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
@@ -106,6 +109,7 @@ export default {
       text_repeat: null,
       logoPU,
       logoBT,
+      logoPDAM,
       ava_width: null,
       ava_height: null,
       balai: null,
@@ -227,7 +231,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/${this.balai}`, {
+        .get(`${this.$baseURL}/balai/6`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },
@@ -257,7 +261,7 @@ export default {
 }
 
 .mobile-top {
-  margin: 5px 0px;
+  margin: 0px 0px;
 }
 
 @media (max-width: 768px) {

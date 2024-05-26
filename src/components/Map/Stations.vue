@@ -460,7 +460,7 @@ console.log('before interval');
 <style scoped>
 .tableFixHead {
   overflow-y: scroll;
-  height: 35vh;
+  height: 38vh;
 }
 
 .tableFixHead table {

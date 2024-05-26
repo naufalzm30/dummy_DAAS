@@ -30,10 +30,10 @@
         </div>
 
         <div v-else-if="$app_title == 'PDAM SURYA SEMBADA'" class="img-fluid login100-more"
-          v-bind:style="{ backgroundImage: `url(' ${bg_bali_img} ')` }">
+          v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
           <div class="logo-container m-4">
             <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
-              <img :src="logoPU" alt="" class="logo-img" />
+              <img :src="logoPDAM" alt="" class="logo-img" />
             </router-link>
             <div>
               <p class="bws">{{ $app_title }}</p>
@@ -138,10 +138,13 @@ import axios from "axios";
 // BWS
 import bg_sum8_img from "@/assets/img/palembang-bg.jpg";
 import bg_bali_img from "@/assets/img/bali-bg.jpg";
+import bg_surabaya_img from "@/assets/img/surabaya-bg.png";
+
 import bg_weather_img from "@/assets/img/bweather-bg.jpg";
 
 import logoPU from "@/assets/icons/pupr.svg";
 import logoBT from "@/assets/icons/logo-bt.svg";
+import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 export default {
   name: "Login",
@@ -153,9 +156,11 @@ export default {
       msg: "",
       bg_sum8_img,
       bg_bali_img,
+      bg_surabaya_img,
       bg_weather_img,
       logoPU,
       logoBT,
+      logoPDAM,
       incorrectAuth: false,
       year: null,
       balai: null,
@@ -197,7 +202,7 @@ export default {
           .dispatch("userLogin", {
             username: this.username,
             password: this.password,
-            balai: this.$fixedBalai,
+            // balai: this.$fixedBalai,
           })
           .then((r) => {
             this.$router.push({ name: "Home" });
@@ -218,7 +223,7 @@ export default {
       }
     },
     async loadBalai() {
-      await axios.get(`${this.$baseURL}/balai/non-auth/0`).then((r) => {
+      await axios.get(`${this.$proxyBaseUrl}/balai/non-auth/0`).then((r) => {
         this.balais = r.data;
       });
     },
@@ -240,7 +245,8 @@ export default {
   font-weight: bold;
   margin: 0;
   margin-left: 25px;
-  color: #fbb040;
+  /* color: #fbb040; */
+  color:   #092581
 }
 
 .weather {
@@ -281,7 +287,9 @@ export default {
 }
 
 .logo-img {
-  width: 60px;
+  /* width: 60px; */
+  width: 80px;
+
 }
 
 .logo-container {

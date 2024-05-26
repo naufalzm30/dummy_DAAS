@@ -33,6 +33,8 @@ if (document.title == "BBWS SUMATERA VIII") {
   Vue.prototype.$fixedBalai = 1;
 } else if (document.title == "BWS BALI-PENIDA") {
   Vue.prototype.$fixedBalai = 2;
+} else if (document.title == "PDAM SURYA SEMBADA") {
+  Vue.prototype.$fixedBalai = 6;
 }
 
 Vue.mixin({

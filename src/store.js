@@ -66,10 +66,12 @@ export default new Vuex.Store({
         },
         userLogin(context, usercredentials) {
             return new Promise((resolve, reject) => {
-                getAPI.post('/login/', {
+                // getAPI.post('/login/', {
+                getAPI.post('login/', {
+
                     username: usercredentials.username,
                     password: usercredentials.password,
-                    balai: usercredentials.balai
+                    // balai: usercredentials.balai
 
                 })
                     .then(response => {

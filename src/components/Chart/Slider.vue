@@ -1,63 +1,34 @@
 <template>
   <div class="container">
-    <div
-      v-if="loading_i"
-      class="d-flex flex-column justify-content-center align-items-center"
-      style="min-height: 70vh"
-    >
-      <i
-        class="zmdi zmdi-spinner zmdi-hc-spin"
-        style="font-size: 2rem; margin-right: 20px"
-      ></i>
+    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
+      <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-
-    <carousel
-      :perPage="1"
-      ref="carousel"
-      :autoplay="false"
-      :interval="0"
-      :navigationEnabled="false"
-      :loop="true"
-      :paginationEnabled="false"
-      navigationNextLabel="<i class='zmdi zmdi-chevron-right zmdi-hc-lg'></i>"
-      navigationPrevLabel="<i class='zmdi zmdi-chevron-left zmdi-hc-lg'></i>"
-    >
-      <slide
-        v-for="station in stations"
-        :key="station[0].id"
-        style="max-width: 100% !important; min-width: 100% !important"
-      >
+    <carousel :perPage="1" ref="carousel" :autoplay="false" :interval="0" :navigationEnabled="false" :loop="true"
+      :paginationEnabled="false" navigationNextLabel="<i class='zmdi zmdi-chevron-right zmdi-hc-lg'></i>"
+      navigationPrevLabel="<i class='zmdi zmdi-chevron-left zmdi-hc-lg'></i>">
+      <slide v-for="station in stations" :key="station[0].id"
+        style="max-width: 100% !important; min-width: 100% !important">
         <div>
           <!-- Location -->
-          <div
-            class="card box-sm mt-2 mx-1 comShadow"
-            style="box-shadow: 10px; border-radius: 10px"
-          >
+          <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
             <div class="row">
               <div class="col-md-4 p-0 imgSZ">
-                <img
-                  :src="`${$baseURL}${station[0].image}`"
-                  class="img-fluid"
-                  alt="station-img"
-                  style="
+                <img :src="`${$baseURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
                     object-fit: cover;
                     border-radius: 10px 0px 0px 10px;
                     margin-left: 14px;
                     width: 100%;
-                  "
-                />
+                  " />
               </div>
 
-              <div class="col-md-8 my-1">
+              <div class="col-md-8 my-0">
                 <div class="row">
                   <div class="col-md-10 col-10">
-                    <div
-                      style="
+                    <div style="
                         font-weight: 500;
-                        font-size: 1.3em;
+                        font-size: 1.1em;
                         margin-left: 7px;
-                      "
-                    >
+                      ">
                       {{ station[0].station_name }}
                     </div>
                   </div>
@@ -82,22 +53,16 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-6 mx-0">
+                  <div class="col-md-7 mx-0">
                     <div class="my-1 mx-2">
                       <div class="info-label">Lokasi</div>
                       <div class="info-value">{{ station[0].location }}</div>
-                      <div
-                        class="info-value"
-                        v-if="station[0].station_type == 2"
-                      >
+                      <div class="info-value" v-if="station[0].station_type == 2">
                         {{ station[0].sungai }}
                       </div>
                     </div>
                     <div class="my-1 mx-2">
-                      <div
-                        class="info-dummy"
-                        v-if="station[0].station_type != 2"
-                      >
+                      <div class="info-dummy" v-if="station[0].station_type != 2">
                         .
                       </div>
                       <div class="info-label">Latitude</div>
@@ -106,7 +71,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6 mx-0">
+                  <div class="col-md-5 mx-0">
                     <div class="my-1 mx-2">
                       <div class="info-label">Elevasi</div>
                       <div class="info-value">{{ station[0].elevasi }} m</div>
@@ -125,44 +90,32 @@
           </div>
 
           <div>
-           <!-- Charts -->
+            <!-- Charts -->
             <div v-for="card in [station[1]]" :key="card.id">
-            
+
+              <!-- CARD {{ card }} -->
+
               <!-- DEBIT -->
-              <div
-                v-for="(item, index) in chart_f2(
-                  card.chart.mix_status,
-                  card.chart.chart_sensor,
-                  card.chart.array_act_chart_type,
-                  card.chart.chart_label,
-                  card.chart.chart_data,
-                  [card.chart.chart_date],
-                  card.chart.array_act_icon,
-                  card.chart.array_act_symbol
-                )"
-                :key="index"
-              >
-              {{ item }}
-              <hr>
-              {{ card.chart }}
+              <div v-for="(item, index) in chart_f2(
+      card.chart.mix_status,
+      card.chart.chart_sensor,
+      card.chart.array_act_chart_type,
+      card.chart.chart_label,
+      card.chart.chart_data,
+      [card.chart.chart_date],
+      card.chart.array_act_icon,
+      card.chart.array_act_symbol
+    )" :key="index">
                 <div v-if="!item.mix" style="border-radius: 15px">
-                  <div
-                    v-if="
-                      item.chart_type == 'BarChart' ||
-                      item.chart_type == 'LineChart'
-                    "
-                    class="box-sm border mx-1 bg-white comShadow"
-                    style="border-radius: 15px"
-                  >
+                  <div v-if="item.chart_type == 'BarChart' ||
+      item.chart_type == 'LineChart'
+      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
                     <div>
-                      <div
-                        class="px-2 py-2"
-                        style="font-weight: 500; font-size: 1em"
-                      >
+                      <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
                         Data {{ item.sensor[0][0] }} 24 Jam Terakhir
                       </div>
                     </div>
-                
+
                     <!-- <Chart
                       style="height: 25vh"
                       class="p-0 pr-0 pt-0 pb-0"
@@ -171,25 +124,14 @@
                       :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
                       :is="item.chart_type[0][0]"
                     ></Chart> -->
-                    <!-- {{ item }} -->
+                    <!-- ITEM {{ item }} -->
 
-                    <Chart
-                      style="height: 25vh"
-                      class="p-0 pr-0 pt-0 pb-0"
-                      :label="item.chart_label[0]"
-                      :chart-data="item.chart_data[0]"
-                      :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-                      is="LineChart"
-                    ></Chart>
-                    <div
-                      class="row text-secondary pb-1"
-                      style="font-size: 0.8rem; margin-top: -10px"
-                    >
+                    <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                      :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
+                      is="LineChart"></Chart>
+                    <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
                       <div class="col-sm-6">
-                        <div
-                          class="float-start"
-                          style="margin-top: -2px; margin-left: 17px"
-                        >
+                        <div class="float-start" style="margin-top: -2px; margin-left: 17px">
                           {{ formatPrevDate(station[1].chart.chart_date) }}
                         </div>
                       </div>
@@ -201,10 +143,58 @@
                     </div>
                   </div>
                 </div>
-                
+
               </div>
               <!-- TOTALIZER -->
-             
+              <div v-for="(item, index) in chart_f2nd(
+      card.chart.mix_status,
+      card.chart.chart_sensor,
+      card.chart.array_act_chart_type,
+      card.chart.chart_label,
+      card.chart.chart_data,
+      [card.chart.chart_date],
+      card.chart.array_act_icon,
+      card.chart.array_act_symbol
+    )" :key="index">
+                <div v-if="!item.mix" style="border-radius: 15px">
+                  <div v-if="item.chart_type == 'BarChart' ||
+      item.chart_type == 'LineChart'
+      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+                    <div>
+                      <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
+                        Data {{ item.sensor[0][0] }} 24 Jam Terakhir
+                      </div>
+                    </div>
+
+                    <!-- <Chart
+                      style="height: 25vh"
+                      class="p-0 pr-0 pt-0 pb-0"
+                      :label="item.chart_label[0]"
+                      :chart-data="item.chart_data[0]"
+                      :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
+                      :is="item.chart_type[0][0]"
+                    ></Chart> -->
+                    <!-- ITEM {{ item }} -->
+
+                    <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                      :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
+                      is="TotalChart"></Chart>
+                    <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
+                      <div class="col-sm-6">
+                        <div class="float-start" style="margin-top: -2px; margin-left: 17px">
+                          {{ formatPrevDate(station[1].chart.chart_date) }}
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="float-end mx-1">
+                          {{ formatDate(station[1].chart.chart_date) }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
@@ -215,6 +205,8 @@
 
 <script>
 import LineChart from "@/components/Chart/LineChart";
+import TotalChart from "@/components/Chart/TotalChart";
+
 // import BarChart from "@/components/Chart/BarChart";
 // import MixChart from "@/components/Chart/MixChart";
 // import Gauge from "@/components/Gauge.vue";
@@ -249,6 +241,8 @@ export default {
   },
   components: {
     LineChart,
+    TotalChart,
+
     // BarChart,
     // MixChart,
     // Gauge,
@@ -367,6 +361,21 @@ export default {
         };
       });
     },
+    chart_f2nd(a, b, c, d, e, f, g, h) {
+      return a.map(() => {
+        // Use the second element if it exists, otherwise fallback to the first element
+        return {
+          mix: a[1] !== undefined ? a[1] : a[0],
+          sensor: b[1] !== undefined ? b[1] : b[0],
+          chart_type: c[1] !== undefined ? c[1] : c[0],
+          chart_label: d[1] !== undefined ? d[1] : d[0],
+          chart_data: e[1] !== undefined ? e[1] : e[0],
+          chart_date: f[1] !== undefined ? f[1] : f[0],
+          chart_icon: g[1] !== undefined ? g[1] : g[0],
+          symbol: h[1] !== undefined ? h[1] : h[0],
+        };
+      });
+    },
     chart_f3(a, b, c, d, e) {
       return a.map((card, i) => {
         return {
@@ -391,7 +400,7 @@ export default {
         });
 
         this.loading_i = false;
-        console.log(this.stations);
+        // console.log(this.stations);
       } catch (error) {
         // Handle error if necessary
         console.error("An error occurred:", error);
@@ -464,15 +473,19 @@ export default {
 .statSZ {
   height: 1.5rem;
 }
+
 .data-font {
   font-size: 2rem;
 }
+
 .symbol-font {
   font-size: 1.2rem;
 }
+
 .title-font {
   font-size: 1.1rem;
 }
+
 .root.padding {
   padding: 0;
 }
@@ -486,6 +499,7 @@ export default {
 .steps-wrapper {
   background-color: #232323;
 }
+
 .img-normal {
   height: 205px;
 }
@@ -499,7 +513,7 @@ export default {
 }
 
 @media only screen and (max-width: 768px) {
-  .flex > div {
+  .flex>div {
     flex: 100%;
   }
 }
@@ -521,6 +535,7 @@ b {
 .comShadow {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
+
 .iconSZ img {
   resize: both;
   height: 10vh;
@@ -554,9 +569,11 @@ b {
 
 @media (max-width: 768px) {
   .imgSZ {
-    height: 170px; /* You can adjust the height as needed */
+    height: 170px;
+    /* You can adjust the height as needed */
     width: 300px;
   }
+
   .info-dummy {
     display: none;
   }

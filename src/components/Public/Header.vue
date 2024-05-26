@@ -15,6 +15,7 @@
       <ul>
         <li class="centered-image">
           <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" />
+          <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
           <img v-else :src="logoPU" class="mobile-icon" style="max-width: 50px" />
 
         </li>
@@ -202,6 +203,7 @@ import axios from "axios";
 // import $ from "jquery";
 import logoPU from "@/assets/icons/pupr.svg";
 import logoBT from "@/assets/icons/logo-bt.svg";
+import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import dash_i from "@/assets/icons/menu/dashboard.svg";
 import login_i from "@/assets/icons/menu/log-in.svg";
@@ -218,6 +220,7 @@ export default {
       user_id: null,
       logoPU,
       logoBT,
+      logoPDAM,
       dash_i,
       login_i,
       data_i,
@@ -234,7 +237,7 @@ export default {
     if (typeof user == "object") {
       this.balai = this.$proxyFixedBalai;
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.balai}`)
+        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
         .then((r) => {
           this.detBalai = r.data[0];
         })
@@ -253,7 +256,7 @@ export default {
       this.token = JSON.parse(user).token;
 
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/${this.balai}`, {
+        .get(`${this.$baseURL}/balai/6`, {
           headers: {
             Authorization: `Token ${this.token}`,
           },
