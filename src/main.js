@@ -30,11 +30,7 @@ Vue.prototype.$proxyFixedBalai = 6
 
 Vue.prototype.$app_title = document.title;
 
-if (document.title == "BBWS SUMATERA VIII") {
-  Vue.prototype.$fixedBalai = 1;
-} else if (document.title == "BWS BALI-PENIDA") {
-  Vue.prototype.$fixedBalai = 2;
-} else if (document.title == "PDAM SURYA SEMBADA") {
+if (document.title == "PDAM SURYA SEMBADA") {
   Vue.prototype.$fixedBalai = 6;
 }
 
@@ -79,10 +75,10 @@ Vue.mixin({
       }
     },
     extractUserInfo() {
-      let user = localStorage.getItem("user-info") || "{}"; // Provide a default empty object in case localStorage is empty
+      let user = localStorage.getItem("user-info") || "{}"; 
       this.user = JSON.parse(user);
       if (typeof this.user !== "object") {
-        this.user = ""; // If parsing failed or the user is not an object, set it to an empty string
+        this.user = ""; 
       }
       this.balai =
         this.user &&
@@ -96,28 +92,11 @@ Vue.mixin({
       this.token = this.user && this.user.token;
       this.profile = this.user && this.user.profile
     },
-    // async gBalai() {
-    //   this.balais = await this.fetchData(`${this.$baseURL}/balai/`);
-    // },
-    // async gProvinsi() {
-    //   this.provinsis = await this.fetchData(`${this.$baseURL}/provinsi/`);
-    // },
+ 
     async gIcons() {
       this.icons = await this.fetchData(`${this.$baseURL}/icon/`);
     },
-    // async gStType() {
-    //   this.stationTypes = await this.fetchData(
-    //     `${this.$baseURL}/station-type/`
-    //   );
-    // },
-    // async gSensor() {
-    //   this.sensorTypes = await this.fetchData(`${this.$baseURL}/sensor-type/`);
-    // },
-    // async gStation() {
-    //   this.stations = await this.fetchData(
-    //     `${this.$baseURL}/station-sensor/${this.balai}`
-    //   );
-    // },
+  
     async fetchData(url) {
       try {
         if (!this.token) {
@@ -136,7 +115,7 @@ Vue.mixin({
         if (error.response) {
           const status = error.response.status;
 
-          // Handle unauthorized and not found errors
+      
           if (status === 401 || status === 403) {
             this.logoutUser();
           }

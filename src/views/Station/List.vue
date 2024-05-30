@@ -228,7 +228,7 @@ export default {
             }
             this.userStationList = this.stations.map(station => station.id)
             this.updateUserStationList(this.userStationList);
-            console.log('L ist.vue', this.userStationList);
+            // console.log('L ist.vue', this.userStationList);
           });
       }
     },

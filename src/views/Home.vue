@@ -20,7 +20,7 @@
       <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center mt-2">
         <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       </div>
-      <!-- text_duration: {{ text_duration }} custom_duration: {{ custom_duration }} -->
+      
       <div class="d-flex flex-row" v-if="ava_width > 768">
         <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
           class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
@@ -40,21 +40,14 @@
               </span>
             </span>
             <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" style="width: 20px" class="mx-3 my-1" />
-            <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" style="width: 20px" class="mx-3 my-1" />
+            <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" style="width: 30px" class="mx-3 mb-1" />
 
             <img v-else :src="logoPU" style="width: 20px" class="mx-3 my-1" />
           </span>
         </marquee-text>
       </div>
 
-      <!-- <div class="row">
-        <div class="col" :class="{ 'col-6': ava_width > 768 }">
-          <Map />
-        </div>
-        <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
-          <Slider :ava_width="ava_width" />
-        </div>
-      </div> -->
+
       <Map />
       <Footer />
     </div>
@@ -69,7 +62,7 @@ import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import MarqueeText from "@/assets/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
-// import Slider from "@/components/Chart/Slider.vue";
+
 import axios from "axios";
 
 export default {
@@ -77,7 +70,6 @@ export default {
     Header,
     MarqueeText,
     Map,
-    // Slider,
   },
   data() {
     return {
@@ -104,7 +96,7 @@ export default {
     async checkScreen() {
       this.ava_width = screen.availWidth;
       this.ava_height = screen.availHeight;
-      // console.log('w: '+ this.ava_width + ', h: ' + this.ava_height);
+      
     },
     marquee_f(a, b, c, d) {
       return a.map((card, i) => {
@@ -215,9 +207,6 @@ export default {
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
 
-    // this.$proxyBaseUrl = "https://weatherapi.blitztechnology.tech"
-    // this.$proxyFixedBalai = 1
-
     if (typeof user == "object") {
       this.balai = this.$proxyFixedBalai;
 
@@ -254,7 +243,6 @@ export default {
   },
   async mounted() {
     this.checkScreen();
-    // console.log('test home');
     this.extractUserInfo()
   },
 };
@@ -288,7 +276,6 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  /* Center vertically within viewport */
 }
 
 .content-container {

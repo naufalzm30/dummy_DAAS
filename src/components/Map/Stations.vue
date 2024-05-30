@@ -84,7 +84,6 @@
 import axios from "axios";
 import awlr_i from "@/assets/icons/map/awlr.svg";
 import arr_i from "@/assets/icons/map/arr.svg";
-import aws_i from "@/assets/icons/map/aws.svg";
 import mtc_i from "@/assets/icons/map/mtc.svg";
 import ok_i from "@/assets/icons/map/ok.svg";
 import s1_i from "@/assets/icons/map/s1.svg";
@@ -99,18 +98,18 @@ export default {
       backupStat: [],
       awlr_stations: [],
       arr_stations: [],
-      aws_stations: [],
+
       awlr_head: [],
       arr_head: [],
-      aws_head: [],
+
 
       total_awlr: null,
       total_arr: null,
-      total_aws: null,
+
 
       awlr_head_pre: [],
       arr_head_pre: [],
-      aws_head_pre: [],
+   
       role: null,
       balai: null,
       indexSt: null,
@@ -119,7 +118,7 @@ export default {
       ava_height: null,
       awlr_i,
       arr_i,
-      aws_i,
+
       mtc_i,
       ok_i,
       s1_i,
@@ -177,8 +176,6 @@ export default {
 
 
     async loadStations() {
-
-
       if (this.profile.station == null) {
         await axios
           .get(`${this.$baseURL}/home-data/`)
@@ -205,120 +202,32 @@ export default {
           });
       }
 
-
-
-
-
-
-
-
-
-
-
       for (let i = 0; i < this.stations.length; i++) {
         if (this.stations[i][0].station_type == 1) {
           this.arr_stations.push(this.stations[i]);
         }
       }
 
-      // setInterval(
-      //   function () {
-      //     axios
-      //       .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
-      //       .then((r) => {
-      //         this.stations = r.data;
-      //       })
-      //       .catch(function (e) {
-      //         console.log(e);
-      //       });
-      //     console.log(this.stations);
-      //     for (let i = 0; i < this.stations.length; i++) {
-      //       if (this.stations[i][0].station_type == 2) {
-      //         this.awlr_stations = [];
-      //         for (let i = 0; i < this.stations.length; i++) {
-      //           if (this.stations[i][0].station_type == 2) {
-      //             this.awlr_stations.push(this.stations[i]);
-      //           }
-      //         }
-      //       }
-      //       if (this.stations[i][0].station_type == 1) {
-      //         this.arr_stations = [];
-      //         for (let i = 0; i < this.stations.length; i++) {
-      //           if (this.stations[i][0].station_type == 1) {
-      //             this.arr_stations.push(this.stations[i]);
-      //           }
-      //         }
-      //       }
-      //       if (this.stations[i][0].station_type == 3) {
-      //         this.aws_stations = [];
-      //         for (let i = 0; i < this.stations.length; i++) {
-      //           if (this.stations[i][0].station_type == 3) {
-      //             this.aws_stations.push(this.stations[i]);
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }.bind(this),
-      //   15000
-      // );
-
-      // let total_awlr = this.stations
-      //   .map((x) => x[0].station_type)
-      //   .filter((x) => x == 2).length;
       let total_arr = this.stations
         .map((x) => x[0].station_type)
         .filter((x) => x == 1).length;
-      // let total_aws = this.stations
-      //   .map((x) => x[0].station_type)
-      //   .filter((x) => x == 3).length;
-      // this.total_awlr = total_awlr;
+
       this.total_arr = total_arr;
-      // this.total_aws = total_aws;
-
-      // Set Table Head
-      // this.awlr_head = [
-      //   "No",
-      //   "Status",
-      //   "Nama Stasiun",
-      //   "Nama Sungai",
-      //   "Tanggal",
-      //   "Waktu",
-      // ];
-
+  
       this.arr_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
-      // this.aws_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
+
 
       for (let i = 0; i < this.stations.length; i++) {
-        // if (this.stations[i][0].station_type == 2) {
-        //   this.awlr_head_pre.push(this.stations[i][1].table.array_table_label);
-        // }
+      
         if (this.stations[i][0].station_type == 1) {
           this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
         }
-        // if (this.stations[i][0].station_type == 3) {
-        //   this.aws_head_pre.push(this.stations[i][1].table.array_table_label);
-        // }
+        
       }
-      // let awlr_uniq = Array.from(new Set(this.awlr_head_pre[0]));
-      // this.awlr_head.splice.apply(this.awlr_head, [6, 0].concat(awlr_uniq));
-      // this.awlr_head.push("Maintenance");
-
       let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
       this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
-      // this.arr_head.push("Maintenance");
-
-      // let aws_uniq = Array.from(new Set(this.aws_head_pre[0]));
-      // this.aws_head.splice.apply(this.aws_head, [5, 0].concat(aws_uniq));
-      // this.aws_head.push("Maintenance");
-
-
-
-      const labels = this.aws_head_pre[0];
-      const values = this.stations[3][1].table.sensor_data
-      const combinedArray = labels.map((label, index) => `${label} : ${values[index]}`);
-      console.log(combinedArray);
-
-
+      
+      
 
       setInterval(
         function () {
@@ -354,14 +263,7 @@ export default {
 
           // console.log(this.stations[38]);
           for (let i = 0; i < this.stations.length; i++) {
-            if (this.stations[i][0].station_type == 2) {
-              this.awlr_stations = [];
-              for (let i = 0; i < this.stations.length; i++) {
-                if (this.stations[i][0].station_type == 2) {
-                  this.awlr_stations.push(this.stations[i]);
-                }
-              }
-            }
+         
             if (this.stations[i][0].station_type == 1) {
               this.arr_stations = [];
               for (let i = 0; i < this.stations.length; i++) {
@@ -370,60 +272,31 @@ export default {
                 }
               }
             }
-            if (this.stations[i][0].station_type == 3) {
-              this.aws_stations = [];
-              for (let i = 0; i < this.stations.length; i++) {
-                if (this.stations[i][0].station_type == 3) {
-                  this.aws_stations.push(this.stations[i]);
-                }
-              }
-            }
+          
           }
         }.bind(this),
         15000
       );
-      console.log('before interval');
-      console.log(this.aws_head_pre[0]);
+      // console.log('before interval');
+
 
       setInterval(
         function () {
-          // Set Table Head
-          this.awlr_head = [
-            "No",
-            "Status",
-            "Nama Stasiun",
-            "Nama Sungai",
-            "Tanggal",
-            "Waktu",
-          ];
-
+          
           this.arr_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
-          this.aws_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
 
           for (let i = 0; i < this.stations.length; i++) {
-            if (this.stations[i][0].station_type == 2) {
-              this.awlr_head_pre.push(this.stations[i][1].table.array_table_label);
-            }
+            
             if (this.stations[i][0].station_type == 1) {
               this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
             }
-            if (this.stations[i][0].station_type == 3) {
-              this.aws_head_pre.push(this.stations[i][1].table.array_table_label);
-            }
+            
           }
-          let awlr_uniq = Array.from(new Set(this.awlr_head_pre[0]));
-          this.awlr_head.splice.apply(this.awlr_head, [6, 0].concat(awlr_uniq));
-          this.awlr_head.push("Maintenance");
-
           let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
           this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
-          this.arr_head.push("Maintenance");
+          
 
-          let aws_uniq = Array.from(new Set(this.aws_head_pre[0]));
-          this.aws_head.splice.apply(this.aws_head, [5, 0].concat(aws_uniq));
-          this.aws_head.push("Maintenance");
-          console.log('afterInterval');
-          console.log(this.aws_head_pre[0]);
+          
         }.bind(this),
         15000
       );
@@ -485,7 +358,7 @@ export default {
 <style scoped>
 .tableFixHead {
   overflow-y: scroll;
-  height: 38vh;
+  height: 37vh;
 }
 
 .tableFixHead table {

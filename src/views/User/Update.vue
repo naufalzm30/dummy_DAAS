@@ -40,7 +40,7 @@
                   <select class="form-select" v-model="item.role" required>
                     <option value="is_superuser">Superadmin</option>
                     <option value="is_staff">Admin</option>
-                    <option value="is_guess">Tamu</option>
+                    <!-- <option value="is_guess">Tamu</option> -->
                   </select>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default {
     };
   },
   methods: {
-    async updateBalai() {
+    async updateUser() {
       await axios
         .put(
           `${this.$baseURL}/user/${this.itemStation}/${this.$route.params.id}`,
@@ -135,7 +135,7 @@ export default {
         timer: 1500,
       });
 
-      this.updateBalai();
+      this.updateUser();
     },
   },
   async mounted() {

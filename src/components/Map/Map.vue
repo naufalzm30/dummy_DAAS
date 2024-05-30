@@ -75,7 +75,7 @@ export default {
             r[0].iconSize = this.normalIcon;
             return r;
           });
-          console.log(this.stations.length);
+          // console.log(this.stations.length);
           if (r.status == 200) {
             this.loading_i = false;
           }

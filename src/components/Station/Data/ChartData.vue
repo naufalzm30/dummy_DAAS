@@ -106,7 +106,7 @@
     card[0].chart.chart_data,
     card[0].chart.array_act_icon,
     card[0].chart.array_act_symbol
-  )" :key="index">
+  )" :key="index+1">
         <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
           <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
     " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
@@ -426,7 +426,7 @@ b {
 
 .imgSZ img {
   resize: both;
-  height: 180px;
+  height: 140px;
   width: 190px;
 }
 

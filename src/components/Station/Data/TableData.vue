@@ -30,7 +30,7 @@
                 <span>Detail</span>
               </button>
 <!-- {{ detailAPI }} -->
-              <ul class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
+              <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
                 <li class="dropdown-item">
                   Jumlah Data: {{ detailAPI.jumlah_data }}
                 </li>
@@ -91,7 +91,7 @@
                       <td v-for="(item, index) in conf_2(
       row.weather_data,
       row.symbol
-    )" :key="index">
+    )" :key="index+2">
                         {{ item.data }} {{ item.symbol }}
                       </td>
                       <td v-if="balai == 0">{{ row.bat.toFixed(2) }} v</td>

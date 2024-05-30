@@ -276,8 +276,7 @@ export default {
     this.loadData();
   },
   async mounted() {
-    // this.gBalai();
-    this.gProvinsi();
+    
     await axios
       .get(`${this.$baseURL}/user/${this.balai}`, {
         headers: {

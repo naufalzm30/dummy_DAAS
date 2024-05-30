@@ -2,34 +2,7 @@
   <section>
     <div class="container">
       <div class="row d-flex align-items-center justify-content-center">
-
-        <div v-if="$app_title == 'BBWS SUMATERA VIII'" class="img-fluid login100-more"
-          v-bind:style="{ backgroundImage: `url(' ${bg_sum8_img} ')` }">
-          <div class="logo-container m-4">
-            <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
-              <img :src="logoPU" alt="" class="logo-img" />
-            </router-link>
-            <div>
-              <p class="bws">{{ $app_title }}</p>
-              <p class="bws">WEATHER APP</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="$app_title == 'BWS BALI-PENIDA'" class="img-fluid login100-more"
-          v-bind:style="{ backgroundImage: `url(' ${bg_bali_img} ')` }">
-          <div class="logo-container m-4">
-            <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
-              <img :src="logoPU" alt="" class="logo-img" />
-            </router-link>
-            <div>
-              <p class="bws">{{ $app_title }}</p>
-              <p class="bws">WEATHER APP</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="$app_title == 'PDAM SURYA SEMBADA'" class="img-fluid login100-more"
+        <div v-if="$app_title == 'PDAM SURYA SEMBADA'" class="img-fluid login100-more"
           v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
           <div class="logo-container m-4">
             <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
@@ -38,18 +11,6 @@
             <div>
               <p class="bws">{{ $app_title }}</p>
               <p class="bws">WATER MONITORING APP</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="img-fluid login100-more" v-bind:style="{ backgroundImage: `url(' ${bg_weather_img} ')` }">
-          <div class="logo-container m-4">
-            <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
-              <img :src="logoBT" alt="" class="logo-img" />
-            </router-link>
-            <div>
-              <p class="weather">{{ $app_title }}</p>
-              <p class="weather">APP</p>
             </div>
           </div>
         </div>
@@ -65,8 +26,7 @@
           </div>
           <form v-else class="login100-form validate-form" @submit.prevent="login">
             <div class="form-group py-2">
-              <span v-if="$app_title == 'WEATHER-VUE'" class="form-weather"> Sign In </span>
-              <span v-else class="form-title"> Sign In </span>
+              <span class="form-title"> Sign In </span>
               <label for="username" class="mb-2">Username</label>
               <div class="input-group mb-3">
                 <span class="input-group-icon">
@@ -87,24 +47,6 @@
                   placeholder="Password" id="password" autocomplete="current-password" v-model="password" required />
               </div>
 
-            </div>
-
-            <div v-if="$app_title == 'WEATHER-VUE'" class="form-group py-2" style="border-radius: 1rem">
-              <label for="balai" class="mb-2">Institution</label>
-              <div class="input-group mb-3">
-                <span class="input-group-icon">
-                  <img src="../assets/icons/office2.svg" alt="Check icon" />
-                </span>
-                <select class="form-control py-2" style="padding: 0.375rem 0.75rem !important" id="balai" v-model="balai"
-                  required>
-                  <option :value="null" disabled style="color: gray">
-                    Select Institution
-                  </option>
-                  <option v-for="item in balais" :key="item.id" :value="item.id">
-                    {{ item.balai }}
-                  </option>
-                </select>
-              </div>
             </div>
             <p v-if="incorrectAuth" class="pb-3" style="color: #fbb040">
               {{ msg }}

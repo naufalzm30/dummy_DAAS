@@ -79,7 +79,7 @@ export default new Vuex.Store({
 
                     username: usercredentials.username,
                     password: usercredentials.password,
-                    // balai: usercredentials.balai
+
 
                 })
                     .then(response => {

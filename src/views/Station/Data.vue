@@ -130,7 +130,7 @@ export default {
     checkStationInList() {
       const isInList = this.getUserStationList.includes(this.profile.station.id);
       // console.log('Is station in list?', isInList);
-      console.log(isInList);
+      // console.log(isInList);
       if (this.profile.role == "is_staff") {
         if (!isInList) {
           this.logoutUser()
@@ -157,6 +157,9 @@ export default {
  
     this.loadData();
   },
+  beforeUnmount(){
+    
+  }
 };
 </script>
 <style>

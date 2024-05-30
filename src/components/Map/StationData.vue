@@ -87,7 +87,7 @@
       [card.chart.chart_date],
       card.chart.array_act_icon,
       card.chart.array_act_symbol
-    )" :key="index">
+    )" :key="index+1">
             <div v-if="!item.mix" style="border-radius: 15px">
               <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
                 <div>
@@ -100,7 +100,7 @@
                   :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
                 </Chart>
 
-                <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
+                <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
                   <div class="col-sm-6">
                     <div class="float-start" style="margin-top: -2px; margin-left: 17px">
                       {{ formatPrevDate(station[1].chart.chart_date) }}
@@ -139,7 +139,7 @@
                 <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
                   :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
                 </Chart>
-                <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
+                <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
                   <div class="col-sm-6">
                     <div class="float-start" style="margin-top: -2px; margin-left: 17px">
                       {{ formatPrevDate(station[1].chart.chart_date) }}
@@ -499,7 +499,7 @@ b {
 
 .imgSZ img {
   resize: both;
-  height: 24vh;
+  height: 20vh;
   width: 190px;
 }
 

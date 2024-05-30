@@ -26,13 +26,13 @@
                   <div class="form-group">
                     <label for="inputNaPo">Nama Stasiun*</label>
                     <input v-model="station_name" type="text" class="form-control" id="inputNaPo"
-                      placeholder="Nama Pos" />
+                      placeholder="Nama Pos" required/>
                   </div>
                 </div>
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputLo">Lokasi*</label>
-                    <input v-model="location" type="text" class="form-control" id="inputLo" placeholder="Lokasi" />
+                    <input v-model="location" type="text" class="form-control" id="inputLo" placeholder="Lokasi" required/>
                   </div>
                 </div>
 
@@ -40,14 +40,14 @@
                   <div class="form-group">
                     <label for="inputLo">Latitude*</label>
                     <input v-model="latitude" type="number" class="form-control" id="inputLo" placeholder="Latitude"
-                      step="0.000000001" />
+                      step="0.000000001" required/>
                   </div>
                 </div>
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputLo">Longitude*</label>
                     <input v-model="longitude" type="number" class="form-control" id="inputLo" placeholder="Longitude"
-                      step="0.000000001" />
+                      step="0.000000001" required/>
                   </div>
                 </div>
 
@@ -210,7 +210,7 @@ export default {
       channels: [
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
       ],
-      balais: [],
+      
       provinsis: [],
       sensorTypes: [],
       stationTypes: [],
@@ -224,7 +224,7 @@ export default {
       station_name: "",
       station_type: null,
       provinsi: null,
-      balaiStation: null,
+      
       location: "",
       sungai: null,
       sn_logger: null,
@@ -361,19 +361,13 @@ export default {
   },
   created() {
     this.gAuthUser();
-    // if (this.role == "is_staff") {
-    //   this.balaiStation = this.detBalai.id;
-    // }
+ 
 
     var date = new Date();
     this.created_at = moment(date).format("YYYY-MM-DDThh:mm");
   },
   async mounted() {
-    // this.gBalai();
-    // this.gProvinsi();
-    // this.gStType();
-    this.gSensor();
-    // $(".file-upload").file_upload();
+   
   },
   //DRAGNDROP
   computed: {

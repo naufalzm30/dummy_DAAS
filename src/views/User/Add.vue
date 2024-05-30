@@ -30,7 +30,7 @@
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputPass">Password*</label>
-                    <input type="password" class="form-control" placeholder="Password" v-model="password" required
+                    <input type="password" class="form-control" placeholder="Password" v-model="password" required attr
                       id="inputPass" />
                   </div>
                 </div>
@@ -40,7 +40,7 @@
                   <select class="form-select" v-model="roleUser" required>
                     <option value="is_superuser">Superadmin</option>
                     <option value="is_staff">Admin</option>
-                    <option value="is_guess">Tamu</option>
+                    <!-- <option value="is_guess">Tamu</option> -->
                   </select>
                 </div>
               </div>

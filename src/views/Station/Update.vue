@@ -107,8 +107,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="col-md-6">
             <div class="card">
               <!-- --- -->
               <div class="card-header">Foto Stasiun</div>
@@ -157,6 +155,9 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="col-md-6">
+           
             <div class="card pt-1" v-if="role == 'is_superuser'">
               <div class="card-header">Data Logger</div>
               <div class="card-body">
