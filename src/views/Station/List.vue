@@ -45,11 +45,11 @@
                       <td>{{ row.location }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
-                      
                       <td>
-                        <router-link type="button" class="btn btn-primary btn-sm mx-1" :to="{
-          path: '/station/data/' + row.id + '/' + profile.station.id,
-        }">Data</router-link>
+                        <router-link v-if="profile.station == null" type="button" class="btn btn-primary btn-sm mx-1"
+                          :to="{ path: '/station/data/' + row.id + '/0'}">Data</router-link>
+                        <router-link v-else type="button" class="btn btn-primary btn-sm mx-1"
+                          :to="{ path: '/station/data/' + row.id + '/' + profile.station.id }">Data</router-link>
                         <span v-if="role == 'is_staff' || role == 'is_superuser'">
                           <router-link type="button" class="btn btn-success btn-sm mx-1"
                             :to="`/station/update/0/${row.id}`">Edit</router-link>
@@ -74,6 +74,7 @@
 <script>
 import Header from "@/components/Public/Header.vue";
 import axios from "axios";
+import { mapActions } from 'vuex';
 
 import {
   Dataset,
@@ -154,15 +155,9 @@ export default {
       }, []);
     },
   },
-  provide() {
-    return {
-      userStationList: this.userStationList
-    };
-  },
+ 
   methods: {
-    updateUserStationList(newList) {
-      this.userStationList = newList;
-    },
+    ...mapActions(['updateUserStationList']),
     click(event, i) {
       let toset;
       const sortEl = this.cols[i];
@@ -195,24 +190,24 @@ export default {
 
 
       if (this.profile.station == null) {
-        await axios
-          .get(`${this.$baseURL}/station/0`, {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          })
-          .then((r) => {
+      await axios
+        .get(`${this.$baseURL}/station/0`, {
+          headers: {
+            Authorization: `Token ${this.token}`,
+          },
+        })
+        .then((r) => {
 
-            if (r.data.length > 1) {
-              this.stations = r.data;
-            } else {
-              this.stations = [r.data];
-            }
+          if (r.data.length > 1) {
+            this.stations = r.data;
+          } else {
+            this.stations = [r.data];
+          }
 
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-          });
+          if (r.status == 200) {
+            this.loading_i = false;
+          }
+        });
       } else if (this.profile.station != null) {
         await axios
           .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
@@ -232,7 +227,8 @@ export default {
               this.loading_i = false;
             }
             this.userStationList = this.stations.map(station => station.id)
-            console.log(this.userStationList);
+            this.updateUserStationList(this.userStationList);
+            console.log('L ist.vue', this.userStationList);
           });
       }
     },
@@ -246,6 +242,7 @@ export default {
   },
   mounted() {
     // this.gBalai();
+    this.updateUserStationList(this.userStationList);
   },
 };
 </script>

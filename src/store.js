@@ -14,6 +14,7 @@ export default new Vuex.Store({
         lastActivityTime: null,
         inactivityTimer: null,
         inactivityThreshold: 3600 * 1, // in seconds
+        userStationList: [],
     },
     mutations: {
         updateStorage(state, { access }) {
@@ -21,16 +22,23 @@ export default new Vuex.Store({
         },
         destroyToken(state) {
             state.accessToken = null
-        }
+        },
+        setUserStationList(state, stations) {
+            state.userStationList = stations;
+          },
     },
     getters: {
         isAuthenticated: state => !!state.accessToken,
         authStatus: state => state.status,
         loggedIn(state) {
             return state.accessToken != null
-        }
+        },
+        getUserStationList: (state) => state.userStationList,
     },
     actions: {
+        updateUserStationList({ commit }, stations) {
+            commit('setUserStationList', stations);
+          },
         startInactivityTimer(context) {
             // console.log('Starting inactivity timer...');
             const inactivityThreshold = context.state.inactivityThreshold;

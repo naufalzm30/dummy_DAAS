@@ -1,22 +1,14 @@
 <template>
   <div v-if="stations[0]">
-    <div
-      class="card box-sm mt-2 comShadow"
-      style="box-shadow: 10px; border-radius: 10px"
-    >
+    <div class="card box-sm mt-2 comShadow mb-2" style="box-shadow: 10px; border-radius: 10px">
       <div class="row">
         <div class="col-md-4 p-0 imgSZ">
-          <img
-            :src="`${$imageURL}${stations[0].image}`"
-            class="img-fluid"
-            alt="station-img"
-            style="
+          <img :src="`${$imageURL}${stations[0].image}`" class="img-fluid" alt="station-img" style="
               object-fit: cover;
               border-radius: 10px 0px 0px 10px;
               margin-left: 12px;
               width: 94%;
-            "
-          />
+            " />
         </div>
         <div class="col-md-8 my-0">
           <div class="d-flex align-items-center mx-2">
@@ -58,14 +50,14 @@
                   {{ stations[0].sungai }}
                 </div>
               </div>
-             
+
             </div>
 
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Latitude</div>
                 <div class="info-value">{{ stations[0].latitude }}<span>&#176;</span></div>
-                
+
               </div>
               <div class="my-1 mx-2">
                 <div class="info-label">Longitude</div>
@@ -81,124 +73,66 @@
 
 
     <div v-for="card in [stations[1]]" :key="card.id">
-      <div
-        v-for="(item, index) in chart_f2(
-          card[0].chart.mix_status,
-          card[0].chart.chart_sensor,
-          card[0].chart.array_act_chart_type,
-          card[0].chart.chart_label,
-          card[0].chart.chart_data,
-          card[0].chart.array_act_icon,
-          card[0].chart.array_act_symbol
-        )"
-        :key="index"
-      >
+      <div v-for="(item, index) in chart_f2(
+    card[0].chart.mix_status,
+    card[0].chart.chart_sensor,
+    card[0].chart.array_act_chart_type,
+    card[0].chart.chart_label,
+    card[0].chart.chart_data,
+    card[0].chart.array_act_icon,
+    card[0].chart.array_act_symbol
+  )" :key="index">
         <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
-          <div
-            v-if="
-              item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
-            "
-            class="box-sm border mx-auto bg-white mb-2"
-            style="border-radius: 15px"
-          >
+          <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
+    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
             <div>
               <h6 class="px-2 pt-2">
                 Data {{ item.sensor[0][0] }}
               </h6>
             </div>
-            <Chart
-              style="height: 28vh"
-              class="p-0 pr-0 pt-0 pb-0"
-              :label="item.chart_label[0]"
-              :chart-data="item.chart_data[0]"
-              :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-              is="LineChart"
-            ></Chart>
+            <Chart style="height: 28vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="debitData"
+              :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChartFiltered">
+            </Chart>
 
-            <div class="row text-secondary pb-1" style="font-size: 0.8rem">
-              <div class="col-sm-6">
-                <span
-                  class="float-start"
-                  style="margin-top: -10px; margin-left: 25px"
-                >
-                
-                  {{ formatPrevDate(card[0].chart.chart_date) }}
-                </span>
-              </div>
-              <div class="col-sm-6">
-                <span class="float-end mx-1" style="margin-top: -10px">
-                  {{ formatDate(card[0].chart.chart_date) }}
-                </span>
-              </div>
-            </div>
           </div>
         </div>
-    
+
       </div>
-      <div
-        v-for="(item, index) in chart_f2nd(
-          card[0].chart.mix_status,
-          card[0].chart.chart_sensor,
-          card[0].chart.array_act_chart_type,
-          card[0].chart.chart_label,
-          card[0].chart.chart_data,
-          card[0].chart.array_act_icon,
-          card[0].chart.array_act_symbol
-        )"
-        :key="index"
-      >
+      <div v-for="(item, index) in chart_f2nd(
+    card[0].chart.mix_status,
+    card[0].chart.chart_sensor,
+    card[0].chart.array_act_chart_type,
+    card[0].chart.chart_label,
+    card[0].chart.chart_data,
+    card[0].chart.array_act_icon,
+    card[0].chart.array_act_symbol
+  )" :key="index">
         <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
-          <div
-            v-if="
-              item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
-            "
-            class="box-sm border mx-auto bg-white mb-2"
-            style="border-radius: 15px"
-          >
+          <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
+    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
             <div>
               <h6 class="px-2 pt-2">
                 Data {{ item.sensor[0][0] }}
               </h6>
             </div>
-            <Chart
-              style="height: 28vh"
-              class="p-0 pr-0 pt-0 pb-0"
-              :label="item.chart_label[0]"
-              :chart-data="item.chart_data[0]"
-              :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-              is="TotalChart"
-            ></Chart>
+            <Chart style="height: 28vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="totalData"
+              :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChartFiltered">
+            </Chart>
 
-            <div class="row text-secondary pb-1" style="font-size: 0.8rem">
-              <div class="col-sm-6">
-                <span
-                  class="float-start"
-                  style="margin-top: -10px; margin-left: 25px"
-                >
-                  {{ formatPrevDate(card[0].chart.chart_date) }}
-                </span>
-              </div>
-              <div class="col-sm-6">
-                <span class="float-end mx-1" style="margin-top: -10px">
-                  {{ formatDate(card[0].chart.chart_date) }}
-                </span>
-              </div>
-            </div>
+
+
           </div>
         </div>
-    
+
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// import Gauge from "@/components/Gauge.vue";
-// import BarChart from "@/components/Chart/BarChart";
-import LineChart from "@/components/Chart/LineChart";
-import TotalChart from "@/components/Chart/TotalChart";
+import LineChartFiltered from "@/components/Chart/LineChartFiltered";
+import TotalChartFiltered from "@/components/Chart/TotalChartFiltered";
 
-// import MixChart from "@/components/Chart/MixChart";
 import mtc_i from "@/assets/icons/map/mtc.svg";
 import ok_i from "@/assets/icons/map/ok.svg";
 import s1_i from "@/assets/icons/map/s1.svg";
@@ -207,13 +141,10 @@ import s3_i from "@/assets/icons/map/s3.svg";
 
 export default {
   name: "Slider",
-  props: ["stations", "status", "ava_width"],
+  props: ["debitData", "debitLabel", "totalData", "stations", "status", "ava_width",],
   components: {
-    LineChart,
-    TotalChart
-    // BarChart,
-    // MixChart,
-    // Gauge,
+    LineChartFiltered,
+    TotalChartFiltered,
   },
   data() {
     return {
@@ -225,7 +156,14 @@ export default {
       total_s: null,
     };
   },
+  computed: {
+    chartTitle() {
+      return this.stations.length > 0 ? `${this.stations[0].sensor[0]} (${this.stations[0].symbol[0][0]})` : 'Chart';
+    }
+  },
+
   methods: {
+
     formatDate(date) {
       var monthShortNames = [
         "Jan",
@@ -386,10 +324,14 @@ export default {
     this.gAuthStation();
     var x = this.stations[1][0].chart.chart_sensor;
     this.total_s = x.flat().length;
+    // console.log(this.debitData);
+
+
   },
 
   mounted() {
     this.ava_width = screen.availWidth;
+
   },
 };
 </script>
@@ -398,12 +340,15 @@ export default {
 .data-font {
   font-size: 2rem;
 }
+
 .symbol-font {
   font-size: 1.2rem;
 }
+
 .title-font {
   font-size: 1.1rem;
 }
+
 .root.padding {
   padding: 0;
 }
@@ -423,7 +368,7 @@ export default {
 }
 
 @media only screen and (max-width: 768px) {
-  .flex > div {
+  .flex>div {
     flex: 100%;
   }
 }
@@ -445,6 +390,7 @@ b {
 .statSZ {
   height: 22px;
 }
+
 .comShadow {
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
 }
@@ -486,8 +432,10 @@ b {
 
 @media (max-width: 768px) {
   .imgSZ {
-    height: 170px; /* You can adjust the height as needed */
+    height: 170px;
+    /* You can adjust the height as needed */
   }
+
   .info-dummy {
     display: none;
   }

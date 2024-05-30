@@ -32,10 +32,11 @@
 
         <div class="col-md-6">
           <TableData :stations="stations" :status="status" :loading_i="loading_i" class="mx-auto mt-2"
-            style="border-radius: 15px" />
+            style="border-radius: 15px" @update-filtered-data="updateFilteredData" />
         </div>
         <div class="col-md-6">
-          <ChartData v-if="stations.length > 0" :stations="stations" :status="status" :ava_width="ava_width" />
+          <ChartData v-if="stations.length > 0" :stations="stations" :status="status" :ava_width="ava_width"
+            :debitData="debitData" :totalData="totalData" :debitLabel="debitLabel" />
         </div>
       </div>
       <Footer />
@@ -50,6 +51,7 @@ import Footer from "@/components/Public/Footer";
 import TableData from "@/components/Station/Data/TableData.vue";
 import ChartData from "@/components/Station/Data/ChartData.vue";
 import axios from "axios";
+import { mapGetters } from 'vuex';
 
 export default {
   name: "DataStation",
@@ -69,9 +71,29 @@ export default {
       ava_width: null,
       msg: "Fetching data, please wait...",
       e_code: null,
+      filteredData: [], // This will hold the filtered data
     };
   },
+  computed: {
+    debitData() {
+      // console.log(this.filteredData);
+      return this.filteredData.map(item => item.weather_data[0]).reverse();
+    },
+    totalData() {
+      // console.log(this.filteredData);
+      return this.filteredData.map(item => item.weather_data[1]).reverse();
+    },
+    debitLabel() {
+      return this.filteredData.map(item => item.waktu).reverse();
+    },
+    ...mapGetters(['getUserStationList']),
+  },
+
   methods: {
+
+    updateFilteredData(filteredData) {
+      this.filteredData = filteredData;
+    },
     async loadData() {
       // console.log(this.profile.station.id);
       // console.log(this.$route.params.id);
@@ -105,20 +127,35 @@ export default {
           console.log(e);
         });
     },
+    checkStationInList() {
+      const isInList = this.getUserStationList.includes(this.profile.station.id);
+      // console.log('Is station in list?', isInList);
+      console.log(isInList);
+      if (this.profile.role == "is_staff") {
+        if (!isInList) {
+          this.logoutUser()
+        }
+      }
+      return isInList;
+    },
   },
+  // watch: {
+  //   getUserStationList(newValue) {
+  //     console.log('vuex updated', newValue);
+  //   },
+  // },
   mounted() {
     this.ava_width = screen.availWidth;
+    // console.log('vuex Data.vue', this.getUserStationList);
+    // console.log(this.profile.station.id);
+    this.checkStationInList();
 
-    this.loadData();
   },
   created() {
     this.extractUserInfo()
     this.gAuthStation();
-    if (this.profile.role == "is_staff") {
-      if (this.$route.params.user_id != this.profile.station.id) {
-        this.logoutUser()
-      }
-    }
+ 
+    this.loadData();
   },
 };
 </script>

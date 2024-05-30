@@ -133,42 +133,7 @@
           </li>
         </div>
 
-        <!-- <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
-          <a href="#collapseTwo" data-bs-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
-            aria-controls="collapseTwo" class="collapsible" style="display: flex; flex-direction: row">
-            <img :src="data_i" class="mr-4" /><span>Data</span>
-          </a>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingOne">
-            <div style="margin-left: 50px">
-              <ul>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Balai' }">Balai</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Provinsi' }">Provinsi</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Sensor' }">Sensor</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Logger' }">Logger</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Modem' }">Modem</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Icon' }">Icon</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Backup' }">Dummy</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'SensorMod' }">SensorMod</router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li> -->
+       
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'Station',

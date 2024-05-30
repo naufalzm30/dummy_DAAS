@@ -1,11 +1,9 @@
 <template>
   <div class="container">
-    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
+    <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
-    </div>
-    
+    </div> -->
     <div v-if="station">
-
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
           <div class="row">
@@ -32,19 +30,19 @@
                 <div class="col-md-2 col-2 d-flex justify-content-end">
                   <span v-if="station[1].table.siaga == []"> </span>
                   <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ" />
+                    <img :src="mtc_i" class="statSZ mx-1" />
                   </span>
                   <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ" />
+                    <img :src="s1_i" class="statSZ mx-1" />
                   </span>
                   <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ" />
+                    <img :src="s2_i" class="statSZ mx-1" />
                   </span>
                   <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ" />
+                    <img :src="s3_i" class="statSZ mx-1" />
                   </span>
                   <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ" />
+                    <img :src="ok_i" class="statSZ mx-1" />
                   </span>
                 </div>
               </div>
@@ -91,9 +89,7 @@
       card.chart.array_act_symbol
     )" :key="index">
             <div v-if="!item.mix" style="border-radius: 15px">
-              <div v-if="item.chart_type == 'BarChart' ||
-      item.chart_type == 'LineChart'
-      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+              <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
                 <div>
                   <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
                     Data {{ item.sensor[0][0] }}
@@ -133,9 +129,7 @@
       card.chart.array_act_symbol
     )" :key="index">
             <div v-if="!item.mix" style="border-radius: 15px">
-              <div v-if="item.chart_type == 'BarChart' ||
-      item.chart_type == 'LineChart'
-      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+              <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
                 <div>
                   <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
                     Data {{ item.sensor[0][0] }}
@@ -164,10 +158,7 @@
         </div>
       </div>
     </div>
-    <!-- <div v-else>
-      <p>Select a station to see the details.</p>
-      
-    </div> -->
+    
   </div>
 </template>
 
@@ -381,36 +372,7 @@ export default {
       }
     },
 
-    async startSlideshow() {
-      try {
-        const response = await axios.get(
-          `${this.$baseURL}/home-data/`
-        );
-        this.stations = response.data.map((element) => {
-          const x = element[1].chart.chart_sensor.flat().length;
-          const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
-          element.duration = duration;
-          return element;
-        });
-
-        this.loading_i = false;
-        let currentIndex = 0;
-
-        const playSlide = () => {
-          setTimeout(() => {
-            currentIndex = (currentIndex + 1) % this.stations.length;
-            if (this.$refs.carousel) {
-              this.$refs.carousel.goToPage(currentIndex);
-            }
-            playSlide();
-          }, this.stations[currentIndex].duration);
-        };
-        playSlide();
-      } catch (error) {
-        // Handle error if necessary
-        console.error("An error occurred:", error);
-      }
-    },
+    
   },
   mounted() {
     this.formatDate();
@@ -425,7 +387,7 @@ export default {
       15000
     );
 
-    this.startSlideshow();
+    
   },
   created() {
     let user = localStorage.getItem("user-info") || {};
