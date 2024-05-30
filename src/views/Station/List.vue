@@ -45,9 +45,10 @@
                       <td>{{ row.location }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
+                      
                       <td>
                         <router-link type="button" class="btn btn-primary btn-sm mx-1" :to="{
-          path: '/station/data/' + row.id + '/1',
+          path: '/station/data/' + row.id + '/' + profile.station.id,
         }">Data</router-link>
                         <span v-if="role == 'is_staff' || role == 'is_superuser'">
                           <router-link type="button" class="btn btn-success btn-sm mx-1"
@@ -231,7 +232,7 @@ export default {
               this.loading_i = false;
             }
             this.userStationList = this.stations.map(station => station.id)
-            // console.log(this.userStationList);
+            console.log(this.userStationList);
           });
       }
     },

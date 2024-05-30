@@ -68,10 +68,10 @@
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
               <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
                 style="font-size: 1.2rem"></i>
-              <input name="from" type="date" v-model="startDate" @change="search" title="Data Awal"
+              <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
                 style="font-size: 0.8rem" />
               <label for="to" class="px-3" style="font-size: 0.8rem; font-weight: normal">s.d</label>
-              <input name="" type="date" v-model="endDate" @change="search" title="Data Akhir"
+              <input name="" type="datetime-local" v-model="endDate" @change="search" title="Data Akhir"
                 style="font-size: 0.8rem" />
                 <!-- <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
                 style="font-size: 0.8rem" />
@@ -1493,15 +1493,23 @@ export default {
         this.loading_data = false;
       }
     },
+    // localStart(date) {
+    //   if (!date || !date.includes("-")) return date;
+    //   const [YYYY, MM, DD] = date.split("-");
+    //   return new Date(`${YYYY}-${MM}-${DD} 00:00:00`);
+    // },
+    // localEnd(date) {
+    //   if (!date || !date.includes("-")) return date;
+    //   const [YYYY, MM, DD] = date.split("-");
+    //   return new Date(`${YYYY}-${MM}-${DD} 23:59:00`);
+    // },
     localStart(date) {
-      if (!date || !date.includes("-")) return date;
-      const [YYYY, MM, DD] = date.split("-");
-      return new Date(`${YYYY}-${MM}-${DD} 00:00:00`);
+      if (!date) return null;
+      return new Date(date);
     },
     localEnd(date) {
-      if (!date || !date.includes("-")) return date;
-      const [YYYY, MM, DD] = date.split("-");
-      return new Date(`${YYYY}-${MM}-${DD} 23:59:00`);
+      if (!date) return null;
+      return new Date(date);
     },
     formatDate(date) {
       var monthShortNames = [

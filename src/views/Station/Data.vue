@@ -1,11 +1,8 @@
 <template>
   <div style="background-color: #f8f8ff" class="mobile-width">
     <Header />
-    <div
-      v-if="loading_i"
-      class="d-flex flex-column justify-content-center align-items-center pb-3"
-      style="height: 100vh"
-    >
+    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center pb-3"
+      style="height: 100vh">
       <div class="content-container">
         <div v-if="e_code == null" class="icon-container">
           <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
@@ -22,37 +19,23 @@
           {{ $app_title }}
         </div>
         <div>
-          <router-link
-            :to="{
-              name: 'Station',
-              params: { balai_id: balai, user_id: user_id },
-            }"
-            type="button"
-            class="btn btn-light border mt-1 bg-white"
-          >
+          <router-link :to="{
+      name: 'Station',
+      params: { balai_id: balai, user_id: user_id },
+    }" type="button" class="btn btn-light border mt-1 bg-white">
             Back
           </router-link>
         </div>
       </div>
 
       <div class="row">
-        
+
         <div class="col-md-6">
-          <TableData
-            :stations="stations"
-            :status="status"
-            :loading_i="loading_i"
-            class="mx-auto mt-2"
-            style="border-radius: 15px"
-          />
+          <TableData :stations="stations" :status="status" :loading_i="loading_i" class="mx-auto mt-2"
+            style="border-radius: 15px" />
         </div>
         <div class="col-md-6">
-          <ChartData
-            v-if="stations.length > 0"
-            :stations="stations"
-            :status="status"
-            :ava_width="ava_width"
-          />
+          <ChartData v-if="stations.length > 0" :stations="stations" :status="status" :ava_width="ava_width" />
         </div>
       </div>
       <Footer />
@@ -85,7 +68,7 @@ export default {
       status: [],
       ava_width: null,
       msg: "Fetching data, please wait...",
-      e_code: null, 
+      e_code: null,
     };
   },
   methods: {
@@ -107,7 +90,7 @@ export default {
           }
         })
         .catch(function (e) {
-          console.log(e.response.status); 
+          console.log(e.response.status);
           this.e_code = e.response.status;
           this.msg = "An error occurred on the server. Please try again later.";
         });
@@ -131,10 +114,15 @@ export default {
   created() {
     this.extractUserInfo()
     this.gAuthStation();
+    if (this.profile.role == "is_staff") {
+      if (this.$route.params.user_id != this.profile.station.id) {
+        this.logoutUser()
+      }
+    }
   },
 };
 </script>
-<style >
+<style>
 .comShadow {
   box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
     rgba(17, 17, 26, 0.05) 0px 8px 32px;
