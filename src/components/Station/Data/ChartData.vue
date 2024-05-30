@@ -58,22 +58,14 @@
                   {{ stations[0].sungai }}
                 </div>
               </div>
-              <div class="my-1 mx-2">
-                <div class="info-dummy" v-if="stations[0].station_type != 2">
-                  .
-                </div>
-                <div class="info-label">Latitude</div>
-                <div class="info-value">
-                  {{ stations[0].latitude }}<span>&#176;</span>
-                </div>
-              </div>
+             
             </div>
 
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
-                <div class="info-label">Elevasi</div>
-                <div class="info-value">{{ stations[0].elevasi }} m</div>
-                <div class="info-dummy">.</div>
+                <div class="info-label">Latitude</div>
+                <div class="info-value">{{ stations[0].latitude }}<span>&#176;</span></div>
+                
               </div>
               <div class="my-1 mx-2">
                 <div class="info-label">Longitude</div>
@@ -111,7 +103,7 @@
           >
             <div>
               <h6 class="px-2 pt-2">
-                Data {{ item.sensor[0][0] }} 24 Jam Terakhir
+                Data {{ item.sensor[0][0] }}
               </h6>
             </div>
             <Chart
@@ -129,6 +121,7 @@
                   class="float-start"
                   style="margin-top: -10px; margin-left: 25px"
                 >
+                
                   {{ formatPrevDate(card[0].chart.chart_date) }}
                 </span>
               </div>
@@ -164,7 +157,7 @@
           >
             <div>
               <h6 class="px-2 pt-2">
-                Data {{ item.sensor[0][0] }} 24 Jam Terakhir
+                Data {{ item.sensor[0][0] }}
               </h6>
             </div>
             <Chart

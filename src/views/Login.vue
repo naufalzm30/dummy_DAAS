@@ -123,7 +123,7 @@
             </div>
 
             <div class="text-center p-t-90 pb-3" style="color: gray">
-              Copyright &copy; {{ year }} {{ $app_title }}
+              &copy; {{ year }} {{ $app_title }}
             </div>
           </form>
         </div>

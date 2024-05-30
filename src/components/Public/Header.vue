@@ -10,7 +10,7 @@
     </div>
 
     <div v-if="!isMobileView" id="mySidebar" :class="{ sidebar: true, 'sidebar-open': sidebarOpen }"
-      v-show="!isMobileView || sidebarOpen" @mouseover="toggleSidebar()" @mouseleave="toggleOut()" style="z-index: 1000">
+      v-show="!isMobileView || sidebarOpen" @mouseover="toggleSidebar()" @mouseleave="toggleOut()" style="z-index: 91000">
 
       <ul>
         <li class="centered-image">

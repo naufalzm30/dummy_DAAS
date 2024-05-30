@@ -113,7 +113,7 @@ export default {
       nama_pos: "",
       cols: [
         {
-          name: "Nama Pos",
+          name: "Nama Stasiun",
         },
         {
           name: "Lokasi",
@@ -131,7 +131,7 @@ export default {
       ],
       colSuper: [
         {
-          name: "Nama Pos",
+          name: "Nama Stasiun",
         },
 
         {

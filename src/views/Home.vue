@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-width">
     <Header />
-    
+
     <div v-if="loading_i" class="center-container mt-2">
       <div class="content-container">
         <div class="icon-container">
@@ -12,51 +12,26 @@
       </div>
     </div>
     <div v-else>
-      
+
       <div class="bwsTitle mobile-top">
-        {{ balai_name }} 
-        
+        {{ balai_name }}
+
       </div>
-      <div
-        v-if="loading_i"
-        class="d-flex flex-column justify-content-center align-items-center mt-2"
-      >
-        <i
-          class="zmdi zmdi-spinner zmdi-hc-spin"
-          style="font-size: 2rem; margin-right: 20px"
-        ></i>
+      <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center mt-2">
+        <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       </div>
       <!-- text_duration: {{ text_duration }} custom_duration: {{ custom_duration }} -->
 
       <div class="d-flex flex-row" v-if="ava_width > 768">
-        <marquee-text
-          :repeat="text_repeat"
-          :duration="custom_duration"
-          :paused="isPaused"
-          class="card mt-0 pb-1 box custom-col-md"
-          @mouseenter="isPaused = !isPaused"
-          @mouseleave="isPaused = false"
-        >
-          <span
-            v-for="station in stations"
-            :key="station[0].id"
-            style="font-size: 1.35rem"
-          >
+        <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
+          class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
+          <span v-for="station in stations" :key="station[0].id" style="font-size: 1.35rem">
             <span style="color: #1b396b; font-weight: 500">
               {{ station[0].station_name }} &bull;
             </span>
             <span v-if="station[2]">
-              <span
-                v-for="(card, index) in [station[2]]"
-                :key="index"
-                class="flex mt-2"
-                style="min-height: 12vh"
-              >
-                <span
-                  v-for="(label, labelIndex) in card.running_label"
-                  :key="labelIndex"
-                  style="color: #1b396b"
-                >
+              <span v-for="(card, index) in [station[2]]" :key="index" class="flex mt-2" style="min-height: 12vh">
+                <span v-for="(label, labelIndex) in card.running_label" :key="labelIndex" style="color: #1b396b">
                   {{ label }}: {{ card.running_data[labelIndex] }}
                   {{ card.running_symbol[labelIndex] }}
                   <span v-if="labelIndex !== card.running_label.length - 1">
@@ -73,14 +48,15 @@
         </marquee-text>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="col" :class="{ 'col-6': ava_width > 768 }">
           <Map />
         </div>
         <div class="col" :class="{ 'col-6 p-0': ava_width > 768 }">
           <Slider :ava_width="ava_width" />
         </div>
-      </div>
+      </div> -->
+      <Map />
       <Footer />
     </div>
   </div>
@@ -94,7 +70,7 @@ import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import MarqueeText from "@/assets/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
-import Slider from "@/components/Chart/Slider.vue";
+// import Slider from "@/components/Chart/Slider.vue";
 import axios from "axios";
 
 export default {
@@ -102,7 +78,7 @@ export default {
     Header,
     MarqueeText,
     Map,
-    Slider,
+    // Slider,
   },
   data() {
     return {
@@ -122,7 +98,7 @@ export default {
       showCarousel: true,
       proxyUrl: null,
       proxyFixedBalai: null,
-      
+
     };
   },
   methods: {
@@ -157,38 +133,75 @@ export default {
       var sensor = [];
       var st_name_length = null;
       var sensor_length = null;
+      console.log("station:", this.profile.station);
 
-      await axios
-        // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
-        .get(`${this.$baseURL}/home-data/`)
+      if (this.profile.station == null) {
+        await axios
+          // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
+          .get(`${this.$baseURL}/home-data`)
 
-        .then((r) => {
-        
-          r.data.forEach((e) => {
-            st_name.push(e[0].station_name.length);
-            sensor.push(
-              e[1].table.array_table_label.reduce((a, b) => a + b, 0).length
-            );
+          .then((r) => {
 
-            var x =
-              e[0].station_name.length +
-              e[1].table.array_table_label.reduce((a, b) => a + b, 0).length;
+            r.data.forEach((e) => {
+              st_name.push(e[0].station_name.length);
+              sensor.push(
+                e[1].table.array_table_label.reduce((a, b) => a + b, 0).length
+              );
 
-            e.duration = x * 510;
+              var x =
+                e[0].station_name.length +
+                e[1].table.array_table_label.reduce((a, b) => a + b, 0).length;
+
+              e.duration = x * 510;
+            });
+
+            st_name_length = st_name.reduce((a, b) => a + b, 0);
+            sensor_length = sensor.reduce((a, b) => a + b, 0);
+            this.stations = r.data;
+
+            this.custom_duration = (st_name_length + sensor_length) / 2;
+            this.stations.slice(-1).pop().duration + 200;
+
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+
           });
+      } else if (this.profile.station != null) {
+        // console.log(this.profile);
+        await axios
+          // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
+          .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
 
-          st_name_length = st_name.reduce((a, b) => a + b, 0);
-          sensor_length = sensor.reduce((a, b) => a + b, 0);
-          this.stations = r.data;
+          .then((r) => {
 
-          this.custom_duration = (st_name_length + sensor_length) / 2;
-          this.stations.slice(-1).pop().duration + 200;
+            r.data.forEach((e) => {
+              st_name.push(e[0].station_name.length);
+              sensor.push(
+                e[1].table.array_table_label.reduce((a, b) => a + b, 0).length
+              );
 
-          if (r.status == 200) {
-            this.loading_i = false;
-          }
+              var x =
+                e[0].station_name.length +
+                e[1].table.array_table_label.reduce((a, b) => a + b, 0).length;
 
-        });
+              e.duration = x * 510;
+            });
+
+            st_name_length = st_name.reduce((a, b) => a + b, 0);
+            sensor_length = sensor.reduce((a, b) => a + b, 0);
+            this.stations = r.data;
+
+            this.custom_duration = (st_name_length + sensor_length) / 2;
+            this.stations.slice(-1).pop().duration + 200;
+
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+
+          });
+      }
+
 
       let currentIndex = 0;
 
@@ -207,7 +220,7 @@ export default {
     },
   },
   async created() {
-  
+
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
 
@@ -223,8 +236,8 @@ export default {
           this.detBalai = r.data[0];
         });
 
-       
-      
+
+
       this.text_duration = this.detBalai.text_duration;
       this.text_repeat = this.detBalai.text_repeat;
       this.homeData();
@@ -251,12 +264,12 @@ export default {
   async mounted() {
     this.checkScreen();
     // console.log('test home');
+    this.extractUserInfo()
   },
 };
 </script>
 
-<style scoped src="@/assets/css/flex14.css">
-</style>
+<style scoped src="@/assets/css/flex14.css"></style>
 
 <style>
 .mobile-width {
@@ -283,7 +296,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Center vertically within viewport */
+  height: 100vh;
+  /* Center vertically within viewport */
 }
 
 .content-container {

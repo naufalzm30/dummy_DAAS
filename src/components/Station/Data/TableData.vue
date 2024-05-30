@@ -15,56 +15,54 @@
     </span>
 
     <div style="border-radius: 15px" class="mt-2">
+      
       <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
         <div class="row" :data-page-count="ds.dsPagecount">
           <div v-if="loading_i && role == 'is_guess'"
             class="d-flex flex-column justify-content-center align-items-center">
             <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
-          </div>
-          <div class="col-md-1 d-flex justify-content-start" style="margin: 1rem 0 1rem 0">
-            <button v-if="role == 'is_superuser'" type="button" class="btn btn-sm btn-success d-none"
-              data-bs-toggle="modal" style="font-size: 0.8rem" data-bs-target="#staticBackdrop">
-              <span>CSV</span>
-            </button>
-          </div>
+          </div>    
 
-          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <form @submit.prevent="modified">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">
-                      Upload CSV File
-                      <span v-for="item in stations" :key="item.id">
-                        <span v-if="item.id == $route.params.id">
-                          {{ item.station_name }}
-                        </span>
-                      </span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <div>
-                      <label>
-                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
-                      </label>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                      Close
-                    </button>
-                    <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
-                      Upload
-                    </button>
-                  </div>
-                </form>
-              </div>
+          <div
+            class="col-md-2 d-flex justify-content-start"
+            style="margin-top: 1rem"
+          >
+            <div class="dropdown col">
+              <button
+                class="btn btn-sm btn-success dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                title="Download sesuai filter tanggal"
+                style="font-size: 0.8rem"
+              >
+                <i
+                  v-if="loading_dw"
+                  class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"
+                ></i>
+
+                <span>Detail</span>
+              </button>
+
+              <ul class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
+                <!-- {{ stations[1][0].summary }} -->
+                <li class="dropdown-item">
+                  Jumlah Data: {{ stations[1][0].summary.jumlah_data }}
+                </li>
+                <li class="dropdown-item">
+                  Rata Debit: {{ stations[1][0].summary.rata_debit }}
+                </li>
+                <li class="dropdown-item">
+                  Total Volume: {{ stations[1][0].summary.total_volume }}
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div class="col-md-9 d-flex justify-content-end" style="margin-top: 1rem">
+          <div class="col-md-8 d-flex justify-content-end" style="margin-top: 1rem">
             <div v-if="role != 'is_guess'">
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
               <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
@@ -74,23 +72,23 @@
               <label for="to" class="px-3" style="font-size: 0.8rem; font-weight: normal">s.d</label>
               <input name="" type="date" v-model="endDate" @change="search" title="Data Akhir"
                 style="font-size: 0.8rem" />
+                <!-- <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
+                style="font-size: 0.8rem" />
+              <label for="to" class="px-3" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+              <input name="" type="datetime-local" v-model="endDate" @change="search" title="Data Akhir"
+                style="font-size: 0.8rem" /> -->
             </div>
           </div>
 
           <div class="col-md-2 d-flex justify-content-end" style="margin-top: 1rem">
-
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" @click.prevent="download"
               title="Download sesuai filter tanggal" style="font-size: 0.8rem">
               <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                 style="font-size: 1.2rem; margin-right: 3px"></i>
-
               <span>Download</span>
-
             </button>
-
-
-
           </div>
+
         </div>
         <p v-if="csv_code">File status: {{ csv_code }}</p>
         <div class="row mt-1">
@@ -114,9 +112,9 @@
                       <td>{{ formatDate(row.waktu) }}</td>
                       <td>{{ formatTime(row.waktu) }}</td>
                       <td v-for="(item, index) in conf_2(
-      row.weather_data,
-      row.symbol
-    )" :key="index">
+                          row.weather_data,
+                          row.symbol
+                        )" :key="index">
                         {{ item.data }} {{ item.symbol }}
                       </td>
                       <td v-if="balai == 0">{{ row.bat.toFixed(2) }} v</td>
@@ -1374,6 +1372,7 @@ export default {
         },
       ],
       localStations: this.stations.slice(),
+      detailAPI: null
     };
   },
   computed: {
@@ -2088,7 +2087,9 @@ export default {
     this.loadData();
   },
   async mounted() {
-    this.gStation();
+    // this.gStation();
+    this.detailAPI = this.stations[1][0].summary;
+    // console.log(this.stations[1][0].summary);
   },
 };
 </script>

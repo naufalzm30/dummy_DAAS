@@ -1,34 +1,20 @@
 <template>
-  <div>
-    <div class="row">
-      <div class="col-12">
-        <StationMap
-          :stations="stations"
-          :status="status"
-          :loading_i="loading_i"
-          class="mx-auto mt-2 shadow-sm border"
-          style="border-radius: 15px"
-        />
+  <div class="row">
+    <div class="col-6">
+      <div class="row">
+        <div class="col-12">
+          <StationMap :stations="stations" :status="status" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
+            style="border-radius: 15px" />
+        </div>
+        <div class="col-12">
+          <Stations :stations="stations" :loading_i="loading_i" class="shadow-sm border mt-2 bg-white"
+            style="border-radius: 15px" @station-selected="handleStationSelected"/>
+        </div>
       </div>
-      <div class="col-12">
-        <!-- <StationsT
-          :stations="stations"
-          :loading_i="loading_i"
-          @mouse-over-station="mouseOverstation"
-          @mouse-left-station="mouseLeftstation"
-          class="shadow-sm border mt-2 bg-white"
-          style="border-radius: 15px"
-        /> -->
-        <Stations
-          :stations="stations"
-          :loading_i="loading_i"
-          @mouse-over-station="mouseOverstation"
-          @mouse-left-station="mouseLeftstation"
-          class="shadow-sm border mt-2 bg-white"
-          style="border-radius: 15px"
-        />
-       
-      </div>
+
+    </div>
+    <div class="col-6">
+      <StationData :station="selectedStation"/>
     </div>
   </div>
 </template>
@@ -37,7 +23,7 @@
 import axios from "axios";
 import StationMap from "@/components/Map/StationMap";
 import Stations from "@/components/Map/Stations";
-// import StationsT from "@/components/Map/StationsT";
+import StationData from "./StationData.vue";
 
 export default {
   name: "Map",
@@ -45,7 +31,7 @@ export default {
   components: {
     StationMap,
     Stations,
-    // StationsT,
+    StationData
   },
   data() {
     return {
@@ -56,11 +42,22 @@ export default {
       largeIcon: [25, 25],
       marker: null,
       loading_i: true,
-      status: [],
+      status: [], selectedStation: null // the selected station
     };
   },
-
+  watch: {
+    stations: {
+      immediate: true,
+      handler(newStations) {
+        if (newStations.length > 0 && !this.selectedStation) {
+          this.selectedStation = newStations[0];
+        }
+      }
+    }},
   methods: {
+    handleStationSelected(station) {
+      this.selectedStation = station;
+    },
     mouseOverstation: function (e) {
       this.stations[e][0].iconSize = this.largeIcon;
     },

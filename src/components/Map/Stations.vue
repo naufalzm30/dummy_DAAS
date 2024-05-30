@@ -9,31 +9,14 @@
       {{ backupStat }}
     </span>
     <div class="box" v-if="!loading_i">
-      
-      <!-- <hr> -->
-      <!-- TAB -->
-      <!-- <ul class="nav nav-tabs red" id="tabs-tab" role="tablist">
-   
-        <li class="nav-item" role="presentation" v-if="total_arr >= 1">
-          <button class="nav-link d-flex flex-row py-1 px-2" :class="{ active: total_arr >= 1 && total_awlr < 1 }"
-            id="tabs-ARR-tab" data-bs-toggle="pill" data-bs-target="#tabs-ARR" type="button" role="tab"
-            aria-controls="tabs-ARR" aria-selected="false">
-            <img :src="arr_i" class="rounded mx-auto d-inline imgSZ" />
-            <span>ARR</span>
-          </button>
-        </li>
-  
-      </ul> -->
-
       <div class="tab-content station-list" id="tabs-tabContent">
         
-        <!-- ARR -->
         <div v-if="total_arr >= 1" class="tableFixHead tab-pane fade" :class="{
           active: total_arr >= 1 && total_awlr < 1,
           show: total_arr >= 1 && total_awlr < 1,
           h100: ava_width <= 850,
         }" id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
-        <!-- {{ stations[0][1] }} -->
+        
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
@@ -44,7 +27,7 @@
             </thead>
             
             <tbody>
-              <tr v-for="(station, index) in stations" :key="station[0].id">
+              <tr v-for="(station, index) in stations" :key="station[0].id" @click="selectStation(station)" style="cursor: pointer">
                 <td>{{ index + 1 }}</td>
                 <td>
                   <span v-if="station[1].table.siaga == []"> </span>
@@ -74,7 +57,7 @@
                 <td>
                   {{ formatTime(station[1].table.date) }}
                 </td>
-                <!-- {{ stations[0][1] }} -->
+                
                 <td v-for="(sensor, index) in conf_2(
                   station[1].table.sensor_data,
                   station[1].table.array_table_symbol
@@ -85,11 +68,7 @@
                   
                 </td>
 
-                <!-- <td v-if="getYear(station[1].table.maint_date) >= 2020">
-                  {{ formatDate(station[1].table.maint_date) }}
-                </td>
-                <td v-else></td> -->
-              </tr>
+                </tr>
             </tbody>
           </table>
         </div>
@@ -147,6 +126,9 @@ export default {
     };
   },
   methods: {
+    selectStation(station) {
+      this.$emit('station-selected', station);
+    },
     conf_2(a, b) {
       return a.map((card, i) => {
         return {

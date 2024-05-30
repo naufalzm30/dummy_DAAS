@@ -3,195 +3,171 @@
     <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-    <div :perPage="1" ref="div" :autoplay="false" :interval="0" :navigationEnabled="false" :loop="true"
-      :paginationEnabled="false" navigationNextLabel="<i class='zmdi zmdi-chevron-right zmdi-hc-lg'></i>"
-      navigationPrevLabel="<i class='zmdi zmdi-chevron-left zmdi-hc-lg'></i>">
-      <div v-for="station in stations" :key="station[0].id"
-        style="max-width: 100% !important; min-width: 100% !important">
-        <div>
-          <!-- Location -->
-          <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
-            <div class="row">
-              <div class="col-md-4 p-0 imgSZ">
-                <img :src="`${$imageURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
+    
+    <div v-if="station">
+
+      <div style="max-width: 100% !important; min-width: 100% !important">
+        <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
+          <div class="row">
+            <div class="col-md-4 p-0 imgSZ">
+              <img :src="`${$imageURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
                     object-fit: cover;
                     border-radius: 10px 0px 0px 10px;
                     margin-left: 14px;
                     width: 100%;
                   " />
-              </div>
+            </div>
 
-              <div class="col-md-8 my-0">
-                <div class="row">
-                  <div class="col-md-10 col-10">
-                    <div style="
+            <div class="col-md-8 my-0">
+              <div class="row">
+                <div class="col-md-10 col-10">
+                  <div style="
                         font-weight: 500;
                         font-size: 1.1em;
                         margin-left: 7px;
                       ">
-                      {{ station[0].station_name }}
-                    </div>
-                  </div>
-                  <div class="col-md-2 col-2 d-flex justify-content-end">
-                    <span v-if="station[1].table.siaga == []"> </span>
-                    <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                      <img :src="mtc_i" class="statSZ" />
-                    </span>
-                    <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                      <img :src="s1_i" class="statSZ" />
-                    </span>
-                    <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                      <img :src="s2_i" class="statSZ" />
-                    </span>
-                    <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                      <img :src="s3_i" class="statSZ" />
-                    </span>
-                    <span v-else-if="station[1].table.siaga == 'OK'">
-                      <img :src="ok_i" class="statSZ" />
-                    </span>
+                    {{ station[0].station_name }}
                   </div>
                 </div>
-
-                <div class="row">
-                  <div class="col-md-7 mx-0">
-                    <div class="my-1 mx-2">
-                      <div class="info-label">Lokasi</div>
-                      <div class="info-value">{{ station[0].location }}</div>
-                      <div class="info-value" v-if="station[0].station_type == 2">
-                        {{ station[0].sungai }}
-                      </div>
-                    </div>
-
-                  </div>
-                  <div class="col-md-5 mx-0">
-                    <div class="my-1 mx-2">
-                      <div class="info-label">Latitude</div>
-                      <div class="info-value"> {{ station[0].latitude }}<span>&#176;</span></div>
-                      
-                    </div>
-                    <div class="my-1 mx-2">
-                      <div class="info-label">Longitude</div>
-                      <div class="info-value">
-                        {{ station[0].longitude }}<span>&#176;</span>
-                      </div>
-                    </div>
-                  </div>
+                <div class="col-md-2 col-2 d-flex justify-content-end">
+                  <span v-if="station[1].table.siaga == []"> </span>
+                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
+                    <img :src="mtc_i" class="statSZ" />
+                  </span>
+                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
+                    <img :src="s1_i" class="statSZ" />
+                  </span>
+                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
+                    <img :src="s2_i" class="statSZ" />
+                  </span>
+                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
+                    <img :src="s3_i" class="statSZ" />
+                  </span>
+                  <span v-else-if="station[1].table.siaga == 'OK'">
+                    <img :src="ok_i" class="statSZ" />
+                  </span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div>
-            <!-- Charts -->
-            <div v-for="card in [station[1]]" :key="card.id">
+              <div class="row">
+                <div class="col-md-7 mx-0">
+                  <div class="my-1 mx-2">
+                    <div class="info-label">Lokasi</div>
+                    <div class="info-value">{{ station[0].location }}</div>
+                  </div>
 
-              <!-- CARD {{ card }} -->
+                </div>
+                <div class="col-md-5 mx-0">
+                  <div class="my-1 mx-2">
+                    <div class="info-label">Latitude</div>
+                    <div class="info-value"> {{ station[0].latitude }}<span>&#176;</span></div>
 
-              <!-- DEBIT -->
-              <div v-for="(item, index) in chart_f2(
-      card.chart.mix_status,
-      card.chart.chart_sensor,
-      card.chart.array_act_chart_type,
-      card.chart.chart_label,
-      card.chart.chart_data,
-      [card.chart.chart_date],
-      card.chart.array_act_icon,
-      card.chart.array_act_symbol
-    )" :key="index">
-                <div v-if="!item.mix" style="border-radius: 15px">
-                  <div v-if="item.chart_type == 'BarChart' ||
-      item.chart_type == 'LineChart'
-      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
-                    <div>
-                      <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
-                        Data {{ item.sensor[0][0] }}
-                      </div>
-                    </div>
-
-                    <!-- <Chart
-                      style="height: 25vh"
-                      class="p-0 pr-0 pt-0 pb-0"
-                      :label="item.chart_label[0]"
-                      :chart-data="item.chart_data[0]"
-                      :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-                      :is="item.chart_type[0][0]"
-                    ></Chart> -->
-                    <!-- ITEM {{ item }} -->
-
-                    <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
-                      :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-                      is="LineChart"></Chart>
-                    <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
-                      <div class="col-sm-6">
-                        <div class="float-start" style="margin-top: -2px; margin-left: 17px">
-                          {{ formatPrevDate(station[1].chart.chart_date) }}
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="float-end mx-1">
-                          {{ formatDate(station[1].chart.chart_date) }}
-                        </div>
-                      </div>
+                  </div>
+                  <div class="my-1 mx-2">
+                    <div class="info-label">Longitude</div>
+                    <div class="info-value">
+                      {{ station[0].longitude }}<span>&#176;</span>
                     </div>
                   </div>
                 </div>
-
-              </div>
-              <!-- TOTALIZER -->
-              <div v-for="(item, index) in chart_f2nd(
-      card.chart.mix_status,
-      card.chart.chart_sensor,
-      card.chart.array_act_chart_type,
-      card.chart.chart_label,
-      card.chart.chart_data,
-      [card.chart.chart_date],
-      card.chart.array_act_icon,
-      card.chart.array_act_symbol
-    )" :key="index">
-                <div v-if="!item.mix" style="border-radius: 15px">
-                  <div v-if="item.chart_type == 'BarChart' ||
-      item.chart_type == 'LineChart'
-      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
-                    <div>
-                      <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
-                        Data {{ item.sensor[0][0] }}
-                      </div>
-                    </div>
-
-                    <!-- <Chart
-                      style="height: 25vh"
-                      class="p-0 pr-0 pt-0 pb-0"
-                      :label="item.chart_label[0]"
-                      :chart-data="item.chart_data[0]"
-                      :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-                      :is="item.chart_type[0][0]"
-                    ></Chart> -->
-                    <!-- ITEM {{ item }} -->
-
-                    <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
-                      :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`"
-                      is="TotalChart"></Chart>
-                    <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
-                      <div class="col-sm-6">
-                        <div class="float-start" style="margin-top: -2px; margin-left: 17px">
-                          {{ formatPrevDate(station[1].chart.chart_date) }}
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="float-end mx-1">
-                          {{ formatDate(station[1].chart.chart_date) }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <div>
+        <div v-for="card in [station[1]]" :key="card.id">
+
+          <!-- DEBIT -->
+          <div v-for="(item, index) in chart_f2(
+      card.chart.mix_status,
+      card.chart.chart_sensor,
+      card.chart.array_act_chart_type,
+      card.chart.chart_label,
+      card.chart.chart_data,
+      [card.chart.chart_date],
+      card.chart.array_act_icon,
+      card.chart.array_act_symbol
+    )" :key="index">
+            <div v-if="!item.mix" style="border-radius: 15px">
+              <div v-if="item.chart_type == 'BarChart' ||
+      item.chart_type == 'LineChart'
+      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+                <div>
+                  <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
+                    Data {{ item.sensor[0][0] }}
+                  </div>
+                </div>
+
+                <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                  :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
+                </Chart>
+
+                <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
+                  <div class="col-sm-6">
+                    <div class="float-start" style="margin-top: -2px; margin-left: 17px">
+                      {{ formatPrevDate(station[1].chart.chart_date) }}
+
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="float-end mx-1">
+                      {{ formatDate(station[1].chart.chart_date) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- TOTALIZER -->
+          <div v-for="(item, index) in chart_f2nd(
+      card.chart.mix_status,
+      card.chart.chart_sensor,
+      card.chart.array_act_chart_type,
+      card.chart.chart_label,
+      card.chart.chart_data,
+      [card.chart.chart_date],
+      card.chart.array_act_icon,
+      card.chart.array_act_symbol
+    )" :key="index">
+            <div v-if="!item.mix" style="border-radius: 15px">
+              <div v-if="item.chart_type == 'BarChart' ||
+      item.chart_type == 'LineChart'
+      " class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+                <div>
+                  <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
+                    Data {{ item.sensor[0][0] }}
+                  </div>
+                </div>
+
+                <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                  :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
+                </Chart>
+                <div class="row text-secondary pb-1" style="font-size: 0.8rem; margin-top: -10px">
+                  <div class="col-sm-6">
+                    <div class="float-start" style="margin-top: -2px; margin-left: 17px">
+                      {{ formatPrevDate(station[1].chart.chart_date) }}
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="float-end mx-1">
+                      {{ formatDate(station[1].chart.chart_date) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- <div v-else>
+      <p>Select a station to see the details.</p>
+      
+    </div> -->
   </div>
 </template>
 
@@ -211,7 +187,13 @@ import s3_i from "@/assets/icons/map/s3.svg";
 
 export default {
   name: "Slider",
-  props: ["ava_width"],
+  // props: ["ava_width, station"],
+  props: {
+    station: {
+      // type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       stations: [],

@@ -3,10 +3,10 @@
     <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-    <div :perPage="1" ref="div" :autoplay="false" :interval="0" :navigationEnabled="false" :loop="true"
+    <carousel :perPage="1" ref="carousel" :autoplay="false" :interval="0" :navigationEnabled="false" :loop="true"
       :paginationEnabled="false" navigationNextLabel="<i class='zmdi zmdi-chevron-right zmdi-hc-lg'></i>"
       navigationPrevLabel="<i class='zmdi zmdi-chevron-left zmdi-hc-lg'></i>">
-      <div v-for="station in stations" :key="station[0].id"
+      <slide v-for="station in stations" :key="station[0].id"
         style="max-width: 100% !important; min-width: 100% !important">
         <div>
           <!-- Location -->
@@ -190,8 +190,8 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </slide>
+    </carousel>
   </div>
 </template>
 
