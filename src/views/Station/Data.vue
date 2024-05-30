@@ -36,6 +36,7 @@
       </div>
 
       <div class="row">
+        
         <div class="col-md-6">
           <TableData
             :stations="stations"
@@ -69,6 +70,7 @@ import axios from "axios";
 
 export default {
   name: "DataStation",
+  // inject: ['userStationList'],
   components: {
     Header,
     Footer,
@@ -83,11 +85,14 @@ export default {
       status: [],
       ava_width: null,
       msg: "Fetching data, please wait...",
-      e_code: null,
+      e_code: null, 
     };
   },
   methods: {
     async loadData() {
+      // console.log(this.profile.station.id);
+      // console.log(this.$route.params.id);
+      // console.log(this.userStationList);
       await axios
         .get(`${this.$baseURL}/data/${this.$route.params.id}/${this.user_id}`, {
           headers: {
@@ -96,6 +101,7 @@ export default {
         })
         .then((r) => {
           this.stations = r.data;
+          // console.log(this.stations);
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -123,6 +129,7 @@ export default {
     this.loadData();
   },
   created() {
+    this.extractUserInfo()
     this.gAuthStation();
   },
 };

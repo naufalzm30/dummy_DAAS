@@ -133,7 +133,7 @@
           </li>
         </div>
 
-        <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
+        <!-- <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
           <a href="#collapseTwo" data-bs-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
             aria-controls="collapseTwo" class="collapsible" style="display: flex; flex-direction: row">
             <img :src="data_i" class="mr-4" /><span>Data</span>
@@ -168,7 +168,7 @@
               </ul>
             </div>
           </div>
-        </li>
+        </li> -->
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'Station',

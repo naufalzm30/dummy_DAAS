@@ -15,6 +15,7 @@
     </span>
 
     <div style="border-radius: 15px" class="mt-2">
+      <!-- {{ filterData }} -->
       
       <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
         <div class="row" :data-page-count="ds.dsPagecount">
@@ -131,6 +132,7 @@
           <dataset-pager style="font-size: 0.9rem" />
         </div>
       </dataset>
+      
     </div>
   </div>
 </template>
@@ -149,30 +151,7 @@ import {
 } from "vue-dataset";
 // import { error } from "highcharts";
 
-function isInDirection(windSpeed, windDirection, startDegree, endDegree) {
-  if (isNaN(parseFloat(windSpeed)) || isNaN(parseFloat(windDirection))) {
-    console.log(
-      "Invalid windSpeed or windDirection:",
-      windSpeed,
-      windDirection
-    );
-    return false;
-  }
 
-  const normalizedValue = (windDirection + 360) % 360;
-  const normalizedStart = (parseFloat(startDegree) + 360) % 360;
-  const normalizedEnd = (parseFloat(endDegree) + 360) % 360;
-
-  if (normalizedStart <= normalizedEnd) {
-    return (
-      normalizedValue >= normalizedStart && normalizedValue <= normalizedEnd
-    );
-  } else {
-    return (
-      normalizedValue >= normalizedStart || normalizedValue <= normalizedEnd
-    );
-  }
-}
 
 export default {
   name: "TableData",
@@ -1393,6 +1372,8 @@ export default {
         ? this.json_data.filter((item) => item.type === filterType)
         : this.json_data;
 
+      
+
       return itemsByType.filter((item) => {
         const itemDate = new Date(item.waktu);
         if (startDate && endDate) {
@@ -1407,150 +1388,9 @@ export default {
         return true;
       });
     },
-    computedWindData() {
-      //   console.log("filterData:", this.filterData);
-      // console.log("windSpeedInterval:", this.windSpeedInterval);
-      if (!this.filterData || this.filterData.length === 0) {
-        return [];
-      }
-      return this.calculateWindData(this.filterData, this.windSpeedInterval);
-    },
+
   },
   methods: {
-    calculateWindData(filterData, windSpeedInterval) {
-      const windDirectionData = [];
-      const windDirections = [
-        "N",
-        "NNE",
-        "NE",
-        "ENE",
-        "E",
-        "ESE",
-        "SE",
-        "SSE",
-        "S",
-        "SSW",
-        "SW",
-        "WSW",
-        "W",
-        "WNW",
-        "NW",
-        "NNW",
-      ];
-
-      const totalDataCount = filterData.length;
-
-      windDirections.forEach((direction, index) => {
-        const startDegree = (index * 22.5 + 348.75) % 360;
-        const endDegree = (index * 22.5 + 11.25) % 360;
-
-        const dataPointsInDirection = filterData.filter((data) => {
-          const windSpeed = data.weather_data[0];
-          const windDirection = data.weather_data[1];
-          return isInDirection(
-            windSpeed,
-            windDirection,
-            startDegree,
-            endDegree
-          );
-        });
-
-        const directionData = {
-          bgcolor: this.wind_directions[index].bgcolor,
-          cells: [
-            { value: direction, class: "dir", speed: null, rawData: null },
-            ...windSpeedInterval.map((interval) => {
-              const rawDataValue = dataPointsInDirection.filter((data) => {
-                const windSpeed = data.weather_data[0];
-                return windSpeed >= interval.start && windSpeed <= interval.end;
-              });
-
-              const percentage =
-                totalDataCount > 0
-                  ? ((rawDataValue.length / totalDataCount) * 100).toFixed(2)
-                  : "0.00";
-
-              return {
-                value: percentage,
-                class: "data",
-                speed: interval.title,
-                rawData:
-                  totalDataCount > 0
-                    ? rawDataValue.map((data) => data.weather_data[0])
-                    : [],
-              };
-            }),
-          ],
-        };
-
-        windDirectionData.push(directionData);
-      });
-
-      windDirections.forEach((direction, index) => {
-        const totalPercentageInDirection =
-          totalDataCount > 0
-            ? windDirectionData[index].cells
-              .slice(1, windSpeedInterval.length)
-              .map((cell) => parseFloat(cell.value))
-              .reduce((acc, value) => acc + value, 0)
-              .toFixed(2)
-            : "0.00";
-
-        windDirectionData[index].cells.push({
-          value: totalPercentageInDirection,
-          class: "data",
-          speed: "Total",
-          rawData:
-            totalDataCount > 0
-              ? windDirectionData[index].cells
-                .slice(1, windSpeedInterval.length)
-                .flatMap((cell) => cell.rawData)
-              : [],
-        });
-      });
-
-      const totalPercentages = windSpeedInterval.map(
-        (interval, intervalIndex) => {
-          return windDirectionData.reduce((acc, directionData) => {
-            const cell = directionData.cells[intervalIndex + 1]; // Add 1 to the index to skip the 'direction' cell
-            return acc + parseFloat(cell.value);
-          }, 0);
-        }
-      );
-
-      const lastObject = {
-        bgcolor: "",
-        cells: [
-          { value: "Total", class: "totals", title: "", speed: "" },
-          ...totalPercentages.map((percentage, index) => ({
-            value: index === 0 ? percentage.toFixed(2) : percentage.toFixed(2), // Fix the condition here
-            class: "totals",
-            title: windSpeedInterval[index].title,
-            speed: windSpeedInterval[index].speed,
-          })),
-          { value: "&nbsp;", class: "totals", title: "", speed: "" },
-        ],
-      };
-
-      windDirectionData.push(lastObject);
-
-      windDirectionData.unshift({
-        bgcolor: "#CCCCFF",
-        cells: [
-          { value: "Direction", class: "freq" },
-          { value: "< 0.5 m/s", class: "freq" },
-          { value: "0.5-2 m/s", class: "freq" },
-          { value: "2-4 m/s", class: "freq" },
-          { value: "4-6 m/s", class: "freq" },
-          { value: "6-8 m/s", class: "freq" },
-          { value: "8-10 m/s", class: "freq" },
-          { value: "> 10 m/s", class: "freq" },
-          { value: "Total", class: "freq" },
-        ],
-      });
-
-      return windDirectionData;
-    },
 
     conf_2(a, b) {
       return a.map((card, i) => {
@@ -2020,6 +1860,7 @@ export default {
             a = { waktu, bat, temp, weather_data, symbol };
 
             this.json_data.push(a);
+            
           });
 
           this.cols = [

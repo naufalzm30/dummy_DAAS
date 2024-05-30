@@ -42,14 +42,6 @@
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.station_name }}</td>
-
-                      <!-- <td v-if="role == 'is_superuser'">
-                        <span v-for="item in balais" :key="item.id">
-                          <span v-if="item.id == row.balai">
-                            {{ item.balai }}
-                          </span>
-                        </span>
-                      </td> -->
                       <td>{{ row.location }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
@@ -148,6 +140,7 @@ export default {
           name: "Action",
         },
       ],
+      userStationList: []
     };
   },
   computed: {
@@ -160,7 +153,15 @@ export default {
       }, []);
     },
   },
+  provide() {
+    return {
+      userStationList: this.userStationList
+    };
+  },
   methods: {
+    updateUserStationList(newList) {
+      this.userStationList = newList;
+    },
     click(event, i) {
       let toset;
       const sortEl = this.cols[i];
@@ -190,24 +191,49 @@ export default {
       } else {
         this.station = this.profile.station.id
       }
-      await axios
-        .get(`${this.$baseURL}/station/${this.station}`, {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        })
-        .then((r) => {
 
-          if (r.data.length > 1) {
-            this.stations = r.data;
-          } else {
-            this.stations = [r.data];
-          }
 
-          if (r.status == 200) {
-            this.loading_i = false;
-          }
-        });
+      if (this.profile.station == null) {
+        await axios
+          .get(`${this.$baseURL}/station/0`, {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+          })
+          .then((r) => {
+
+            if (r.data.length > 1) {
+              this.stations = r.data;
+            } else {
+              this.stations = [r.data];
+            }
+
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+          });
+      } else if (this.profile.station != null) {
+        await axios
+          .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+          })
+          .then((r) => {
+
+            if (r.data.length > 1) {
+              this.stations = r.data;
+            } else {
+              this.stations = [r.data];
+            }
+
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+            this.userStationList = this.stations.map(station => station.id)
+            // console.log(this.userStationList);
+          });
+      }
     },
   },
   created() {

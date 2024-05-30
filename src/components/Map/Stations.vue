@@ -4,30 +4,32 @@
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
     <span class="d-none">
-      {{ stations}}
+      {{ stations }}
       <hr />
       {{ backupStat }}
     </span>
     <div class="box" v-if="!loading_i">
       <div class="tab-content station-list" id="tabs-tabContent">
-        
+
         <div v-if="total_arr >= 1" class="tableFixHead tab-pane fade" :class="{
-          active: total_arr >= 1 && total_awlr < 1,
-          show: total_arr >= 1 && total_awlr < 1,
-          h100: ava_width <= 850,
-        }" id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
-        
+      active: total_arr >= 1 && total_awlr < 1,
+      show: total_arr >= 1 && total_awlr < 1,
+      h100: ava_width <= 850,
+    }" id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
-                <th v-for="(head, index) in arr_head" :key="index" :class="{ thClass: index >= 0, sticky: index === 2 }">
+                <th v-for="(head, index) in arr_head" :key="index"
+                  :class="{ thClass: index >= 0, sticky: index === 2 }">
                   {{ head }}
                 </th>
               </tr>
             </thead>
-            
+
             <tbody>
-              <tr v-for="(station, index) in stations" :key="station[0].id" @click="selectStation(station)" style="cursor: pointer">
+              <tr v-for="(station, index) in stations" :key="station[0].id" @click="selectStation(station)"
+                style="cursor: pointer">
                 <td>{{ index + 1 }}</td>
                 <td>
                   <span v-if="station[1].table.siaga == []"> </span>
@@ -57,23 +59,23 @@
                 <td>
                   {{ formatTime(station[1].table.date) }}
                 </td>
-                
-                <td v-for="(sensor, index) in conf_2(
-                  station[1].table.sensor_data,
-                  station[1].table.array_table_symbol
 
-                )" :key="index">
-                  {{ sensor.data }} 
+                <td v-for="(sensor, index) in conf_2(
+      station[1].table.sensor_data,
+      station[1].table.array_table_symbol
+
+    )" :key="index">
+                  {{ sensor.data }}
                   {{ sensor.symbol }}
-                  
+
                 </td>
 
-                </tr>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      
+
     </div>
   </div>
 </template>
@@ -175,30 +177,48 @@ export default {
 
 
     async loadStations() {
-      await axios
-        // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
-        .get(`${this.$baseURL}/home-data/`)
-        .then((r) => {
-          this.stations = r.data;
-          if (r.status == 200) {
-            this.loading_i = false;
-          }
-        })
-        .catch(function (e) {
-          console.log(e);
-        });
-// console.log(this.stations);
-      // Check Station TAB
+
+
+      if (this.profile.station == null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/`)
+          .then((r) => {
+            this.stations = r.data;
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      } else if (this.profile.station != null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
+          .then((r) => {
+            this.stations = r.data;
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      }
+
+
+
+
+
+
+
+
+
+
+
       for (let i = 0; i < this.stations.length; i++) {
-        // if (this.stations[i][0].station_type == 2) {
-        //   this.awlr_stations.push(this.stations[i]);
-        // }
         if (this.stations[i][0].station_type == 1) {
           this.arr_stations.push(this.stations[i]);
         }
-        // if (this.stations[i][0].station_type == 3) {
-        //   this.aws_stations.push(this.stations[i]);
-        // }
       }
 
       // setInterval(
@@ -302,15 +322,36 @@ export default {
 
       setInterval(
         function () {
-          axios
-            // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
-            .get(`${this.$baseURL}/home-data/`)
-            .then((r) => {
-              this.stations = r.data;
-            })
-            .catch(function (e) {
-              console.log(e);
-            });
+
+          if (this.profile.station == null) {
+            axios
+              .get(`${this.$baseURL}/home-data/`)
+              .then((r) => {
+                this.stations = r.data;
+                if (r.status == 200) {
+                  this.loading_i = false;
+                }
+              })
+              .catch(function (e) {
+                console.log(e);
+              });
+          } else if (this.profile.station != null) {
+            axios
+              .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
+              .then((r) => {
+                this.stations = r.data;
+                if (r.status == 200) {
+                  this.loading_i = false;
+                }
+              })
+              .catch(function (e) {
+                console.log(e);
+              });
+          }
+
+
+
+
           // console.log(this.stations[38]);
           for (let i = 0; i < this.stations.length; i++) {
             if (this.stations[i][0].station_type == 2) {
@@ -341,7 +382,7 @@ export default {
         }.bind(this),
         15000
       );
-console.log('before interval');
+      console.log('before interval');
       console.log(this.aws_head_pre[0]);
 
       setInterval(
@@ -412,6 +453,8 @@ console.log('before interval');
   },
 
   created() {
+    this.extractUserInfo()
+
     this.ava_width = screen.availWidth;
     this.ava_height = screen.availHeight;
 

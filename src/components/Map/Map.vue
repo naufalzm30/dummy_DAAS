@@ -8,13 +8,13 @@
         </div>
         <div class="col-12">
           <Stations :stations="stations" :loading_i="loading_i" class="shadow-sm border mt-2 bg-white"
-            style="border-radius: 15px" @station-selected="handleStationSelected"/>
+            style="border-radius: 15px" @station-selected="handleStationSelected" />
         </div>
       </div>
 
     </div>
     <div class="col-6">
-      <StationData :station="selectedStation"/>
+      <StationData :station="selectedStation" />
     </div>
   </div>
 </template>
@@ -42,7 +42,8 @@ export default {
       largeIcon: [25, 25],
       marker: null,
       loading_i: true,
-      status: [], selectedStation: null // the selected station
+      status: [], selectedStation: null, // the selected station,
+      userStation: null
     };
   },
   watch: {
@@ -53,7 +54,8 @@ export default {
           this.selectedStation = newStations[0];
         }
       }
-    }},
+    }
+  },
   methods: {
     handleStationSelected(station) {
       this.selectedStation = station;
@@ -65,9 +67,22 @@ export default {
       this.stations[e][0].iconSize = this.normalIcon;
     },
     async loadData() {
-      await axios
-        // .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
-        .get(`${this.$baseURL}/home-data/`)
+      if (this.profile.station == null) {
+        await axios
+        .get(`${this.$baseURL}/home-data`)
+        .then((r) => {
+          this.stations = r.data.map((r) => {
+            r[0].iconSize = this.normalIcon;
+            return r;
+          });
+          console.log(this.stations.length);
+          if (r.status == 200) {
+            this.loading_i = false;
+          }
+        });
+      } else if (this.profile.station != null) {
+        await axios
+        .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
         .then((r) => {
           this.stations = r.data.map((r) => {
             r[0].iconSize = this.normalIcon;
@@ -77,20 +92,34 @@ export default {
             this.loading_i = false;
           }
         });
+      }
 
-      await axios
-        // .get(`${this.$baseURL}/home-data/non-auth/${this.balai}`)
-        .get(`${this.$baseURL}/home-data/`)
-        .then((r) => {
-          this.status = r.data;
-          // console.log(this.status);
-        })
-        .catch(function (e) {
-          console.log(e);
-        });
+
+
+      if (this.profile.station == null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/`)
+          .then((r) => {
+            this.status = r.data;
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      } else if (this.profile.station != null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
+          .then((r) => {
+            this.status = r.data;
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      }
+
     },
   },
   created() {
+    this.extractUserInfo()
     let user = localStorage.getItem("user-info") || {};
     if (typeof user == "object") {
       this.balai = this.$fixedBalai;
@@ -105,6 +134,8 @@ export default {
   },
   mounted() {
     this.loadData();
+
+
   },
 };
 </script>

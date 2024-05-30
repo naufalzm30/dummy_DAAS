@@ -21,7 +21,6 @@
         <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       </div>
       <!-- text_duration: {{ text_duration }} custom_duration: {{ custom_duration }} -->
-
       <div class="d-flex flex-row" v-if="ava_width > 768">
         <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
           class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
@@ -133,15 +132,11 @@ export default {
       var sensor = [];
       var st_name_length = null;
       var sensor_length = null;
-      console.log("station:", this.profile.station);
 
       if (this.profile.station == null) {
         await axios
-          // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
           .get(`${this.$baseURL}/home-data`)
-
           .then((r) => {
-
             r.data.forEach((e) => {
               st_name.push(e[0].station_name.length);
               sensor.push(
@@ -168,13 +163,9 @@ export default {
 
           });
       } else if (this.profile.station != null) {
-        // console.log(this.profile);
         await axios
-          // .get(`${this.$proxyBaseUrl}/home-data/non-auth/${this.$proxyFixedBalai}`)
           .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
-
           .then((r) => {
-
             r.data.forEach((e) => {
               st_name.push(e[0].station_name.length);
               sensor.push(
