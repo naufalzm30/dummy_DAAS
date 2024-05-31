@@ -3,7 +3,7 @@
     <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div> -->
-    <div v-if="station">
+    <div v-if="station" >
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
           <div class="row">
@@ -16,7 +16,7 @@
                   " />
             </div>
 
-            <div class="col-md-8 my-0">
+            <div class="col-md-8 my-0" :class="{ 'mt-2': ava_width < 768 }">
               <div class="row">
                 <div class="col-md-10 col-10">
                   <div style="
@@ -101,13 +101,13 @@
                 </Chart>
 
                 <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
-                  <div class="col-sm-6">
-                    <div class="float-start" style="margin-top: -2px; margin-left: 17px">
+                  <div class="col">
+                    <div class="float-start" style="margin-top: -2px; margin-left: 20px">
                       {{ formatPrevDate(station[1].chart.chart_date) }}
 
                     </div>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col">
                     <div class="float-end mx-1">
                       {{ formatDate(station[1].chart.chart_date) }}
                     </div>
@@ -140,12 +140,12 @@
                   :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
                 </Chart>
                 <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
-                  <div class="col-sm-6">
-                    <div class="float-start" style="margin-top: -2px; margin-left: 17px">
+                  <div class="col">
+                    <div class="float-start" style="margin-top: -2px; margin-left: 27px">
                       {{ formatPrevDate(station[1].chart.chart_date) }}
                     </div>
                   </div>
-                  <div class="col-sm-6">
+                  <div class="col">
                     <div class="float-end mx-1">
                       {{ formatDate(station[1].chart.chart_date) }}
                     </div>
@@ -183,7 +183,7 @@ export default {
     station: {
       // type: Object,
       default: null
-    }
+    },
   },
   data() {
     return {
@@ -202,6 +202,7 @@ export default {
         centralLabel: "70%",
       },
       currentIndex: 0,
+      ava_width: null
     };
   },
   components: {
@@ -401,6 +402,8 @@ export default {
         this.balai = 0;
       }
     }
+    this.ava_width = screen.availWidth;
+
   },
 };
 </script>

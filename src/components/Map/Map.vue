@@ -1,9 +1,9 @@
 <template>
   <div class="row">
-    <div class="col-6">
+    <div class="col" :class="{ 'col-6': ava_width > 768 }">
       <div class="row">
         <div class="col-12">
-          <StationMap :stations="stations" :status="status" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
+          <StationMap  :stations="stations" :status="status" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
             style="border-radius: 15px" />
         </div>
         <div class="col-12">
@@ -13,7 +13,7 @@
       </div>
 
     </div>
-    <div class="col-6">
+    <div class="col" :class="{ 'col-6': ava_width > 768 }">
       <StationData :station="selectedStation" />
     </div>
   </div>
@@ -43,7 +43,8 @@ export default {
       marker: null,
       loading_i: true,
       status: [], selectedStation: null, // the selected station,
-      userStation: null
+      userStation: null,
+      ava_width: null,
     };
   },
   watch: {
@@ -131,6 +132,8 @@ export default {
         this.balai = 0;
       }
     }
+    this.ava_width = screen.availWidth;
+
   },
   mounted() {
     this.loadData();

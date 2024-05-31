@@ -46,8 +46,6 @@
           </span>
         </marquee-text>
       </div>
-
-
       <Map />
       <Footer />
     </div>
