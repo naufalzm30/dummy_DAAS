@@ -46,23 +46,23 @@
               <div class="my-1 mx-2">
                 <div class="info-label">Lokasi</div>
                 <div class="info-value">{{ stations[0].location }}</div>
-                <div class="info-value" v-if="stations[0].station_type == 2">
-                  {{ stations[0].sungai }}
-                </div>
               </div>
-
+              <div class="my-1 mx-2">
+                <div class="info-label">Nameplate Head</div>
+                <div class="info-value">{{ stations[0].nameplate_head }}</div>
+              </div>
             </div>
 
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
-                <div class="info-label">Latitude</div>
-                <div class="info-value">{{ stations[0].latitude }}<span>&#176;</span></div>
+                <div class="info-label">Jumlah Pompa</div>
+                <div class="info-value">{{ stations[0].jumlah_pompa }}</div>
 
               </div>
               <div class="my-1 mx-2">
-                <div class="info-label">Longitude</div>
+                <div class="info-label">Jumlah Operasi</div>
                 <div class="info-value">
-                  {{ stations[0].longitude }}<span>&#176;</span>
+                  {{ stations[0].jumlah_operasi }}
                 </div>
               </div>
             </div>
@@ -409,12 +409,13 @@ b {
 /* Add your desired styles for the label and value containers */
 .info-label {
   font-weight: 500;
-  font-size: 1rem;
+  /* font-size: 0.9rem; */
+  font-size: 1em;
 }
 
 .info-value {
   margin-left: 10px;
-  font-size: 1rem;
+  font-size: 0.9em;
 }
 
 /* Dummy element style to hide if needed */

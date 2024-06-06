@@ -29,7 +29,7 @@
 
                 <span>Detail</span>
               </button>
-<!-- {{ detailAPI }} -->
+              <!-- {{ detailAPI }} -->
               <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
                 <li class="dropdown-item">
                   Jumlah Data: {{ detailAPI.jumlah_data }}
@@ -57,13 +57,61 @@
             </div>
           </div>
 
-          <div class="col-md-2 d-flex justify-content-end" style="margin-top: 1rem">
+          <!-- <div class="col-md-2 d-flex justify-content-end" style="margin-top: 1rem">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" @click.prevent="download"
               title="Download sesuai filter tanggal" style="font-size: 0.8rem">
               <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                 style="font-size: 1.2rem; margin-right: 3px"></i>
               <span>Download</span>
             </button>
+          </div> -->
+
+          <div
+            class="col-md-2 d-flex justify-content-end"
+            style="margin-top: 1rem"
+          >
+            <div class="dropdown">
+              <button
+                class="btn btn-sm btn-primary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                title="Download sesuai filter tanggal"
+                style="font-size: 0.8rem"
+              >
+                <i
+                  v-if="loading_dw"
+                  class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"
+                ></i>
+
+                <span>Download</span>
+              </button>
+
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click.prevent="download"
+                    style="font-size: 0.9rem"
+                    >Semua Data</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click.prevent="persentaseData"
+                    style="font-size: 0.9rem"
+                    >Persentase Data</a
+                  >
+                </li>
+                
+              </ul>
+            </div>
           </div>
 
         </div>
@@ -91,7 +139,7 @@
                       <td v-for="(item, index) in conf_2(
       row.weather_data,
       row.symbol
-    )" :key="index+2">
+    )" :key="index + 2">
                         {{ item.data }} {{ item.symbol }}
                       </td>
                       <td v-if="balai == 0">{{ row.bat.toFixed(2) }} v</td>
@@ -394,14 +442,19 @@ export default {
             }
           })
           .catch((error) => console.log(error));
-      } else if (this.role == "is_guess") {
+      }
+    },
+    persentaseData() {
+      this.loading_dw = true;
+      if (this.role == "is_staff" || this.role == "is_superuser") {
         axios
           .post(
-            `${this.$baseURL}/excel/`,
+            `${this.$baseURL}/excel-summary/`,
             {
               station_id: this.$route.params.id,
-              first_date: null,
-              last_date: null,
+              user_id: this.user_id,
+              first_date: this.startDate,
+              last_date: this.endDate,
             },
             {
               responseType: "arraybuffer",
@@ -414,10 +467,20 @@ export default {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute(
-              "download",
-              `Laporan Pembacaan Sensor ${this.nama}.xlsx`
-            );
+
+
+            if (this.startDate && this.endDate) {
+              link.setAttribute(
+                "download",
+                `Persentase Data ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+              );
+            } else {
+              link.setAttribute(
+                "download",
+                `Persentase Data ${this.nama}.xlsx`
+              );
+            }
+
             document.body.appendChild(link);
             link.click();
 

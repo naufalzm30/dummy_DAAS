@@ -8,6 +8,7 @@
       <hr />
       {{ backupStat }}
     </span>
+    <!-- {{ userStationList }} -->
     <div class="box" v-if="!loading_i">
       <div class="tab-content station-list" id="tabs-tabContent">
 
@@ -50,6 +51,14 @@
                   </span>
                 </td>
                 <td>
+                  <router-link v-if="profile.station == null" type="button" class="btn btn-sm btn-primary m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station[0].id + '/0' }">Data</router-link>
+                  <router-link v-else type="button" class="btn btn-primary btn-sm m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station[0].id + '/' + profile.station.id }">Data</router-link>
+                </td>
+                <td>
                   {{ station[0].station_name }}
                 </td>
 
@@ -89,12 +98,15 @@ import ok_i from "@/assets/icons/map/ok.svg";
 import s1_i from "@/assets/icons/map/s1.svg";
 import s2_i from "@/assets/icons/map/s2.svg";
 import s3_i from "@/assets/icons/map/s3.svg";
+import { mapActions } from 'vuex';
 
 export default {
   name: "stations",
   data() {
     return {
       stations: [],
+      users: [],
+      userStationList: [],
       backupStat: [],
       awlr_stations: [],
       arr_stations: [],
@@ -109,7 +121,7 @@ export default {
 
       awlr_head_pre: [],
       arr_head_pre: [],
-   
+
       role: null,
       balai: null,
       indexSt: null,
@@ -127,6 +139,8 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['updateUserStationList']),
+
     selectStation(station) {
       this.$emit('station-selected', station);
     },
@@ -173,7 +187,51 @@ export default {
 
       return [hour, minute].join(":");
     },
+    async loadUser() {
 
+      if (this.profile.station == null) {
+      await axios
+        .get(`${this.$baseURL}/station/0`, {
+          headers: {
+            Authorization: `Token ${this.token}`,
+          },
+        })
+        .then((r) => {
+
+          if (r.data.length > 1) {
+            this.users = r.data;
+          } else {
+            this.users = [r.data];
+          }
+
+          if (r.status == 200) {
+            this.loading_i = false;
+          }
+        });
+      } else if (this.profile.station != null) {
+        await axios
+          .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+          })
+          .then((r) => {
+
+            if (r.data.length > 1) {
+              this.users = r.data;
+            } else {
+              this.users = [r.data];
+            }
+
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+            this.userStationList = this.users.map(station => station.id)
+            this.updateUserStationList(this.userStationList);
+            // console.log('L ist.vue', this.userStationList);
+          });
+      }
+    },
 
     async loadStations() {
       if (this.profile.station == null) {
@@ -213,21 +271,21 @@ export default {
         .filter((x) => x == 1).length;
 
       this.total_arr = total_arr;
-  
-      this.arr_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
+
+      this.arr_head = ["No", "Status", "Data", "Nama Stasiun", "Tanggal", "Waktu"];
 
 
       for (let i = 0; i < this.stations.length; i++) {
-      
+
         if (this.stations[i][0].station_type == 1) {
           this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
         }
-        
+
       }
       let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
       this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
-      
-      
+
+
 
       setInterval(
         function () {
@@ -263,7 +321,7 @@ export default {
 
           // console.log(this.stations[38]);
           for (let i = 0; i < this.stations.length; i++) {
-         
+
             if (this.stations[i][0].station_type == 1) {
               this.arr_stations = [];
               for (let i = 0; i < this.stations.length; i++) {
@@ -272,7 +330,7 @@ export default {
                 }
               }
             }
-          
+
           }
         }.bind(this),
         15000
@@ -282,21 +340,21 @@ export default {
 
       setInterval(
         function () {
-          
-          this.arr_head = ["No", "Status", "Nama Stasiun", "Tanggal", "Waktu"];
+
+          this.arr_head = ["No", "Status", "Data", "Nama Stasiun", "Tanggal", "Waktu"];
 
           for (let i = 0; i < this.stations.length; i++) {
-            
+
             if (this.stations[i][0].station_type == 1) {
               this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
             }
-            
+
           }
           let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
           this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
-          
 
-          
+
+
         }.bind(this),
         15000
       );
@@ -342,12 +400,15 @@ export default {
         this.balai = 0;
       }
     }
+    this.loadUser();
+
   },
   mounted() {
     this.loadStations();
     this.formatDate();
     this.formatTime();
     window.addEventListener("scroll", this.handleScroll);
+    this.updateUserStationList(this.userStationList);
   },
   destroyed() {
     window.removeEventListener("scroll", this.handleScroll);

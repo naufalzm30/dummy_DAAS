@@ -38,7 +38,7 @@ body,
 .zero {
   padding: 0;
   margin: 0;
-  background-color: #f4f7ff !important;
+  background-color: #fff !important;
 }
 
 @media (min-width: 1280px) {

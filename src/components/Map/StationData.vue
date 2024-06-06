@@ -53,18 +53,22 @@
                     <div class="info-label">Lokasi</div>
                     <div class="info-value">{{ station[0].location }}</div>
                   </div>
+                  <div class="my-1 mx-2">
+                    <div class="info-label">Nameplate Head</div>
+                    <div class="info-value"> {{ station[0].nameplate_head }}</div>
 
+                  </div>
                 </div>
                 <div class="col-md-5 mx-0">
                   <div class="my-1 mx-2">
-                    <div class="info-label">Latitude</div>
-                    <div class="info-value"> {{ station[0].latitude }}<span>&#176;</span></div>
+                    <div class="info-label">Jumlah Pompa</div>
+                    <div class="info-value"> {{ station[0].jumlah_pompa }}</div>
 
                   </div>
                   <div class="my-1 mx-2">
-                    <div class="info-label">Longitude</div>
+                    <div class="info-label">Jumlah Operasi</div>
                     <div class="info-value">
-                      {{ station[0].longitude }}<span>&#176;</span>
+                      {{ station[0].jumlah_operasi }}
                     </div>
                   </div>
                 </div>

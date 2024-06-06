@@ -10,7 +10,7 @@
             </router-link>
             <div>
               <p class="bws">{{ $app_title }}</p>
-              <p class="bws">WATER MONITORING APP</p>
+              <p class="bws">WATER MONITORING</p>
             </div>
           </div>
         </div>
@@ -55,11 +55,8 @@
               <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
             </div>
             <div class="container-login100-form-btn">
-              <button v-if="$app_title == 'WEATHER-VUE'" class="login100-form-btn rounded bg-weather" type="submit"
-                style="min-width: 100%">
-                Sign In
-              </button>
-              <button v-else class="login100-form-btn rounded" type="submit" style="min-width: 100%">
+             
+              <button class="login100-form-btn rounded" type="submit" style="min-width: 100%">
                 Sign In
               </button>
             </div>
@@ -188,7 +185,7 @@ export default {
   margin: 0;
   margin-left: 25px;
   /* color: #fbb040; */
-  color:   #092581
+  color:   #a5d310
 }
 
 .weather {
