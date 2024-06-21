@@ -85,8 +85,7 @@ export default {
       balai_name: "",
       custom_duration: null,
       showCarousel: true,
-      proxyUrl: null,
-      proxyFixedBalai: null,
+  
 
     };
   },
@@ -209,10 +208,10 @@ export default {
       this.balai = this.$proxyFixedBalai;
 
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.balai}`)
+        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
         .then((r) => {
           this.detBalai = r.data[0];
-        });
+        })
 
 
 

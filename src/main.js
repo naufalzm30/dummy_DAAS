@@ -24,7 +24,7 @@ Vue.prototype.$imageURL = "https://pdamsby.blitztechnology.tech";
 // Vue.prototype.$baseURL = "https://weatherapi.blitztechnology.tech";
 
 //PROXY
-Vue.prototype.$proxyBaseUrl = "https://weatherapi.blitztechnology.tech"
+// Vue.prototype.$proxyBaseUrl = "https://weatherapi.blitztechnology.tech"
 Vue.prototype.$proxyFixedBalai = 6
 //
 

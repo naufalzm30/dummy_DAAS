@@ -26,12 +26,9 @@
             <img :src="dash_i" class="mr-4" /><span>Dashboard</span>
           </router-link>
         </li>
-
+<!-- {{ balai }} -->
         <li v-if="accessToken"></li>
-
         <div v-else>
-
-
           <li class="my-1">
             <hr style="color: white" />
             <router-link :to="{ name: 'Login', params: { balai_id: balai } }"

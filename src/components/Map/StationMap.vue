@@ -268,7 +268,7 @@ export default {
       this.balai = this.$fixedBalai;
 
       await axios
-        .get(`${this.$proxyBaseUrl}/balai/non-auth/${this.$proxyFixedBalai}`)
+        .get(`${this.$baseURL}/balai/non-auth/${this.$proxyFixedBalai}`)
         .then((r) => {
           this.detBalai = r.data[0];
         });

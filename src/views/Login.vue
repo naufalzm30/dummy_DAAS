@@ -16,7 +16,7 @@
         </div>
 
         <div class="col-md-6">
-          <div v-if="balais.length == 0" class="d-flex flex-column justify-content-center align-items-center pb-3">
+          <div v-if="stats.length == 0" class="d-flex flex-column justify-content-center align-items-center pb-3">
             <div class="content-container">
               <div class="icon-container">
                 <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
@@ -105,7 +105,7 @@ export default {
       balai: null,
       spin_i: false,
       balai_name: "",
-      balais: [],
+      stats: [],
     };
   },
   methods: {
@@ -162,8 +162,8 @@ export default {
       }
     },
     async loadBalai() {
-      await axios.get(`${this.$proxyBaseUrl}/balai/non-auth/0`).then((r) => {
-        this.balais = r.data;
+      await axios.get(`${this.$baseURL}/home-data`).then((r) => {
+        this.stats = r.data;
       });
     },
   },
