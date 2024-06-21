@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-6">
           <ChartData v-if="stations.length > 0" :stations="stations" :status="status" :ava_width="ava_width"
-            :debitData="debitData" :totalData="totalData" :debitLabel="debitLabel" />
+            :debitData="debitData" :totalData="totalData" :debitLabel="debitLabel" :batteryData="batteryData"/>
         </div>
       </div>
       <Footer />
@@ -80,8 +80,10 @@ export default {
       return this.filteredData.map(item => item.weather_data[0]).reverse();
     },
     totalData() {
-      // console.log(this.filteredData);
       return this.filteredData.map(item => item.weather_data[1]).reverse();
+    },
+    batteryData() {
+      return this.filteredData.map(item => item.bat).reverse();
     },
     debitLabel() {
       return this.filteredData.map(item => item.waktu).reverse();

@@ -106,7 +106,7 @@
     card[0].chart.chart_data,
     card[0].chart.array_act_icon,
     card[0].chart.array_act_symbol
-  )" :key="index+1">
+  )" :key="index + 1">
         <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
           <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
     " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
@@ -118,13 +118,35 @@
             <Chart style="height: 28vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="totalData"
               :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChartFiltered">
             </Chart>
-
-
-
           </div>
         </div>
-
       </div>
+      <div v-if="role == 'is_superuser'">
+        <div v-for="(item, index) in chart_f2nd(
+    card[0].chart.mix_status,
+    card[0].chart.chart_sensor,
+    card[0].chart.array_act_chart_type,
+    card[0].chart.chart_label,
+    card[0].chart.chart_data,
+    card[0].chart.array_act_icon,
+    card[0].chart.array_act_symbol
+  )" :key="index + 2">
+          <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
+            <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
+    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
+              <div>
+                <h6 class="px-2 pt-2">
+                  Data Battery
+                </h6>
+              </div>
+              <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="batteryData"
+                :title="`Battery (V)`" is="BatteryChartFiltered">
+              </Chart>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -132,6 +154,7 @@
 <script>
 import LineChartFiltered from "@/components/Chart/LineChartFiltered";
 import TotalChartFiltered from "@/components/Chart/TotalChartFiltered";
+import BatteryChartFiltered from "@/components/Chart/BatteryChartFiltered";
 
 import mtc_i from "@/assets/icons/map/mtc.svg";
 import ok_i from "@/assets/icons/map/ok.svg";
@@ -141,9 +164,10 @@ import s3_i from "@/assets/icons/map/s3.svg";
 
 export default {
   name: "Slider",
-  props: ["debitData", "debitLabel", "totalData", "stations", "status", "ava_width",],
+  props: ["debitData", "debitLabel", "totalData", "batteryData", "stations", "status", "ava_width",],
   components: {
     LineChartFiltered,
+    BatteryChartFiltered,
     TotalChartFiltered,
   },
   data() {

@@ -14,37 +14,114 @@
 
       <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
         <div class="row" :data-page-count="ds.dsPagecount">
-          <div v-if="loading_i && role == 'is_guess'"
-            class="d-flex flex-column justify-content-center align-items-center">
-            <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
-          </div>
-
           <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
             <div class="dropdown col">
-              <button class="btn btn-sm btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                title="Download sesuai filter tanggal" style="font-size: 0.8rem">
-                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>
+              <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Summary Data"
+                style="font-size: 0.8rem">
 
-                <span>Detail</span>
+                <span><i class="zmdi zmdi-search"></i></span>
               </button>
-              <!-- {{ detailAPI }} -->
               <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
-                <li class="dropdown-item">
+                <li class="dropdown-item py-0" style="font-size: 0.9rem;">
                   Jumlah Data: {{ detailAPI.jumlah_data }}
                 </li>
-                <li class="dropdown-item">
-                  Rata Debit: {{ detailAPI.rata_debit }}
+                <li class="dropdown-item py-0" style="font-size: 0.9rem;">
+                  Rata Debit: {{ detailAPI.rata_debit }} L/s
                 </li>
-                <li class="dropdown-item">
-                  Total Volume: {{ detailAPI.total_volume }}
+                <li class="dropdown-item py-0" style="font-size: 0.9rem;">
+                  Total Volume: {{ detailAPI.total_volume }} m³
+                </li>
+                <li v-if="role != 'is_superadmin'" class="dropdown-item py-0" style="font-size: 0.9rem;">
+                  Persentase Data: {{ persenData }}
                 </li>
               </ul>
             </div>
           </div>
 
-          <div class="col-md-9 d-flex justify-content-end" style="margin-top: 1rem">
+          <div v-if="role != 'is_superadmin' && noteBalai == 'ptab'" class="col-md-1 d-flex justify-content-start"
+            style="margin-top: 1rem">
+            <div class="dropdown col">
+              <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Upload file CSV"
+                style="font-size: 0.8rem">
+                <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"></i>
+                <span><i class="zmdi zmdi-upload"></i></span>
+              </button>
+              <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
+                <li>
+                  <a class="dropdown-item py-0" href="#" @click.prevent="formatData" style="font-size: 0.9rem">Download
+                    Format Data Sensor</a>
+                </li>
+                <li>
+                  <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="dropdown-item py-0" href="#" style="font-size: 0.9rem">Upload Data Sensor</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div
+            class="modal fade"
+            id="staticBackdrop"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form @submit.prevent="modified">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                      Upload File
+                      <span v-for="item in stations" :key="item.id">
+                        <span v-if="item.id == $route.params.id">
+                          {{ item.station_name }}
+                        </span>
+                      </span>
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+                      <label>
+                        <input
+                          type="file"
+                          id="file"
+                          v-on:change="onChangeFileUpload($event)"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-primary"
+                      data-bs-dismiss="modal"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md d-flex justify-content-end" style="margin-top: 1rem">
             <div v-if="role != 'is_guess'">
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
               <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
@@ -57,59 +134,29 @@
             </div>
           </div>
 
-          <!-- <div class="col-md-2 d-flex justify-content-end" style="margin-top: 1rem">
-            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" @click.prevent="download"
-              title="Download sesuai filter tanggal" style="font-size: 0.8rem">
-              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                style="font-size: 1.2rem; margin-right: 3px"></i>
-              <span>Download</span>
-            </button>
-          </div> -->
-
-          <div
-            class="col-md-2 d-flex justify-content-end"
-            style="margin-top: 1rem"
-          >
+          <div class="col-md-1 d-flex justify-content-end" style="margin-top: 1rem">
             <div class="dropdown">
-              <button
-                class="btn btn-sm btn-primary dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton1"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                title="Download sesuai filter tanggal"
-                style="font-size: 0.8rem"
-              >
-                <i
-                  v-if="loading_dw"
-                  class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"
-                ></i>
-
-                <span>Download</span>
+              <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                title="Download sesuai filter tanggal" style="font-size: 0.8rem">
+                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"></i>
+                <span><i class="zmdi zmdi-download"></i></span>
               </button>
 
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="download"
-                    style="font-size: 0.9rem"
-                    >Semua Data</a
-                  >
+                  <a class="dropdown-item py-0" href="#" @click.prevent="download" style="font-size: 0.9rem">Semua
+                    Data</a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click.prevent="persentaseData"
-                    style="font-size: 0.9rem"
-                    >Persentase Data</a
-                  >
+                  <a class="dropdown-item py-0" href="#" @click.prevent="hourlyData" style="font-size: 0.9rem">Data per
+                    jam</a>
                 </li>
-                
+                <li>
+                  <a class="dropdown-item py-0" href="#" @click.prevent="dailyData" style="font-size: 0.9rem">Data per
+                    hari</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -202,11 +249,15 @@ export default {
       sensors: [],
       first_date: null,
       last_date: null,
+      loading_detail: false,
+      loading_upload: false,
       loading_dw: false,
       loading_date_data: false,
       loading_data: false,
       localStations: this.stations.slice(),
-      detailAPI: null
+      detailAPI: null,
+      persenData: null,
+      noteBalai: null
     };
   },
   computed: {
@@ -253,7 +304,7 @@ export default {
     }
   },
   methods: {
-
+ 
     conf_2(a, b) {
       return a.map((card, i) => {
         return {
@@ -444,7 +495,7 @@ export default {
           .catch((error) => console.log(error));
       }
     },
-    persentaseData() {
+    hourlyData() {
       this.loading_dw = true;
       if (this.role == "is_staff" || this.role == "is_superuser") {
         axios
@@ -472,12 +523,12 @@ export default {
             if (this.startDate && this.endDate) {
               link.setAttribute(
                 "download",
-                `Persentase Data ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+                `Data per jam ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
               );
             } else {
               link.setAttribute(
                 "download",
-                `Persentase Data ${this.nama}.xlsx`
+                `Data per jam ${this.nama}.xlsx`
               );
             }
 
@@ -489,6 +540,85 @@ export default {
             }
           })
           .catch((error) => console.log(error));
+      }
+    },
+    dailyData() {
+      this.loading_dw = true;
+      if (this.role == "is_staff" || this.role == "is_superuser") {
+        axios
+          .post(
+            `${this.$baseURL}/excel-summary-daily/`,
+            {
+              station_id: this.$route.params.id,
+              user_id: this.user_id,
+              first_date: this.startDate,
+              last_date: this.endDate,
+            },
+            {
+              responseType: "arraybuffer",
+              headers: {
+                Authorization: `Token ${this.token}`,
+              },
+            }
+          )
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+
+
+            if (this.startDate && this.endDate) {
+              link.setAttribute(
+                "download",
+                `Data per hari ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+              );
+            } else {
+              link.setAttribute(
+                "download",
+                `Data per hari ${this.nama}.xlsx`
+              );
+            }
+
+            document.body.appendChild(link);
+            link.click();
+
+            if (response.status == 200) {
+              this.loading_dw = false;
+            }
+          })
+          .catch((error) => console.log(error));
+      }
+    },
+    async formatData() {
+      try {
+        const response = await axios.get(
+          `${this.$baseURL}/input-data-format/`,
+          {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+            responseType: 'blob', // Ensure the response is treated as a blob
+          }
+        );
+
+        // Create a blob from the response data
+        const blob = new Blob([response.data], { type: response.data.type });
+
+        // Create a link element
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'Format Input Data Sensor.xlsx'); // Set the file name
+
+        // Append the link to the body
+        document.body.appendChild(link);
+
+        // Trigger the download by simulating click
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading the file', error);
       }
     },
     async search() {
@@ -562,8 +692,9 @@ export default {
             this.loading_date_data = false;
           }
           // console.log('SUMMARY:', result.data[1][0].summary);
-          // console.log('result sum', result.data[1][0].summary);
+
           this.detailAPI = result.data[1][0].summary;
+          this.persenData = result.data[0].persentase_data;
         })
         .catch((error) => console.log(error));
     },
@@ -576,7 +707,7 @@ export default {
       formData.append("csvFile", this.csvFile);
 
       axios
-        .post(`${this.$baseURL}/csv/`, formData, {
+        .post(`${this.$baseURL}/input-data-excel/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Token ${this.token}`,
@@ -586,8 +717,8 @@ export default {
           console.log("status: ", r.status);
 
           if (r.status == 204) {
-            this.csv_code = "File uploaded successfully, reload the page";
-            // location.reload();
+            this.csv_code = "File uploaded successfully";
+            location.reload();
           }
         })
         .catch((error) => {
@@ -596,6 +727,11 @@ export default {
           // this.csv_code = error;
         });
     },
+    getBalaiValue() {
+      const note = this.stations[0].note;
+      const match = note.match(/balai:\s*([^,\]]+)/);
+      return match ? match[1].trim() : null;
+    }
   },
   created() {
     this.gAuthUser();
@@ -604,7 +740,10 @@ export default {
   async mounted() {
     if (this.filterData.length == 0) {
       this.detailAPI = this.stations[1][0].summary;
+      this.persenData = this.stations[0].persentase_data;
     }
+    // console.log('note', this.getBalaiValue());
+    this.noteBalai = this.getBalaiValue()
   },
 };
 </script>

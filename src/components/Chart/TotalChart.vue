@@ -36,16 +36,17 @@ export default {
       {
         labels: this.label,
         datasets: [
-          {
+           {
             label: this.title,
-            borderColor: "rgba(99,102,241,1)",
+            borderColor: "rgba(35,137,218, 0.9)",
             pointBackgroundColor: "rgba(35,137,218, 0.9)",
             borderWidth: 2,
-            pointBorderColor: "white",
+            // pointBorderColor: "white",
             backgroundColor: this.gradient,
             data: this.chartData,
-            pointRadius: 0,
-            lineTension: 0,
+            pointRadius: 1,
+            // lineTension: 0,
+            tension: 0.1,
             z: 2,
           },
         ],
@@ -101,16 +102,17 @@ export default {
       {
         labels: this.label,
         datasets: [
-          {
+           {
             label: this.title,
-            borderColor: "rgba(99,102,241,1)",
+            borderColor: "rgba(35,137,218, 0.9)",
             pointBackgroundColor: "rgba(35,137,218, 0.9)",
             borderWidth: 2,
-            pointBorderColor: "white",
+            // pointBorderColor: "white",
             backgroundColor: this.gradient,
             data: this.chartData,
-            pointRadius: 0,
-            lineTension: 0,
+            pointRadius: 1,
+            // lineTension: 0,
+            tension: 0.1,
             z: 2,
           },
         ],

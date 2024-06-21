@@ -100,7 +100,7 @@
                   </div>
                 </div>
 
-                <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
                   :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
                 </Chart>
 
@@ -140,7 +140,7 @@
                   </div>
                 </div>
 
-                <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
                   :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
                 </Chart>
                 <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
@@ -159,6 +159,44 @@
             </div>
 
           </div>
+            <!-- TOTALIZER -->
+            <!-- <div v-for="(item, index) in chart_f2nd(
+      card.chart.mix_status,
+      card.chart.chart_sensor,
+      card.chart.array_act_chart_type,
+      card.chart.chart_label,
+      card.chart.chart_data,
+      [card.chart.chart_date],
+      card.chart.array_act_icon,
+      card.chart.array_act_symbol
+    )" :key="index">
+            <div v-if="!item.mix" style="border-radius: 15px">
+              <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+                <div>
+                  <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
+                    Data {{ item.sensor[0][0] }}
+                  </div>
+                </div>
+
+                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
+                  :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
+                </Chart>
+                <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
+                  <div class="col">
+                    <div class="float-start" style="margin-top: -2px; margin-left: 27px">
+                      {{ formatPrevDate(station[1].chart.chart_date) }}
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="float-end mx-1">
+                      {{ formatDate(station[1].chart.chart_date) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div> -->
         </div>
       </div>
     </div>
@@ -529,6 +567,10 @@ b {
 </style>
 
 <style>
+.hChart25 {
+  height: 25vh;
+}
+
 .highcharts-figure {
   min-width: 360px;
   max-width: 660px;
