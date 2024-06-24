@@ -203,7 +203,7 @@ export default {
     },
     getUkuranSensor(note) {
       const parsedNote = this.parseNoteString(note);
-      return parsedNote['ukuran_sensor'];
+      return parsedNote['kapasitas'];
     },
     formatDate(date) {
       var monthShortNames = [
