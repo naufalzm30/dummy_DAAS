@@ -55,14 +55,14 @@
 
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
-                <div class="info-label">Jumlah Pompa</div>
-                <div class="info-value">{{ stations[0].jumlah_pompa }}</div>
+                <div class="info-label">Jumlah Operasi</div>
+                <div class="info-value">{{ stations[0].jumlah_operasi }}</div>
 
               </div>
               <div class="my-1 mx-2">
-                <div class="info-label">Jumlah Operasi</div>
+                <div class="info-label">Kapasitas</div>
                 <div class="info-value">
-                  {{ stations[0].jumlah_operasi }}
+                  {{ getUkuranSensor(stations[0].note) }} L/s
                 </div>
               </div>
             </div>
@@ -187,7 +187,24 @@ export default {
   },
 
   methods: {
+    parseNoteString(note) {
+      const keyValuePairs = note.slice(1, -1).split(', ');
+      const parsedObject = keyValuePairs.reduce((obj, pair) => {
+        const index = pair.indexOf(':');
+        if (index > -1) {
+          const key = pair.slice(0, index).trim();
+          const value = pair.slice(index + 1).trim();
+          obj[key] = value;
+        }
+        return obj;
+      }, {});
 
+      return parsedObject;
+    },
+    getUkuranSensor(note) {
+      const parsedNote = this.parseNoteString(note);
+      return parsedNote['ukuran_sensor'];
+    },
     formatDate(date) {
       var monthShortNames = [
         "Jan",
