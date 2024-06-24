@@ -32,8 +32,8 @@
                 <span class="input-group-icon">
                   <img src="../assets/icons/user.svg" alt="usr icon" />
                 </span>
-                <input type="text" class="form-control py-2" style="padding: 0.375rem 0.75rem;"
-                  placeholder="Username" id="username" autocomplete="username" v-model="username" required />
+                <input type="text" class="form-control py-2" style="padding: 0.375rem 0.75rem;" placeholder="Username"
+                  id="username" autocomplete="username" v-model="username" required />
               </div>
             </div>
 
@@ -55,7 +55,7 @@
               <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
             </div>
             <div class="container-login100-form-btn">
-             
+
               <button class="login100-form-btn rounded" type="submit" style="min-width: 100%">
                 Sign In
               </button>
@@ -105,7 +105,7 @@ export default {
       balai: null,
       spin_i: false,
       balai_name: "",
-      stats: [],
+      stats: false,
     };
   },
   methods: {
@@ -162,9 +162,13 @@ export default {
       }
     },
     async loadBalai() {
-      await axios.get(`${this.$baseURL}/home-data`).then((r) => {
-        this.stats = r.data;
-      });
+      try {
+        await axios.get(`${this.$baseURL}`);
+        this.stats = true; // Set stats to true if the request is successful
+      } catch (error) {
+        console.error('Error fetching API:', error);
+        this.stats = false; // Set stats to false if there's an error
+      }
     },
   },
   created() {
@@ -185,7 +189,7 @@ export default {
   margin: 0;
   margin-left: 25px;
   /* color: #fbb040; */
-  color:   #a5d310
+  color: #a5d310
 }
 
 .weather {

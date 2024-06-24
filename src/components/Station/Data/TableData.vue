@@ -11,7 +11,6 @@
 
     <div style="border-radius: 15px" class="mt-2">
       <!-- {{ filterData }} -->
-
       <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
         <div class="row" :data-page-count="ds.dsPagecount">
           <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
@@ -32,14 +31,14 @@
                 <li class="dropdown-item py-0" style="font-size: 0.9rem;">
                   Total Volume: {{ detailAPI.total_volume }} m³
                 </li>
-                <li v-if="role != 'is_superadmin'" class="dropdown-item py-0" style="font-size: 0.9rem;">
+                <li v-if="role == 'is_superuser'" class="dropdown-item py-0" style="font-size: 0.9rem;">
                   Persentase Data: {{ persenData }}
                 </li>
               </ul>
             </div>
           </div>
 
-          <div v-if="role != 'is_superadmin' && noteBalai == 'ptab'" class="col-md-1 d-flex justify-content-start"
+          <div v-if="role != 'is_superuser' && noteBalai == 'ptab'" class="col-md-1 d-flex justify-content-start"
             style="margin-top: 1rem">
             <div class="dropdown col">
               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
@@ -149,11 +148,11 @@
                   <a class="dropdown-item py-0" href="#" @click.prevent="download" style="font-size: 0.9rem">Semua
                     Data</a>
                 </li>
-                <li>
+                <li v-if="role == 'is_superuser'">
                   <a class="dropdown-item py-0" href="#" @click.prevent="hourlyData" style="font-size: 0.9rem">Data per
                     jam</a>
                 </li>
-                <li>
+                <li v-if="role == 'is_superuser'">
                   <a class="dropdown-item py-0" href="#" @click.prevent="dailyData" style="font-size: 0.9rem">Data per
                     hari</a>
                 </li>

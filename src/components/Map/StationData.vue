@@ -3,7 +3,7 @@
     <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div> -->
-    <div v-if="station" >
+    <div v-if="station">
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
           <div class="row">
@@ -91,7 +91,7 @@
       [card.chart.chart_date],
       card.chart.array_act_icon,
       card.chart.array_act_symbol
-    )" :key="index+1">
+    )" :key="index + 1">
             <div v-if="!item.mix" style="border-radius: 15px">
               <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
                 <div>
@@ -100,8 +100,8 @@
                   </div>
                 </div>
 
-                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
-                  :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
+                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]" :chart-data="item.chart_data[0]"
+                  :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
                 </Chart>
 
                 <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
@@ -140,8 +140,8 @@
                   </div>
                 </div>
 
-                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]"
-                  :chart-data="item.chart_data[0]" :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
+                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]" :chart-data="item.chart_data[0]"
+                  :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
                 </Chart>
                 <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
                   <div class="col">
@@ -159,8 +159,8 @@
             </div>
 
           </div>
-            <!-- TOTALIZER -->
-            <!-- <div v-for="(item, index) in chart_f2nd(
+          <!-- TOTALIZER -->
+          <!-- <div v-for="(item, index) in chart_f2nd(
       card.chart.mix_status,
       card.chart.chart_sensor,
       card.chart.array_act_chart_type,
@@ -200,7 +200,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -397,15 +397,30 @@ export default {
     },
     async loadHomeData() {
       try {
-        const response = await axios.get(
-          `${this.$baseURL}/home-data/`
-        );
-        this.stations = response.data.map((element) => {
-          const x = element[1].chart.chart_sensor.flat().length;
-          const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
-          element.duration = duration;
-          return element;
-        });
+
+
+        if (this.profile.station == null) {
+          const response = await axios.get(
+            `${this.$baseURL}/home-data/`
+          );
+          this.stations = response.data.map((element) => {
+            const x = element[1].chart.chart_sensor.flat().length;
+            const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
+            element.duration = duration;
+            return element;
+          });
+        } else {
+          const response = await axios.get(
+            `${this.$baseURL}/home-data/${this.profile.station.id}`
+          );
+          this.stations = response.data.map((element) => {
+            const x = element[1].chart.chart_sensor.flat().length;
+            const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
+            element.duration = duration;
+            return element;
+          });
+        }
+
 
         this.loading_i = false;
         // console.log(this.stations);
@@ -415,7 +430,7 @@ export default {
       }
     },
 
-    
+
   },
   mounted() {
     this.formatDate();
@@ -430,7 +445,7 @@ export default {
       15000
     );
 
-    
+
   },
   created() {
     let user = localStorage.getItem("user-info") || {};

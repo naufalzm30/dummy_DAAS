@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-6">
           <ChartData v-if="stations.length > 0" :stations="stations" :status="status" :ava_width="ava_width"
-            :debitData="debitData" :totalData="totalData" :debitLabel="debitLabel" :batteryData="batteryData"/>
+            :debitData="debitData" :totalData="totalData" :debitLabel="debitLabel" :batteryData="batteryData" />
         </div>
       </div>
       <Footer />
@@ -119,15 +119,25 @@ export default {
           this.msg = "An error occurred on the server. Please try again later.";
         });
 
-      await axios
-        .get(`${this.$baseURL}/home-data/`)
-        .then((r) => {
-          this.status = r.data;
-          // console.log(this.status);
-        })
-        .catch(function (e) {
-          console.log(e);
-        });
+      if (this.profile.station == null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/`)
+          .then((r) => {
+            this.status = r.data;
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      } else if (this.profile.station != null) {
+        await axios
+          .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
+          .then((r) => {
+            this.status = r.data;
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+      }
     },
     checkStationInList() {
       const isInList = this.getUserStationList.includes(this.profile.station.id);
@@ -156,11 +166,11 @@ export default {
   created() {
     this.extractUserInfo()
     this.gAuthStation();
- 
+
     this.loadData();
   },
-  beforeUnmount(){
-    
+  beforeUnmount() {
+
   }
 };
 </script>

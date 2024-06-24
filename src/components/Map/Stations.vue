@@ -51,6 +51,9 @@
                   </span>
                 </td>
                 <td>
+                  {{ station[0].station_name }}
+                </td>
+                <td>
                   <router-link v-if="profile.station == null" type="button" class="btn btn-sm btn-primary m-0 p-0"
                     style="font-size: 0.8rem; padding: 0 5px!important;"
                     :to="{ path: '/station/data/' + station[0].id + '/0' }">Data</router-link>
@@ -58,9 +61,7 @@
                     style="font-size: 0.8rem; padding: 0 5px!important;"
                     :to="{ path: '/station/data/' + station[0].id + '/' + profile.station.id }">Data</router-link>
                 </td>
-                <td>
-                  {{ station[0].station_name }}
-                </td>
+
 
                 <td>
                   {{ formatDate(station[1].table.date) }}
@@ -190,24 +191,24 @@ export default {
     async loadUser() {
 
       if (this.profile.station == null) {
-      await axios
-        .get(`${this.$baseURL}/station/0`, {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        })
-        .then((r) => {
+        await axios
+          .get(`${this.$baseURL}/station/0`, {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+          })
+          .then((r) => {
 
-          if (r.data.length > 1) {
-            this.users = r.data;
-          } else {
-            this.users = [r.data];
-          }
+            if (r.data.length > 1) {
+              this.users = r.data;
+            } else {
+              this.users = [r.data];
+            }
 
-          if (r.status == 200) {
-            this.loading_i = false;
-          }
-        });
+            if (r.status == 200) {
+              this.loading_i = false;
+            }
+          });
       } else if (this.profile.station != null) {
         await axios
           .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
@@ -272,7 +273,7 @@ export default {
 
       this.total_arr = total_arr;
 
-      this.arr_head = ["No", "Status", "Data", "Nama Stasiun", "Tanggal", "Waktu"];
+      this.arr_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu"];
 
 
       for (let i = 0; i < this.stations.length; i++) {
@@ -341,7 +342,7 @@ export default {
       setInterval(
         function () {
 
-          this.arr_head = ["No", "Status", "Data", "Nama Stasiun", "Tanggal", "Waktu"];
+          this.arr_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu"];
 
           for (let i = 0; i < this.stations.length; i++) {
 
