@@ -200,7 +200,7 @@ export default {
     },
   },
   async created() {
-
+    this.extractUserInfo()
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
 
@@ -240,7 +240,7 @@ export default {
   },
   async mounted() {
     this.checkScreen();
-    this.extractUserInfo()
+    
   },
 };
 </script>

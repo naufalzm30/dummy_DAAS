@@ -284,7 +284,7 @@ export default {
 
       }
       let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
-      this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
+      this.arr_head.splice.apply(this.arr_head, [6, 0].concat(arr_uniq));
 
 
 
@@ -352,7 +352,7 @@ export default {
 
           }
           let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
-          this.arr_head.splice.apply(this.arr_head, [5, 0].concat(arr_uniq));
+          this.arr_head.splice.apply(this.arr_head, [6, 0].concat(arr_uniq));
 
 
 

@@ -3,6 +3,7 @@
     <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div> -->
+    
     <div v-if="station">
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
@@ -396,9 +397,8 @@ export default {
       });
     },
     async loadHomeData() {
+      // console.log(this.profile);
       try {
-
-
         if (this.profile.station == null) {
           const response = await axios.get(
             `${this.$baseURL}/home-data/`
@@ -448,6 +448,8 @@ export default {
 
   },
   created() {
+    this.extractUserInfo()
+
     let user = localStorage.getItem("user-info") || {};
     if (typeof user == "object") {
       this.balai = this.$fixedBalai;
