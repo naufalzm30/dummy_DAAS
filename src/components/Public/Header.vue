@@ -10,15 +10,20 @@
     </div>
 
     <div v-if="!isMobileView" id="mySidebar" :class="{ sidebar: true, 'sidebar-open': sidebarOpen }"
-      v-show="!isMobileView || sidebarOpen" @mouseover="toggleSidebar()" @mouseleave="toggleOut()" style="z-index: 91000">
+      v-show="!isMobileView || sidebarOpen" @mouseover="toggleSidebar()" @mouseleave="toggleOut()"
+      style="z-index: 91000">
 
       <ul>
         <li class="centered-image">
           <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" />
-          <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
+          <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" class="mobile-icon"
+            style="max-width: 50px" />
           <img v-else :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
-
         </li>
+
+        <li v-if="role == 'is_superuser'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">SADM </li>
+        <li v-if="role == 'is_staff'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">ADM </li>
+        <li class="centered-image" style="font-size: 0.7rem; color: lightgray;">{{ profile.user.username }} </li>
 
         <li class="my-1 mt-3">
           <router-link :to="{ name: 'Home', params: { balai_id: balai } }" style="display: flex; flex-direction: row"
@@ -26,7 +31,7 @@
             <img :src="dash_i" class="mr-4" /><span>Dashboard</span>
           </router-link>
         </li>
-<!-- {{ balai }} -->
+        <!-- {{ balai }} -->
         <li v-if="accessToken"></li>
         <div v-else>
           <li class="my-1">
@@ -38,55 +43,20 @@
           </li>
         </div>
 
-        <!-- <li class="accordion my-1" v-if="accessToken && role == 'is_superuser'">
-          <a href="#collapseTwo" data-bs-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
-            aria-controls="collapseTwo" class="collapsible" style="display: flex; flex-direction: row">
-            <img :src="data_i" class="mr-4" /><span>Data</span>
-          </a>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingOne">
-            <div style="margin-left: 50px">
-              <ul>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Balai' }">Balai</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Provinsi' }">Provinsi</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Sensor' }">Sensor</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Logger' }">Logger</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Modem' }">Modem</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Icon' }">Icon</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'Backup' }">Dummy</router-link>
-                </li>
-                <li class="my-1">
-                  <router-link :to="{ name: 'SensorMod' }">SensorMod</router-link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </li> -->
+
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-            name: 'Station',
-            params: { balai_id: balai, user_id: user_id },
-          }" style="display: flex; flex-direction: row">
+      name: 'Station',
+      params: { balai_id: balai, user_id: user_id },
+    }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Station</span>
           </router-link>
         </li>
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-            name: 'User',
-            params: { balai_id: balai },
-          }" style="display: flex; flex-direction: row" v-if="role == 'is_superuser'">
+      name: 'User',
+      params: { balai_id: balai },
+    }" style="display: flex; flex-direction: row" v-if="role == 'is_superuser'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
         </li>
@@ -108,7 +78,9 @@
           <img v-else :src="logoPU" class="mobile-icon" style="max-width: 50px" />
 
         </li>
-
+        <li v-if="role == 'is_superuser'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">SADM </li>
+        <li v-if="role == 'is_staff'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">ADM </li>
+        <li class="centered-image" style="font-size: 0.7rem; color: lightgray;">{{ profile.user.username }} </li>
         <li class="my-1 mt-3">
           <router-link :to="{ name: 'Home', params: { balai_id: balai } }" style="display: flex; flex-direction: row"
             class="active" aria-current="page">
@@ -130,20 +102,20 @@
           </li>
         </div>
 
-       
+
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-            name: 'Station',
-            params: { balai_id: balai, user_id: user_id },
-          }" style="display: flex; flex-direction: row">
+      name: 'Station',
+      params: { balai_id: balai, user_id: user_id },
+    }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Station</span>
           </router-link>
         </li>
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-            name: 'User',
-            params: { balai_id: balai },
-          }" style="display: flex; flex-direction: row" v-if="role == 'is_staff' || role == 'is_superuser'">
+      name: 'User',
+      params: { balai_id: balai },
+    }" style="display: flex; flex-direction: row" v-if="role == 'is_staff' || role == 'is_superuser'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
         </li>
@@ -195,6 +167,8 @@ export default {
   },
   computed: mapState(["accessToken"]),
   async created() {
+    this.extractUserInfo();
+
     let user = localStorage.getItem("user-info") || {};
     if (typeof user == "object") {
       this.balai = this.$proxyFixedBalai;

@@ -3,7 +3,7 @@
     <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div> -->
-    
+
     <div v-if="station">
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
@@ -54,23 +54,41 @@
                     <div class="info-label">Lokasi</div>
                     <div class="info-value">{{ station[0].location }}</div>
                   </div>
-                  <div class="my-1 mx-2">
+                  <div v-if="getBalai(station[0].note) == 'distribusi'" class="my-1 mx-2">
+                    <div class="info-label">In/Out Interzone</div>
+                    <div class="info-value">{{ station[0].interzone }}</div>
+                  </div>
+                  <div v-else class="my-1 mx-2">
                     <div class="info-label">Nameplate Head</div>
                     <div class="info-value"> {{ station[0].nameplate_head }}</div>
                   </div>
                 </div>
-                <div class="col-md-5 mx-0">
+
+                <div v-if="getBalai(station[0].note) == 'distribusi'" class="col-md-5 mx-0">
+                  <div class="my-1 mx-2">
+                    <div class="info-label"> Max Flow</div>
+                    <div class="info-value">{{ station[0].max_flow }} L/s</div>
+                  </div>
+                  <div class="my-1 mx-2">
+                    <div class="info-label">Diameter Pipa</div>
+                    <div class="info-value">
+                      {{ station[0].diameter }} mm
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="col-md-5 mx-0">
                   <div class="my-1 mx-2">
                     <div class="info-label">Jumlah Operasi</div>
-                    <div class="info-value"> {{ station[0].jumlah_operasi }}</div>
+                    <div class="info-value">{{ station[0].jumlah_operasi }}</div>
                   </div>
                   <div class="my-1 mx-2">
                     <div class="info-label">Kapasitas</div>
                     <div class="info-value">
-                      {{ getUkuranSensor(station[0].note) }} L/s
+                      {{ station[0].kapasitas }} L/s
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -218,13 +236,7 @@ export default {
   },
   methods: {
     parseNoteString(note) {
-      // Remove the brackets and split the string by commas
       const keyValuePairs = note.slice(1, -1).split(', ');
-
-      // Debugging: Log the key-value pairs
-      // console.log('Key-Value Pairs:', keyValuePairs);
-
-      // Reduce the array of key-value pairs into an object
       const parsedObject = keyValuePairs.reduce((obj, pair) => {
         const index = pair.indexOf(':');
         if (index > -1) {
@@ -237,9 +249,9 @@ export default {
 
       return parsedObject;
     },
-    getUkuranSensor(note) {
+    getBalai(note) {
       const parsedNote = this.parseNoteString(note);
-      return parsedNote['kapasitas'];
+      return parsedNote['balai'];
     },
     formatDate(date) {
       var monthShortNames = [

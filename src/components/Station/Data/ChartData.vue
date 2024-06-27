@@ -40,29 +40,46 @@
               </div>
             </div>
           </div>
-
+          <!-- {{ stations[0] }} -->
           <div class="row">
+
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Lokasi</div>
                 <div class="info-value">{{ stations[0].location }}</div>
               </div>
-              <div class="my-1 mx-2">
+              <div v-if="getBalai(stations[0].note) == 'distribusi'" class="my-1 mx-2">
+                <div class="info-label">In/Out Interzone</div>
+                <div class="info-value">{{ stations[0].interzone }}</div>
+              </div>
+              <div v-else class="my-1 mx-2">
                 <div class="info-label">Nameplate Head</div>
                 <div class="info-value">{{ stations[0].nameplate_head }}</div>
               </div>
+
             </div>
 
-            <div class="col-md-6 mx-0">
+            <div v-if="getBalai(stations[0].note) == 'distribusi'" class="col-md-6 mx-0">
+              <div class="my-1 mx-2">
+                <div class="info-label"> Max Flow</div>
+                <div class="info-value">{{ stations[0].max_flow }} L/s</div>
+              </div>
+              <div class="my-1 mx-2">
+                <div class="info-label">Diameter Pipa</div>
+                <div class="info-value">
+                  {{ stations[0].diameter }} mm
+                </div>
+              </div>
+            </div>
+            <div v-else class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Jumlah Operasi</div>
                 <div class="info-value">{{ stations[0].jumlah_operasi }}</div>
-
               </div>
               <div class="my-1 mx-2">
                 <div class="info-label">Kapasitas</div>
                 <div class="info-value">
-                  {{ getUkuranSensor(stations[0].note) }} L/s
+                  {{ stations[0].kapasitas }} L/s
                 </div>
               </div>
             </div>
@@ -201,9 +218,9 @@ export default {
 
       return parsedObject;
     },
-    getUkuranSensor(note) {
+    getBalai(note) {
       const parsedNote = this.parseNoteString(note);
-      return parsedNote['kapasitas'];
+      return parsedNote['balai'];
     },
     formatDate(date) {
       var monthShortNames = [

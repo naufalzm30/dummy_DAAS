@@ -43,6 +43,7 @@
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.station_name }}</td>
                       <td>{{ row.location }}</td>
+                      <td v-if="role == 'is_superuser'">{{ getBalai(row.note) }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
                       <td>
@@ -127,9 +128,11 @@ export default {
         {
           name: "Nama Stasiun",
         },
-
         {
           name: "Lokasi",
+        },
+        {
+          name: "Produksi",
         },
         {
           name: "Latitude",
@@ -157,6 +160,24 @@ export default {
   },
  
   methods: {
+    parseNoteString(note) {
+      const keyValuePairs = note.slice(1, -1).split(', ');
+      const parsedObject = keyValuePairs.reduce((obj, pair) => {
+        const index = pair.indexOf(':');
+        if (index > -1) {
+          const key = pair.slice(0, index).trim();
+          const value = pair.slice(index + 1).trim();
+          obj[key] = value;
+        }
+        return obj;
+      }, {});
+
+      return parsedObject;
+    },
+    getBalai(note) {
+      const parsedNote = this.parseNoteString(note);
+      return parsedNote['balai'];
+    },
     ...mapActions(['updateUserStationList']),
     click(event, i) {
       let toset;
