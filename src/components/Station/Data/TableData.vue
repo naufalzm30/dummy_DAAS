@@ -38,7 +38,7 @@
             </div>
           </div>
 
-          <div v-if="role != 'is_superuser' && noteBalai == 'ptab'" class="col-md-1 d-flex justify-content-start"
+          <div  class="col-md-1 d-flex justify-content-start"
             style="margin-top: 1rem">
             <div class="dropdown col">
               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
@@ -49,31 +49,47 @@
                 <span><i class="zmdi zmdi-upload"></i></span>
               </button>
               <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
-                <li>
-                  <a class="dropdown-item py-0" href="#" @click.prevent="formatData" style="font-size: 0.9rem">Download
-                    Format Data Sensor</a>
+                <li class="dropdown-submenu">
+                  <a class="dropdown-item dropdown-toggle py-0" href="#" style="font-size: 0.9rem">Threshold </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item py-0" href="#" @click.prevent="formatThreshold"
+                        style="font-size: 0.9rem">Download
+                        Format Threshold</a>
+                    </li>
+                    <li>
+                      <a data-bs-toggle="modal" data-bs-target="#thresholdData" class="dropdown-item py-0" href="#"
+                        style="font-size: 0.9rem">Upload Threshold</a>
+                    </li>
+                  </ul>
                 </li>
-                <li>
-                  <a data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="dropdown-item py-0" href="#" style="font-size: 0.9rem">Upload Data Sensor</a>
+                <!-- Nested Subsubmenu -->
+                <div class="dropdown-divider"></div>
+                <li v-if="role != 'is_superuser' && noteBalai == 'ptab'" class="dropdown-submenu">
+                  <a class="dropdown-item dropdown-toggle py-0" href="#" style="font-size: 0.9rem">Data Sensor</a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item py-0" href="#" @click.prevent="formatData"
+                        style="font-size: 0.9rem">Download
+                        Format Data Sensor</a>
+                    </li>
+                    <li>
+                      <a data-bs-toggle="modal" data-bs-target="#sensorData" class="dropdown-item py-0" href="#"
+                        style="font-size: 0.9rem">Upload Data Sensor</a>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </div>
           </div>
-          
-          <div
-            class="modal fade"
-            id="staticBackdrop"
-            data-bs-backdrop="static"
-            data-bs-keyboard="false"
-            tabindex="-1"
-            aria-labelledby="staticBackdropLabel"
-            aria-hidden="true"
-          >
+       
+          <div class="modal fade" id="thresholdData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="thresholdDataLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="modified">
+                <form @submit.prevent="tresholdDataUpload">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">
+                    <h5 class="modal-title" id="thresholdDataLabel">
                       Upload File
                       <span v-for="item in stations" :key="item.id">
                         <span v-if="item.id == $route.params.id">
@@ -81,37 +97,20 @@
                         </span>
                       </span>
                     </h5>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div>
                       <label>
-                        <input
-                          type="file"
-                          id="file"
-                          v-on:change="onChangeFileUpload($event)"
-                        />
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
                       </label>
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-secondary"
-                      data-bs-dismiss="modal"
-                    >
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
                       Close
                     </button>
-                    <button
-                      type="submit"
-                      class="btn btn-sm btn-primary"
-                      data-bs-dismiss="modal"
-                    >
+                    <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
                       Upload
                     </button>
                   </div>
@@ -119,7 +118,41 @@
               </div>
             </div>
           </div>
-
+          <div class="modal fade" id="sensorData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="sensorDataLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form @submit.prevent="sensorDataUpload">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="sensorDataLabel">
+                      Upload File
+                      <span v-for="item in stations" :key="item.id">
+                        <span v-if="item.id == $route.params.id">
+                          {{ item.station_name }}
+                        </span>
+                      </span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+                      <label>
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
+                      Upload
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
           <div class="col-md d-flex justify-content-end" style="margin-top: 1rem">
             <div v-if="role != 'is_guess'">
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
@@ -303,7 +336,7 @@ export default {
     }
   },
   methods: {
- 
+
     conf_2(a, b) {
       return a.map((card, i) => {
         return {
@@ -620,6 +653,38 @@ export default {
         console.error('Error downloading the file', error);
       }
     },
+    async formatThreshold() {
+      try {
+        const response = await axios.get(
+          `${this.$baseURL}/threshold-format/`,
+          {
+            headers: {
+              Authorization: `Token ${this.token}`,
+            },
+            responseType: 'blob', // Ensure the response is treated as a blob
+          }
+        );
+
+        // Create a blob from the response data
+        const blob = new Blob([response.data], { type: response.data.type });
+
+        // Create a link element
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'Format Input Threshold.xlsx'); // Set the file name
+
+        // Append the link to the body
+        document.body.appendChild(link);
+
+        // Trigger the download by simulating click
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading the file', error);
+      }
+    },
     async search() {
       this.loading_date_data = true;
       await axios
@@ -700,13 +765,39 @@ export default {
     onChangeFileUpload(event) {
       this.csvFile = event.target.files[0];
     },
-    modified() {
+    sensorDataUpload() {
       let formData = new FormData();
       formData.append("station_id", this.$route.params.id);
       formData.append("csvFile", this.csvFile);
 
       axios
         .post(`${this.$baseURL}/input-data-excel/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Token ${this.token}`,
+          },
+        })
+        .then((r) => {
+          console.log("status: ", r.status);
+
+          if (r.status == 204) {
+            this.csv_code = "File uploaded successfully";
+            location.reload();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
+          // this.csv_code = error;
+        });
+    },
+    tresholdDataUpload() {
+      let formData = new FormData();
+      formData.append("station_id", this.$route.params.id);
+      formData.append("csvFile", this.csvFile);
+
+      axios
+        .post(`${this.$baseURL}/input-threshold/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Token ${this.token}`,
@@ -802,5 +893,20 @@ td {
 .table-bordered td {
   border: 1px solid #dee2e6;
   /* Add the desired border style */
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -0.125rem;
+  display: none;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
 }
 </style>

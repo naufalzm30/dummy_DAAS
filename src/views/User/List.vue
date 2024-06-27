@@ -24,7 +24,7 @@
         v-slot="{ ds }"
         :ds-data="users"
         :ds-sortby="sortBy"
-        :ds-search-in="['user', 'created_by', 'phone']"
+        :ds-search-in="['user', 'created_by']"
       >
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
@@ -63,7 +63,7 @@
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.user }}</td>
-                      <td>{{ row.phone }}</td>
+                    
                    
                  
                       <td v-if="role == 'is_superuser'">
@@ -151,10 +151,7 @@ export default {
           name: "Nama",
           field: "user",
         },
-        {
-          name: "Phone",
-          field: "phone",
-        },
+       
     
       ],
       colSuper: [
