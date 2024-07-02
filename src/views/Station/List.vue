@@ -16,7 +16,8 @@
             class="btn btn-primary float-right my-2" style="padding: 5px 10px">Tambah Data</router-link>
         </div>
       </div>
-      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name']">
+      
+      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']">
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
         </div>
