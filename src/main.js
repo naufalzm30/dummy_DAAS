@@ -14,6 +14,11 @@ import axios from "axios";
 import store from "@/store";
 import HighchartsVue from "highcharts-vue";
 import inactivityDirective from "./inactivityDirective.js";
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
+
+Vue.component('DatePicker', DatePicker);
+
 
 Vue.config.productionTip = false;
 Vue.directive("inactivity", inactivityDirective);

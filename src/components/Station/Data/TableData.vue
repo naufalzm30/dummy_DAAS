@@ -38,8 +38,7 @@
             </div>
           </div>
 
-          <div  class="col-md-1 d-flex justify-content-start"
-            style="margin-top: 1rem">
+          <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
             <div class="dropdown col">
               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Upload file CSV"
@@ -82,7 +81,7 @@
               </ul>
             </div>
           </div>
-       
+
           <div class="modal fade" id="thresholdData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="thresholdDataLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -153,16 +152,18 @@
               </div>
             </div>
           </div>
-          <div class="col-md d-flex justify-content-end" style="margin-top: 1rem">
+          <div class="col-md d-flex justify-content-end" style="margin-top: 1rem;">
             <div v-if="role != 'is_guess'">
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
               <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
                 style="font-size: 1.2rem"></i>
-              <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
-                style="font-size: 0.8rem" />
-              <label for="to" class="px-3" style="font-size: 0.8rem; font-weight: normal">s.d</label>
-              <input name="" type="datetime-local" v-model="endDate" @change="search" title="Data Akhir"
-                style="font-size: 0.8rem" />
+              <!-- <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
+                style="font-size: 0.7rem" /> -->
+              <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="DD/MM/YYYY HH:mm" placeholder="Select first date"></DatePicker>
+              <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+              <!-- <input name="" type="datetime-local" v-model="endDate" @change="search" title="Data Akhir"
+                style="font-size: 0.7rem" /> -->
+              <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="DD/MM/YYYY HH:mm" placeholder="Select last date"></DatePicker>
             </div>
           </div>
 
@@ -289,7 +290,8 @@ export default {
       localStations: this.stations.slice(),
       detailAPI: null,
       persenData: null,
-      noteBalai: null
+      noteBalai: null,
+      datetime: null
     };
   },
   computed: {
@@ -336,7 +338,17 @@ export default {
     }
   },
   methods: {
-
+    formatDatePicker(date) {
+      if (!date) return null;
+      // Format date to YYYY-MM-DDTHH:mm
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    },
     conf_2(a, b) {
       return a.map((card, i) => {
         return {
@@ -489,8 +501,8 @@ export default {
             `${this.$baseURL}/excel/`,
             {
               station_id: this.$route.params.id,
-              first_date: this.startDate,
-              last_date: this.endDate,
+              first_date: this.formatDatePicker(this.startDate),
+              last_date: this.formatDatePicker(this.endDate)
             },
             {
               responseType: "arraybuffer",
@@ -508,7 +520,7 @@ export default {
             if (this.startDate && this.endDate) {
               link.setAttribute(
                 "download",
-                `Laporan Pembacaan Sensor ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+                `Laporan Pembacaan Sensor ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
               );
             } else {
               link.setAttribute(
@@ -536,8 +548,8 @@ export default {
             {
               station_id: this.$route.params.id,
               user_id: this.user_id,
-              first_date: this.startDate,
-              last_date: this.endDate,
+              first_date: this.formatDatePicker(this.startDate),
+              last_date: this.formatDatePicker(this.endDate)
             },
             {
               responseType: "arraybuffer",
@@ -555,7 +567,7 @@ export default {
             if (this.startDate && this.endDate) {
               link.setAttribute(
                 "download",
-                `Data per jam ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+                `Data per jam ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
               );
             } else {
               link.setAttribute(
@@ -583,8 +595,8 @@ export default {
             {
               station_id: this.$route.params.id,
               user_id: this.user_id,
-              first_date: this.startDate,
-              last_date: this.endDate,
+              first_date: this.formatDatePicker(this.startDate),
+              last_date: this.formatDatePicker(this.endDate)
             },
             {
               responseType: "arraybuffer",
@@ -602,7 +614,7 @@ export default {
             if (this.startDate && this.endDate) {
               link.setAttribute(
                 "download",
-                `Data per hari ${this.nama} ${this.startDate} sd ${this.endDate}.xlsx`
+                `Data per hari ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
               );
             } else {
               link.setAttribute(
@@ -693,8 +705,10 @@ export default {
           {
             station_id: this.$route.params.id,
             user_id: this.user_id,
-            first_date: this.startDate,
-            last_date: this.endDate,
+            // first_date: this.startDate,
+            // last_date: this.endDate,
+            first_date: this.formatDatePicker(this.startDate),
+            last_date: this.formatDatePicker(this.endDate)
           },
           {
             headers: {
@@ -908,5 +922,9 @@ td {
 
 .dropdown-submenu:hover>.dropdown-menu {
   display: block;
+}
+
+.mx-datepicker {
+  width: 180px;
 }
 </style>
