@@ -63,8 +63,10 @@
                   </ul>
                 </li>
                 <!-- Nested Subsubmenu -->
-                <div class="dropdown-divider"></div>
-                <li v-if="role != 'is_superuser' && noteBalai == 'ptab'" class="dropdown-submenu">
+                
+                
+                <li v-if="role == 'is_staff' && uploadVal == '1'" class="dropdown-submenu">
+                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item dropdown-toggle py-0" href="#" style="font-size: 0.9rem">Data Sensor</a>
                   <ul class="dropdown-menu">
                     <li>
@@ -291,7 +293,8 @@ export default {
       detailAPI: null,
       persenData: null,
       noteBalai: null,
-      datetime: null
+      datetime: null,
+      uploadVal: null
     };
   },
   computed: {
@@ -835,6 +838,11 @@ export default {
       const note = this.stations[0].note;
       const match = note.match(/balai:\s*([^,\]]+)/);
       return match ? match[1].trim() : null;
+    },
+    getUploadValue() {
+      const note = this.stations[0].note;
+      const match = note.match(/upload:\s*([^,\]]+)/);
+      return match ? match[1].trim() : null;
     }
   },
   created() {
@@ -848,6 +856,7 @@ export default {
     }
     // console.log('note', this.getBalaiValue());
     this.noteBalai = this.getBalaiValue()
+    this.uploadVal = this.getUploadValue()
   },
 };
 </script>
