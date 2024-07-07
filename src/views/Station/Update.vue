@@ -81,30 +81,7 @@
                   </div>
                 </div>
              
-                <div class="col-md pb-3">
-                  <div class="form-group">
-                    <label for="inputNaPe">Nama Pengamat</label>
-                    <input
-                      v-model="item.observator"
-                      type="text"
-                      class="form-control"
-                      id="inputNaPe"
-                      placeholder="Nama Pengamat"
-                    />
-                  </div>
-                </div>
-                <div class="col-md pb-3">
-                  <div class="form-group">
-                    <label for="inputNoPe">No Pengamat</label>
-                    <input
-                      v-model="item.observator_phone"
-                      type="text"
-                      class="form-control"
-                      id="inputNoPe"
-                      placeholder="Nama Pengamat"
-                    />
-                  </div>
-                </div>
+                
               </div>
             </div>
             <div class="card">
@@ -264,7 +241,7 @@
                         v-model="item.note"
                         class="form-control"
                         id="exampleFormControlTextarea1"
-                        rows="2"
+                        rows="3"
                       ></textarea>
                     </div>
                   </div>

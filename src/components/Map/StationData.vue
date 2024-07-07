@@ -12,7 +12,7 @@
               <img :src="`${$imageURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
                     object-fit: cover;
                     border-radius: 10px 0px 0px 10px;
-                    margin-left: 14px;
+                    margin-left: 11px;
                     width: 100%;
                   " />
             </div>

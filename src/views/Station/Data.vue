@@ -71,7 +71,9 @@ export default {
       ava_width: null,
       msg: "Fetching data, please wait...",
       e_code: null,
-      filteredData: [], // This will hold the filtered data
+      filteredData: [],
+      user_balai: null,
+      station_balai: null
     };
   },
   computed: {
@@ -92,7 +94,24 @@ export default {
   },
 
   methods: {
+    parseNoteString(note) {
+      const keyValuePairs = note.slice(1, -1).split(', ');
+      const parsedObject = keyValuePairs.reduce((obj, pair) => {
+        const index = pair.indexOf(':');
+        if (index > -1) {
+          const key = pair.slice(0, index).trim();
+          const value = pair.slice(index + 1).trim();
+          obj[key] = value;
+        }
+        return obj;
+      }, {});
 
+      return parsedObject;
+    },
+    getBalai(note) {
+      const parsedNote = this.parseNoteString(note);
+      return parsedNote['balai'];
+    },
     updateFilteredData(filteredData) {
       this.filteredData = filteredData;
     },
@@ -109,6 +128,10 @@ export default {
         .then((r) => {
           this.stations = r.data;
           // console.log(this.stations);
+          // console.log('balai_station:', this.getBalai(this.station[0].note));
+          // console.log(this.getBalai(this.stations[0].note));
+          this.station_balai = this.getBalai(this.stations[0].note)
+
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -137,21 +160,34 @@ export default {
           .catch(function (e) {
             console.log(e);
           });
+
+          // console.log(this.user_balai, this.station_balai);
+        this.user_balai = this.profile.role_balai
+
+          if (this.user_balai != this.station_balai) {
+            this.logoutUser()
+            console.log('user_balai', this.user_balai);
+            console.log('station_balai', this.station_balai);
+          }
       }
     },
     checkStationInList() {
       if (this.profile.station != null) {
         const isInList = this.getUserStationList.includes(this.profile.station.id);
-      // console.log('Is station in list?', isInList);
-      // console.log(isInList);
-      if (this.profile.role == "is_staff") {
-        if (!isInList) {
-          this.logoutUser()
+
+        // console.log('role_profile: ', this.profile.role_balai);
+        // console.log('balai_station', this.stations);
+        this.user_balai = this.profile.role_balai
+        if (this.profile.role == "is_staff") {
+          // if (!isInList) {
+          //   this.logoutUser()
+          // }
+          // console.log(this.user_balai, this.station_balai);
+
         }
+        return isInList;
       }
-      return isInList;
-      }
-      
+
     },
   },
   // watch: {
@@ -163,7 +199,7 @@ export default {
     this.ava_width = screen.availWidth;
     // console.log('vuex Data.vue', this.getUserStationList);
     // console.log(this.profile.station.id);
-    this.checkStationInList();
+    // this.checkStationInList();
 
   },
   created() {
