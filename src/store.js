@@ -114,6 +114,7 @@ export default new Vuex.Store({
 
             // console.log('User logged out.');
             router.push({ name: 'Home' })
+            location.reload();
         },
     }
 })

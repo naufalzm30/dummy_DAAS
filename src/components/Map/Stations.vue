@@ -316,13 +316,7 @@ export default {
                 console.log(e);
               });
           }
-
-
-
-
-          // console.log(this.stations[38]);
           for (let i = 0; i < this.stations.length; i++) {
-
             if (this.stations[i][0].station_type == 1) {
               this.arr_stations = [];
               for (let i = 0; i < this.stations.length; i++) {
@@ -334,7 +328,7 @@ export default {
 
           }
         }.bind(this),
-        15000
+        300000
       );
       // console.log('before interval');
 
@@ -357,7 +351,7 @@ export default {
 
 
         }.bind(this),
-        15000
+        300000
       );
     },
     getYear(x) {

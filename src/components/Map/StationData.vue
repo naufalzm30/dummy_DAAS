@@ -438,7 +438,7 @@ export default {
       function () {
         this.loadHomeData();
       }.bind(this),
-      15000
+      300000
     );
 
 

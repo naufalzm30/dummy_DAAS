@@ -200,6 +200,7 @@ export default {
     },
   },
   async created() {
+    
     this.extractUserInfo()
     this.balai_name = document.title;
     let user = localStorage.getItem("user-info") || {};
@@ -239,9 +240,24 @@ export default {
     }
   },
   async mounted() {
+    
     this.checkScreen();
     
   },
+  beforeMount() {
+    // Check if the page has been reloaded
+    if (!localStorage.getItem('pageReloaded')) {
+      // Set the flag in local storage
+      localStorage.setItem('pageReloaded', 'true');
+      // Reload the page
+      window.location.reload();
+    }
+  },
+
+  destroyed() {
+    // Clear the flag in local storage when the component is destroyed
+    localStorage.removeItem('pageReloaded');
+  }
 };
 </script>
 
