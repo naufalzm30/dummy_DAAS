@@ -1,219 +1,214 @@
 <template>
-  <div class="container">
-    <!-- <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
+  <div class="container px-0">
+    <div v-if="role !== 'QA' && !station" class="d-flex flex-column justify-content-center align-items-center"
+      style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
-    </div> -->
-
-    <div v-if="station">
+    </div>
+    <div v-if="role === 'QA' && !stationQA" class="d-flex flex-column justify-content-center align-items-center"
+      style="min-height: 90vh">
+      <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
+      <div class="py-2">Drawing Chart...</div>
+    </div>
+    <div v-if="station && role !== 'QA'">
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
           <div class="row">
             <div class="col-md-4 p-0 imgSZ">
-              <img :src="`${$imageURL}${station[0].image}`" class="img-fluid" alt="station-img" style="
-                    object-fit: cover;
-                    border-radius: 10px 0px 0px 10px;
-                    margin-left: 11px;
-                    width: 100%;
-                  " />
+              <img :src="`${station.image}`" class="img-fluid" alt="station-img" style="
+              object-fit: cover;
+              border-radius: 10px 0px 0px 10px;
+              margin-left: 12px;
+              width: 92%;
+            " />
             </div>
-
             <div class="col-md-8 my-0" :class="{ 'mt-2': ava_width < 768 }">
               <div class="row">
-                <div class="col-md-10 col-10">
+                <div class="col-md-7 col-7">
                   <div style="
                         font-weight: 500;
-                        font-size: 1.1em;
+                        font-size: 1rem;
                         margin-left: 7px;
                       ">
-                    {{ station[0].station_name }}
+                    {{ station.station_name }}
                   </div>
                 </div>
-                <div class="col-md-2 col-2 d-flex justify-content-end">
-                  <span v-if="station[1].table.siaga == []"> </span>
-                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ mx-1" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ mx-1" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ mx-1" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ mx-1" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ mx-1" />
-                  </span>
+                <!-- <div v-if="station.maintenance" class="col-md-5 col-5 d-flex justify-content-end align-items-center "
+                  style="font-size: 0.8rem;">
+                  <span class="dotMTC mx-1"></span>
+                  <span style="color: black;" class="mx-1">MTC</span>
+                </div> -->
+                <div class="col-md-5 col-5 d-flex justify-content-end">
+                  <div v-if="station.station_status == 'OK'" class="statusText px-2" style="font-size: 0.8rem;">
+                    <span class="dotOK mx-1"></span> <span style="color: #219653;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'maintenance'" class="statusText px-2"
+                    style="font-size: 0.8rem;">
+                    <span class="dotMTC mx-1"></span> <span style="color: black;">MTC</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'Min Threshold'" class="statusText px-2"
+                    style="font-size: 0.8rem;">
+                    <span class="dotMin mx-1"></span> <span style="color: #00B2FF;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'Max Threshold'" class="statusText px-2"
+                    style="font-size: 0.8rem;">
+                    <span class="dotMax mx-1"></span> <span style="color: #D34053;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else class="statusText px-2" style="font-size: 0.8rem;">{{ station.station_status }}</div>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col-md-7 mx-0">
                   <div class="my-1 mx-2">
                     <div class="info-label">Lokasi</div>
-                    <div class="info-value">{{ station[0].location }}</div>
+                    <div class="info-value">{{ station.location }}</div>
                   </div>
-                  <div v-if="getBalai(station[0].note) == 'distribusi'" class="my-1 mx-2">
+                  <div v-if="station.balai == 'Distribusi'" class="my-1 mx-2">
                     <div class="info-label">In/Out Interzone</div>
-                    <div class="info-value">{{ station[0].interzone }}</div>
+                    <div class="info-value">{{ station.interzone }}</div>
                   </div>
                   <div v-else class="my-1 mx-2">
                     <div class="info-label">Nameplate Head</div>
-                    <div class="info-value"> {{ station[0].nameplate_head }}</div>
+                    <div class="info-value"> {{ station.nameplate_head }}</div>
                   </div>
                 </div>
-
-                <div v-if="getBalai(station[0].note) == 'distribusi'" class="col-md-5 mx-0">
+                <div v-if="station.balai == 'Distribusi'" class="col-md-5 mx-0">
                   <div class="my-1 mx-2">
                     <div class="info-label"> Max Flow</div>
-                    <div class="info-value">{{ station[0].max_flow }} L/s</div>
+                    <div class="info-value">{{ station.max_flow }} L/s</div>
                   </div>
                   <div class="my-1 mx-2">
                     <div class="info-label">Diameter Pipa</div>
                     <div class="info-value">
-                      {{ station[0].diameter }} mm
+                      {{ station.diameter }} mm
                     </div>
                   </div>
                 </div>
                 <div v-else class="col-md-5 mx-0">
                   <div class="my-1 mx-2">
                     <div class="info-label">Jumlah Operasi</div>
-                    <div class="info-value">{{ station[0].jumlah_operasi }}</div>
+                    <div class="info-value">{{ station.jumlah_operasi }}</div>
                   </div>
                   <div class="my-1 mx-2">
                     <div class="info-label">Kapasitas</div>
                     <div class="info-value">
-                      {{ station[0].kapasitas }} L/s
+                      {{ station.kapasitas }} L/s
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <div>
-        <div v-for="card in [station[1]]" :key="card.id">
-
-          <!-- DEBIT -->
-          <div v-for="(item, index) in chart_f2(
-      card.chart.mix_status,
-      card.chart.chart_sensor,
-      card.chart.array_act_chart_type,
-      card.chart.chart_label,
-      card.chart.chart_data,
-      [card.chart.chart_date],
-      card.chart.array_act_icon,
-      card.chart.array_act_symbol
-    )" :key="index + 1">
-            <div v-if="!item.mix" style="border-radius: 15px">
-              <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
-                <div>
-                  <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
-                    Data {{ item.sensor[0][0] }}
-                  </div>
-                </div>
-
-                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]" :chart-data="item.chart_data[0]"
-                  :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChart">
-                </Chart>
-
-                <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
-                  <div class="col">
-                    <div class="float-start" style="margin-top: -2px; margin-left: 20px">
-                      {{ formatPrevDate(station[1].chart.chart_date) }}
-
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="float-end mx-1">
-                      {{ formatDate(station[1].chart.chart_date) }}
-                    </div>
-                  </div>
-                </div>
+        <div style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Data Flowmeter
+                <!-- {{ station.chart.sensor_data[0].sensor_name }} ({{ station.chart.sensor_data[0].notation }}) -->
               </div>
             </div>
-
+            <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
+              :chart-data="station.chart.sensor_data[0].value"
+              :title="`Flowmeter (${station.chart.sensor_data[0].notation})`"
+              is="LineChart">
+            </Chart>
           </div>
-          <!-- TOTALIZER -->
-          <div v-for="(item, index) in chart_f2nd(
-      card.chart.mix_status,
-      card.chart.chart_sensor,
-      card.chart.array_act_chart_type,
-      card.chart.chart_label,
-      card.chart.chart_data,
-      [card.chart.chart_date],
-      card.chart.array_act_icon,
-      card.chart.array_act_symbol
-    )" :key="index">
-            <div v-if="!item.mix" style="border-radius: 15px">
-              <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
-                <div>
-                  <div class="px-2 py-2" style="font-weight: 500; font-size: 1em">
-                    Data {{ item.sensor[0][0] }}
-                  </div>
-                </div>
-
-                <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="item.chart_label[0]" :chart-data="item.chart_data[0]"
-                  :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChart">
-                </Chart>
-                <div class="row text-secondary pb-1" style="font-size: 0.75rem; margin-top: -10px">
-                  <div class="col">
-                    <div class="float-start" style="margin-top: -2px; margin-left: 27px">
-                      {{ formatPrevDate(station[1].chart.chart_date) }}
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="float-end mx-1">
-                      {{ formatDate(station[1].chart.chart_date) }}
-                    </div>
-                  </div>
-                </div>
+        </div>
+        <div style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Data Totalizer
+                <!-- {{ station.chart.sensor_data[1].sensor_name }} ({{ station.chart.sensor_data[1].notation }}) -->
               </div>
             </div>
-
+            <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
+              :chart-data="station.chart.sensor_data[1].value"
+              :title="`Totalizer (${station.chart.sensor_data[1].notation})`"
+              is="TotalChart">
+            </Chart>
+          </div>
+        </div>
+        <div v-if="role === 'QA'" style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Data Gangguan
+                <!-- {{ station.chart.sensor_data[1].sensor_name }} ({{ station.chart.sensor_data[1].notation }}) -->
+              </div>
+            </div>
+            <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
+              :chart-data="station.chart.sensor_data[1].value"
+              :title="`${station.chart.sensor_data[1].sensor_name} (${station.chart.sensor_data[1].notation})`"
+              is="TotalChartBar">
+            </Chart>
           </div>
         </div>
       </div>
     </div>
-
+    <div v-if="stationQA && role === 'QA'">
+      <div class="mt-2">
+        <div style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div style="font-weight: 500; font-size: 1rem;margin-left: 7px;"
+                class="mt-1 d-flex justify-content-center">
+                {{ stationQA.station_name }}
+              </div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Jumlah Data
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationQA.data.map(item => item.date).reverse()"
+              :chart-data="stationQA.data.map(item => item.sum).reverse()" :title="`Jumlah Data`" is="TotalChartBar">
+            </Chart>
+          </div>
+        </div>
+        <div style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Persentase Data (%)
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationQA.data.map(item => item.date).reverse()"
+              :chart-data="stationQA.data.map(item => item.percentage).reverse()" :title="`Persentase Data (%)`"
+              is="TotalChartBar">
+            </Chart>
+          </div>
+        </div>
+        <div style="border-radius: 15px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Jumlah Gangguan
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationQA.data.map(item => item.date).reverse()"
+              :chart-data="stationQA.data.map(item => item.maintenance).reverse()" :title="`Jumlah Gangguan`"
+              is="TotalChartBar">
+            </Chart>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import LineChart from "@/components/Chart/LineChart";
 import TotalChart from "@/components/Chart/TotalChart";
-
 // import BarChart from "@/components/Chart/BarChart";
-// import MixChart from "@/components/Chart/MixChart";
-// import Gauge from "@/components/Gauge.vue";
-import axios from "axios";
-import mtc_i from "@/assets/icons/map/mtc.svg";
-import ok_i from "@/assets/icons/map/ok.svg";
-import s1_i from "@/assets/icons/map/s1.svg";
-import s2_i from "@/assets/icons/map/s2.svg";
-import s3_i from "@/assets/icons/map/s3.svg";
+import TotalChartBar from "@/components/Chart/TotalChartBar";
 
 export default {
-  name: "Slider",
-  // props: ["ava_width, station"],
-  props: {
-    station: {
-      // type: Object,
-      default: null
-    },
-  },
+  name: "StationData",
+  props: ['station', 'stationQA'],
   data() {
     return {
-      stations: [],
-      mtc_i,
-      ok_i,
-      s1_i,
-      s2_i,
-      s3_i,
+      // stations: [],
       loading_i: true,
       window_loc: "",
       options: {
@@ -229,236 +224,69 @@ export default {
   components: {
     LineChart,
     TotalChart,
-
     // BarChart,
-    // MixChart,
-    // Gauge,
+    TotalChartBar,
+  },
+  watch: {
+    // Watch the 'station' prop for changes
+    station: {
+      handler(newVal) {
+        // Perform actions when the 'station' prop changes
+        // console.log('The station prop has changed:', newVal);
+
+        // Update component data based on the new 'station' value
+        this.updateComponentData(newVal);
+      },
+      deep: true // This ensures the watcher also detects changes to nested properties
+    },
+    // Watch the 'stationQA' prop for changes
+    stationQA: {
+      handler(newVal) {
+        // Perform actions when the 'stationQA' prop changes
+        // console.log('The stationQA prop has changed:', newVal);
+
+        // Update component data based on the new 'stationQA' value
+        this.updateComponentData(newVal);
+      },
+      deep: true // This ensures the watcher also detects changes to nested properties
+    }
   },
   methods: {
-    parseNoteString(note) {
-      const keyValuePairs = note.slice(1, -1).split(', ');
-      const parsedObject = keyValuePairs.reduce((obj, pair) => {
-        const index = pair.indexOf(':');
-        if (index > -1) {
-          const key = pair.slice(0, index).trim();
-          const value = pair.slice(index + 1).trim();
-          obj[key] = value;
-        }
-        return obj;
-      }, {});
-
-      return parsedObject;
+    updateComponentData(newVal) {
+      // Logic to update the component's data based on the new prop value
+      // For example, you could update 'loading_i', 'window_loc', etc.
+      this.loading_i = false; // Example update
+      this.window_loc = newVal.location || ""; // Example update
     },
-    getBalai(note) {
-      const parsedNote = this.parseNoteString(note);
-      return parsedNote['balai'];
-    },
-    formatDate(date) {
-      var monthShortNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
-      ];
-      var d = new Date(date),
-        year = d.getFullYear(),
-        month = "" + d.getMonth(),
-        day = "" + d.getDate();
-
-      if (day.length < 2) day = "0" + day;
-
-      return [day, monthShortNames[month], year].join(" ");
-    },
-    formatPrevDate(date) {
-      var monthShortNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
-      ];
-      var days = -1;
-
-      var d = new Date(date);
-
-      var d_1 = new Date(d.getTime() + days * 24 * 60 * 60 * 1000),
-        day_1 = "" + d_1.getDate(),
-        month_1 = "" + d_1.getMonth(),
-        year_1 = d_1.getFullYear();
-
-      if (day_1.length < 2) day_1 = "0" + day_1;
-
-      return [day_1, monthShortNames[month_1], year_1].join(" ");
-    },
-    formatTime(date) {
-      var d = new Date(date),
-        hour = "" + d.getHours(),
-        minute = "" + d.getMinutes(),
-        second = d.getSeconds();
-
-      if (hour.length < 2) hour = "0" + hour;
-      if (minute.length < 2) minute = "0" + minute;
-      if (second.length < 2) second = "0" + second;
-
-      return [hour, minute].join(":");
-    },
-    formatLabel(date) {
-      var d = new Date(date),
-        hour = "" + d.getHours(),
-        minute = "" + d.getMinutes(),
-        second = d.getSeconds();
-
-      if (hour.length < 2) hour = "0" + hour;
-      if (minute.length < 2) minute = "0" + minute;
-      if (second.length < 2) second = "0" + second;
-
-      return [hour, minute].join(":");
-    },
-    cards_f(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          label: card,
-          icon: b[i],
-          symbol: c[i],
-          data: d[i],
-          chart_type: e[i],
-        };
-      });
-    },
-    chart_f(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          label: card,
-          chart_type: b[i],
-          data: c[i],
-          sensor: d[i],
-          date: e[i],
-        };
-      });
-    },
-
-    chart_f2(a, b, c, d, e, f, g, h) {
-      return a.map((card, i) => {
-        return {
-          mix: card,
-          sensor: b[i],
-          chart_type: c[i],
-          chart_label: d[i],
-          chart_data: e[i],
-          chart_date: f[i],
-          chart_icon: g[i],
-          symbol: h[i],
-        };
-      });
-    },
-    chart_f2nd(a, b, c, d, e, f, g, h) {
-      return a.map(() => {
-        // Use the second element if it exists, otherwise fallback to the first element
-        return {
-          mix: a[1] !== undefined ? a[1] : a[0],
-          sensor: b[1] !== undefined ? b[1] : b[0],
-          chart_type: c[1] !== undefined ? c[1] : c[0],
-          chart_label: d[1] !== undefined ? d[1] : d[0],
-          chart_data: e[1] !== undefined ? e[1] : e[0],
-          chart_date: f[1] !== undefined ? f[1] : f[0],
-          chart_icon: g[1] !== undefined ? g[1] : g[0],
-          symbol: h[1] !== undefined ? h[1] : h[0],
-        };
-      });
-    },
-    chart_f3(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          mix: card,
-          sensor: b[i],
-          chart_type: c[i],
-          chart_label: d[i],
-          chart_data: e[i],
-        };
-      });
-    },
-    async loadHomeData() {
-      // console.log(this.profile);
+    formatDate(dateString) {
       try {
-        if (this.profile.station == null) {
-          const response = await axios.get(
-            `${this.$baseURL}/home-data/`
-          );
-          this.stations = response.data.map((element) => {
-            const x = element[1].chart.chart_sensor.flat().length;
-            const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
-            element.duration = duration;
-            return element;
-          });
-        } else {
-          const response = await axios.get(
-            `${this.$baseURL}/home-data/${this.profile.station.id}`
-          );
-          this.stations = response.data.map((element) => {
-            const x = element[1].chart.chart_sensor.flat().length;
-            const duration = Math.ceil(x / 3) * 3 * 4000 + 1000;
-            element.duration = duration;
-            return element;
-          });
-        }
+        const date = new Date(dateString);
+        if (isNaN(date)) throw new Error("Invalid date");
 
-
-        this.loading_i = false;
-        // console.log(this.stations);
+        const options = {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Asia/Jakarta', // Adjust as necessary
+        };
+        return new Intl.DateTimeFormat('en-GB', options).format(date);
       } catch (error) {
-        // Handle error if necessary
-        console.error("An error occurred:", error);
+        console.error('Error parsing date:', error);
+        return dateString; // Fallback to original if parsing fails
       }
     },
-
-
-  },
-  mounted() {
-    this.formatDate();
-    this.formatLabel();
-    this.formatTime();
-
-    this.loadHomeData();
-    setInterval(
-      function () {
-        this.loadHomeData();
-      }.bind(this),
-      300000
-    );
-
+    formatAllDates(timeArray) {
+      return timeArray.map(this.formatDate);
+    },
 
   },
+
   created() {
     this.extractUserInfo()
-
-    let user = localStorage.getItem("user-info") || {};
-    if (typeof user == "object") {
-      this.balai = this.$fixedBalai;
-    } else if (typeof user == "string") {
-      this.role = JSON.parse(user).profile.role;
-      this.user_id = JSON.parse(user).profile.user.id;
-      this.balai = JSON.parse(user).profile.balai.id;
-      if (this.role == "is_superuser") {
-        this.balai = 0;
-      }
-    }
     this.ava_width = screen.availWidth;
-
   },
 };
 </script>
@@ -557,7 +385,7 @@ b {
 
 .imgSZ img {
   resize: both;
-  height: 20vh;
+  height: 140px;
   width: 190px;
 }
 
@@ -565,7 +393,7 @@ b {
   .imgSZ {
     height: 170px;
     /* You can adjust the height as needed */
-    width: 300px;
+    /* width: 300px; */
   }
 
   .info-dummy {
@@ -581,7 +409,11 @@ b {
 
 <style>
 .hChart25 {
-  height: 25vh;
+  height: 28vh;
+}
+
+.hChartQA {
+  height: 24.5vh;
 }
 
 .highcharts-figure {

@@ -1,4 +1,4 @@
-<template>
+<template v-if="role == 'SuperAdmin'">
   <div>
     <Header />
     <div class="mobile-width d-flex justify-content-between align-items-center">
@@ -10,88 +10,43 @@
       <div class="d-flex justify-content-between align-items-center">
         <div class="subTitle">Daftar User</div>
         <div>
-          <router-link
-            v-if="role === 'is_superuser' || role === 'is_staff'"
-            :to="{ name: 'AddUser' }"
-            type="button"
-            class="btn btn-primary float-right my-2"
-            style="padding: 5px 10px"
-            >Tambah Data</router-link
-          >
+          <router-link v-if="role === 'SuperAdmin' || role === 'Admin'" :to="{ name: 'AddUser' }" type="button"
+            class="btn btn-primary float-right my-2" style="padding: 5px 10px">Tambah Data</router-link>
         </div>
       </div>
-      <dataset
-        v-slot="{ ds }"
-        :ds-data="users"
-        :ds-sortby="sortBy"
-        :ds-search-in="['user', 'created_by']"
-      >
+
+      <dataset v-slot="{ ds }" :ds-data="users" :ds-sortby="sortBy" :ds-search-in="['user', 'created_by']">
         <div :data-page-count="ds.dsPagecount">
-          <dataset-search ds-search-placeholder="Search..." />
+          <!-- <dataset-search ds-search-placeholder="Search..." /> -->
         </div>
         <div class="row">
           <div class="col-md-12">
             <div class="table-responsive">
-              <table
-                class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white"
-              >
+              <table class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white">
                 <thead class="table-light">
                   <tr>
                     <th scope="col">#</th>
-                    <th
-                      v-for="(th, index) in cols"
-                      :key="th.field"
-                      :class="['sort', th.sort]"
-                      @click="click($event, index)"
-                      class="thLight"
-                    >
+                    <th v-for="(th, index) in cols" :key="th.field" :class="['sort', th.sort]"
+                      @click="click($event, index)" class="thLight">
                       {{ th.name }} <i class="gg-select float-right"></i>
                     </th>
                   </tr>
                 </thead>
-                <div
-                  v-if="loading_i"
-                  class="d-flex flex-column justify-content-center align-items-center"
-                >
-                  <i
-                    class="zmdi zmdi-spinner zmdi-hc-spin"
-                    style="font-size: 1.5rem"
-                  ></i>
+                <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center">
+                  <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 1.5rem"></i>
                 </div>
                 <dataset-item tag="tbody">
                   <template #default="{ row, rowIndex }">
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
-                      <td>{{ row.user }}</td>
-                    
-                   
-                 
-                      <td v-if="role == 'is_superuser'">
-                        <span v-if="row.is_superuser"> superadmin </span>
-                        <span v-else-if="row.is_staff"> admin </span>
-                        <span v-else-if="row.is_guess"> tamu </span>
-                      </td>
-                      <td>
-                        <span v-for="item in userList" :key="item.id">
-                          <span v-if="item.id == row.created_by">
-                            {{ item.user }}
-                          </span>
-                        </span>
-                      </td>
+                      <td>{{ row.username }}</td>
+                      <td>{{ row.role_name }}</td>
+                      <td v-if="row.balai !== null && row.role_name == 'Admin'">{{ row.balai.balai_name }}</td>
+                      <td v-else></td>
+                      <td>{{ row.created_by }}</td>
                       <td>
                         <span>
-                          
-                          <router-link
-                            type="button"
-                            class="btn btn-success btn-sm mx-1"
-                            :to="`/user/update/0/${row.id} `"
-                            >Edit</router-link
-                          >
-                          <button
-                            type="button"
-                            class="btn btn-danger btn-sm mx-1"
-                            v-on:click="deleteData(row.id)"
-                          >
+                          <button type="button" class="btn btn-danger btn-sm mx-1" v-on:click="deleteData(row.id)">
                             Delete
                           </button>
                         </span>
@@ -103,11 +58,19 @@
             </div>
           </div>
         </div>
-        <div
-          class="d-flex flex-md-row flex-column justify-content-between align-items-center"
-        >
-          <dataset-info class="mb-2 mb-md-0" />
-          <dataset-pager />
+        <div class="d-flex flex-md-row flex-row justify-content-end align-items-center">
+
+
+          <button @click="loadPrevPage" :disabled="!prevPage" class="btn btn-sm btn-light mx-1">Previous</button>
+          <!-- Page Number Buttons -->
+          <span v-for="page in totalPages" :key="page">
+            <button @click="loadData(page)" :class="['btn btn-sm', page === currentPage ? 'btn-primary' : 'btn-light']">
+              {{ page }}
+            </button>
+          </span>
+          <button @click="loadNextPage" :disabled="!nextPage" class="btn btn-sm btn-light mx-1">Next</button>
+
+
         </div>
       </dataset>
     </div>
@@ -121,9 +84,9 @@ import axios from "axios";
 import {
   Dataset,
   DatasetItem,
-  DatasetInfo,
-  DatasetPager,
-  DatasetSearch,
+  // DatasetInfo,
+  // DatasetPager,
+  // DatasetSearch,
   // DatasetShow,
 } from "vue-dataset";
 
@@ -133,9 +96,9 @@ export default {
     Header,
     Dataset,
     DatasetItem,
-    DatasetInfo,
-    DatasetPager,
-    DatasetSearch,
+    // DatasetInfo,
+    // DatasetPager,
+    // DatasetSearch,
     // DatasetShow,
   },
   data: function () {
@@ -148,16 +111,17 @@ export default {
       users: [],
       cols: [
         {
-          name: "Nama",
+          name: "Username",
           field: "user",
         },
-       
-    
       ],
       colSuper: [
-  
+
         {
           name: "Role",
+        },
+        {
+          name: "Produksi",
         },
       ],
       colCreated: [
@@ -165,9 +129,14 @@ export default {
           name: "Created by",
         },
         {
-          name: "Action",
+          name: "Delete",
         },
       ],
+      currentPage: 1, // Start at the first page
+      totalPages: 0,  // To be calculated
+      nextPage: null,
+      prevPage: null,
+      maxPerPage: 10,
     };
   },
   computed: {
@@ -206,50 +175,64 @@ export default {
       sortEl.sort = toset;
     },
     loadHeader() {
-      if (this.role == "is_superuser") {
+      if (this.role == "SuperAdmin") {
         this.cols.push(...this.colSuper);
       }
       this.cols.push(...this.colCreated);
     },
-    async loadData() {
+    async loadData(pageNumber) {
+      this.loading_i = true;
       await axios
-        .get(`${this.$baseURL}/user/${this.balai}`, {
+        .get(`${this.$baseURL}/user/?page=${pageNumber}`, {
           headers: {
-            Authorization: `Token ${this.token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((r) => {
-          let guess = [];
+          this.users = r.data.results;
+          this.nextPage = r.data.next;
+          this.prevPage = r.data.previous;
+          this.currentPage = pageNumber;
+          // Calculate total pages based on the count and max_per_page
+          this.totalPages = Math.ceil(r.data.count / r.data.max_per_page);
 
-          if (this.role == "is_superuser") {
-            this.users = r.data;
-          }
-
-          if (this.role == "is_staff") {
-            for (let i = 0; i < r.data.length; i++) {
-              if (r.data[i].role == "is_guess") {
-                guess.push(r.data[i]);
-                this.users = guess;
-              }
-            }
-          }
           if (r.status == 200) {
             this.loading_i = false;
           }
         });
     },
+    async loadNextPage() {
+      if (this.nextPage) {
+        const nextPageNumber = this.currentPage + 1;
+        await this.loadData(nextPageNumber);
+      }
+    },
+    async loadPrevPage() {
+      if (this.prevPage) {
+        const prevPageNumber = this.currentPage - 1;
+        await this.loadData(prevPageNumber);
+      }
+    },
+    // click(event, index) {
+    //   // Sorting logic here
+    // },
+    // deleteData(id) {
+    //   // Deletion logic here
+    // },
     async delete(id) {
-      await axios
-        .delete(`${this.$baseURL}/user/${this.balai}/${id}`, {
+      try {
+        const response = await axios.delete(`${this.$baseURL}/user/${id}`, {
           headers: {
-            Authorization: `Token ${this.token}`,
+            Authorization: `Bearer ${this.token}`,
           },
-        })
-        .then((r) => {
-          if (r.status == 204) {
-            this.loadData();
-          }
         });
+        if (response.status == 204) {
+          // Reload the current page data after deletion
+          await this.loadData(this.currentPage);
+        }
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
     },
     deleteData(id) {
       this.$swal({
@@ -267,62 +250,78 @@ export default {
       });
     },
   },
-  created() {
-    this.gAuthUser();
+  async created() {
+    this.extractUserInfo()
     this.loadHeader();
-    this.loadData();
+    await this.loadData(this.currentPage);
   },
   async mounted() {
-    
+
     await axios
-      .get(`${this.$baseURL}/user/${this.balai}`, {
+      .get(`${this.$baseURL}/user/`, {
         headers: {
-          Authorization: `Token ${this.token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       .then((r) => {
-        this.userList = r.data;
+        this.userList = r.data.results;
+        // console.log(this.userList);
+
+      }).catch((error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
+        }
       });
   },
+
+  
 };
 </script>
 
-<style scoped src="@/assets/css/figma.css">
-</style>
+<style scoped src="@/assets/css/figma.css"></style>
 
 <style scoped>
 * {
   box-sizing: border-box;
 }
+
 #app {
   display: flex;
 }
+
 aside {
   display: none;
   width: 200px;
   background: #cecece;
   height: 100vh;
 }
+
 aside.active {
   display: block;
 }
+
 aside a {
   display: block;
   padding: 10px 5px;
   color: #666;
   border-bottom: 1px solid #bbb;
 }
+
 .wrapper {
   display: flex;
   align-items: stretch;
   flex-direction: column;
   width: 100vw;
 }
+
 header {
   width: 100%;
   padding: 10px;
   background: #aaa;
 }
+
 main {
   flex-grow: 2;
   padding: 10px;

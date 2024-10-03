@@ -2,15 +2,15 @@
   <section>
     <div class="container">
       <div class="row d-flex align-items-center justify-content-center">
-        <div v-if="$app_title == 'PDAM SURYA SEMBADA'" class="img-fluid login100-more"
+        <div  class="img-fluid login100-more"
           v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
-          <div class="logo-container m-4">
+          <div class="logo-container m-3">
             <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
               <img :src="logoPDAM" alt="" class="logo-img" />
             </router-link>
             <div>
               <p class="bws">{{ $app_title }}</p>
-              <p class="bws">WATER MONITORING</p>
+              <p class="bws">SURABAYA</p>
             </div>
           </div>
         </div>
@@ -73,17 +73,9 @@
 
 <script>
 import axios from "axios";
-
-// BWS
-import bg_sum8_img from "@/assets/img/palembang-bg.jpg";
-import bg_bali_img from "@/assets/img/bali-bg.jpg";
-import bg_surabaya_img from "@/assets/img/surabaya-bg.png";
-
+import bg_surabaya_img from "@/assets/img/surabaya-bg2.png";
 import bg_weather_img from "@/assets/img/bweather-bg.jpg";
-
-import logoPU from "@/assets/icons/pupr.svg";
-import logoBT from "@/assets/icons/logo-bt.svg";
-import logoPDAM from "@/assets/icons/logo-pdam.png";
+import logoPDAM from "@/assets/icons/logo-pdam2.png";
 
 export default {
   name: "Login",
@@ -93,12 +85,10 @@ export default {
       username: "",
       password: "",
       msg: "",
-      bg_sum8_img,
-      bg_bali_img,
+
       bg_surabaya_img,
       bg_weather_img,
-      logoPU,
-      logoBT,
+
       logoPDAM,
       incorrectAuth: false,
       year: null,
@@ -112,62 +102,36 @@ export default {
     async login() {
       this.spin_i = true;
 
-
-      if (this.$app_title == 'WEATHER-VUE') {
-        this.$store
-          .dispatch("userLogin", {
-            username: this.username,
-            password: this.password,
-            balai: this.balai,
-          })
-          .then((r) => {
-            this.$router.push({ name: "Home" });
-            if (r.status == 200) {
-              this.spin_i = false;
-            }
-          })
-          .catch((err) => {
-            this.incorrectAuth = true;
-
-            if (err == "Error: Request failed with status code 400") {
-              this.msg = "These credentials do not match our records.";
-            } else {
-              this.msg = "Please try to login again.";
-            }
+      this.$store
+        .dispatch("userLogin", {
+          username: this.username,
+          password: this.password,
+        })
+        .then((r) => {
+          this.$router.push({ name: "Home" });
+          if (r.status == 200) {
             this.spin_i = false;
-          });
-      } else {
-        this.$store
-          .dispatch("userLogin", {
-            username: this.username,
-            password: this.password,
-            // balai: this.$fixedBalai,
-          })
-          .then((r) => {
-            this.$router.push({ name: "Home" });
-            if (r.status == 200) {
-              this.spin_i = false;
-            }
-          })
-          .catch((err) => {
-            this.incorrectAuth = true;
+          }
+        })
+        .catch((err) => {
+          this.incorrectAuth = true;
 
-            if (err == "Error: Request failed with status code 400") {
-              this.msg = "These credentials do not match our records.";
-            } else {
-              this.msg = "Please try to login again.";
-            }
-            this.spin_i = false;
-          });
-      }
+          if (err == "Error: Request failed with status code 400") {
+            this.msg = "These credentials do not match our records.";
+          } else {
+            this.msg = "Please try to login again.";
+          }
+          this.spin_i = false;
+        });
+      // }
     },
     async loadBalai() {
       try {
-        await axios.get(`${this.$baseURL}`);
-        this.stats = true; // Set stats to true if the request is successful
+        await axios.get(`${this.$baseURL}/schema/swagger-ui/`);
+        this.stats = true;
       } catch (error) {
         console.error('Error fetching API:', error);
-        this.stats = false; // Set stats to false if there's an error
+        this.stats = false;
       }
     },
   },
@@ -189,7 +153,7 @@ export default {
   margin: 0;
   margin-left: 25px;
   /* color: #fbb040; */
-  color: #a5d310
+  color: #D6FB40
 }
 
 .weather {
@@ -206,7 +170,7 @@ export default {
   font-weight: bold;
   line-height: 1.2;
   display: block;
-  color: #092581;
+  color: #68C0FF;
   padding: 20px 0;
 }
 
@@ -221,7 +185,7 @@ export default {
 }
 
 .login100-form-btn {
-  background-color: #092581;
+  background-color: #68C0FF;
 }
 
 .bg-weather {
@@ -230,7 +194,6 @@ export default {
 }
 
 .logo-img {
-  /* width: 60px; */
   width: 80px;
 
 }
@@ -276,14 +239,14 @@ form {
   }
 
   .logo-img {
-    width: 50px;
+    width: 70px;
   }
 
   .bws {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    margin: 0;
-    margin-left: 25px;
+    margin-left: 15px;
+    /* margin-left: 25px; */
   }
 
   .weather {

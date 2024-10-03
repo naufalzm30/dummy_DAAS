@@ -1,395 +1,318 @@
 <template>
-  <div v-if="stations[0]">
-    <div class="card box-sm mt-2 comShadow mb-2" style="box-shadow: 10px; border-radius: 10px">
+  <div>
+    <div v-if="role !== 'QA'" class="card box-sm mt-2 comShadow mb-2" style="box-shadow: 10px; border-radius: 10px">
       <div class="row">
         <div class="col-md-4 p-0 imgSZ">
-          <img :src="`${$imageURL}${stations[0].image}`" class="img-fluid" alt="station-img" style="
+          <img :src="`${station.image}`" class="img-fluid" alt="station-img" style="
               object-fit: cover;
-              border-radius: 10px 0px 0px 10px;
+              border-radius: 10px 0px 0px 0px;
               margin-left: 12px;
               width: 94%;
             " />
         </div>
         <div class="col-md-8 my-0">
           <div class="d-flex align-items-center mx-2">
-            <div class="col-md-10 col-10">
+            <div class="col-md-12 col-10">
               <div style="font-weight: 500; font-size: 1.1rem">
-                {{ stations[0].station_name }}
-              </div>
-            </div>
-            <div class="col-md-2 col-2 d-flex justify-content-end">
-              <div v-for="station in status" :key="station[0].id">
-                <div v-if="station[0].id == stations[0].id">
-                  <span v-if="station[1].table.siaga == []"> </span>
-                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ" />
-                  </span>
-                </div>
+                {{ station.station_name }}
               </div>
             </div>
           </div>
-          <!-- {{ stations[0] }} -->
-          <div class="row">
 
+          <div class="row" v-if="profile">
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Lokasi</div>
-                <div class="info-value">{{ stations[0].location }}</div>
+                <div class="info-value">{{ profile.location }}</div>
               </div>
-              <div v-if="getBalai(stations[0].note) == 'distribusi'" class="my-1 mx-2">
+              <div v-if="profile.balai.balai_name == 'Distribusi'" class="my-1 mx-2">
                 <div class="info-label">In/Out Interzone</div>
-                <div class="info-value">{{ stations[0].interzone }}</div>
+                <div class="info-value">{{ profile.interzone }}</div>
               </div>
               <div v-else class="my-1 mx-2">
                 <div class="info-label">Nameplate Head</div>
-                <div class="info-value">{{ stations[0].nameplate_head }}</div>
+                <div class="info-value">{{ profile.nameplate_head }}</div>
               </div>
 
             </div>
 
-            <div v-if="getBalai(stations[0].note) == 'distribusi'" class="col-md-6 mx-0">
+            <div v-if="profile.balai.balai_name == 'Distribusi'" class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label"> Max Flow</div>
-                <div class="info-value">{{ stations[0].max_flow }} L/s</div>
+                <div class="info-value">{{ profile.max_flow }} L/s</div>
               </div>
               <div class="my-1 mx-2">
                 <div class="info-label">Diameter Pipa</div>
                 <div class="info-value">
-                  {{ stations[0].diameter }} mm
+                  {{ profile.diameter }} mm
                 </div>
               </div>
             </div>
             <div v-else class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Jumlah Operasi</div>
-                <div class="info-value">{{ stations[0].jumlah_operasi }}</div>
+                <div class="info-value">{{ profile.jumlah_operasi }}</div>
               </div>
               <div class="my-1 mx-2">
                 <div class="info-label">Kapasitas</div>
                 <div class="info-value">
-                  {{ stations[0].kapasitas }} L/s
+                  {{ profile.kapasitas }} L/s
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-
-    <div v-for="card in [stations[1]]" :key="card.id">
-      <div v-for="(item, index) in chart_f2(
-    card[0].chart.mix_status,
-    card[0].chart.chart_sensor,
-    card[0].chart.array_act_chart_type,
-    card[0].chart.chart_label,
-    card[0].chart.chart_data,
-    card[0].chart.array_act_icon,
-    card[0].chart.array_act_symbol
-  )" :key="index">
-        <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
-          <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
-    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
+      <div>
+        <div class=" mx-auto bg-white mb-2" style="border-radius: 15px">
+          <div class="d-flex pt-2 px-2 justify-content-between">
+            <h6>
+              Data {{ station.chart[0].sensor_data[0].sensor_name }} <span v-if="role == 'SuperAdmin'"> & {{ station.chart[0].sensor_data[2].sensor_name }} ({{ station.chart[0].sensor_data[2].notation }})</span>
+            </h6>
+            
             <div>
-              <h6 class="px-2 pt-2">
-                Data {{ item.sensor[0][0] }}
-              </h6>
+              <button v-if="role == 'SuperAdmin'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
+                class="btn btn-sm btn-success" type="button" style="font-size: 0.8rem">
+                <i class="zmdi zmdi-check"></i> Approve
+              </button>
+              <button v-if="role == 'SuperAdmin'" data-bs-toggle="modal" data-bs-target="#taksasiData"
+                class="btn btn-sm btn-primary mx-1" type="button" style="font-size: 0.8rem">
+                <i class="zmdi zmdi-edit"></i> Taksasi
+              </button>
+
             </div>
-            <Chart style="height: 28vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="debitData"
-              :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="LineChartFiltered">
-            </Chart>
 
           </div>
-        </div>
+          <div class="modal fade" id="taksasiData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="taksasiDataLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form @submit.prevent="tresholdDataUpload">
+                  <div class="modal-header">
+                    <h5 class="modal-title text-primary" id="taksasiDataLabel">
+                      Taksasi Data
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
 
-      </div>
-      <div v-for="(item, index) in chart_f2nd(
-    card[0].chart.mix_status,
-    card[0].chart.chart_sensor,
-    card[0].chart.array_act_chart_type,
-    card[0].chart.chart_label,
-    card[0].chart.chart_data,
-    card[0].chart.array_act_icon,
-    card[0].chart.array_act_symbol
-  )" :key="index + 1">
-        <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
-          <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
-    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
-            <div>
-              <h6 class="px-2 pt-2">
-                Data {{ item.sensor[0][0] }}
-              </h6>
-            </div>
-            <Chart style="height: 28vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="totalData"
-              :title="`${item.sensor[0]} (${item.symbol[0][0]})`" is="TotalChartFiltered">
-            </Chart>
-          </div>
-        </div>
-      </div>
-      <div v-if="role == 'is_superuser'">
-        <div v-for="(item, index) in chart_f2nd(
-    card[0].chart.mix_status,
-    card[0].chart.chart_sensor,
-    card[0].chart.array_act_chart_type,
-    card[0].chart.chart_label,
-    card[0].chart.chart_data,
-    card[0].chart.array_act_icon,
-    card[0].chart.array_act_symbol
-  )" :key="index + 2">
-          <div v-if="!item.mix" class="comShadow" style="border-radius: 15px">
-            <div v-if="item.chart_type == 'BarChart' || item.chart_type == 'LineChart'
-    " class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
-              <div>
-                <h6 class="px-2 pt-2">
-                  Data Battery
-                </h6>
+                      <DatePicker name="from" v-model="startDate" type="datetime" format="DD/MM/YYYY HH:mm"
+                        placeholder="Select first date" :minute-step="5"></DatePicker>
+
+                      <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+                      <DatePicker name="to" v-model="endDate" type="datetime" format="DD/MM/YYYY HH:mm"
+                        placeholder="Select last date" :minute-step="5"></DatePicker>
+                    </div>
+                    <!-- <div class="form-group">
+                      <p class=" mt-3 mb-3">Tipe Taksasi</p>
+                      <select class="form-select" v-model="taksasi">
+                        <option v-for="item in taksasiType" :key="item.id" :value="item">
+                          {{ item }}
+                        </option>
+                      </select>
+                    </div> -->
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
+                      Taksasi
+                    </button>
+                  </div>
+                </form>
               </div>
-              <Chart style="height: 25vh" class="p-0 pr-0 pt-0 pb-0" :label="debitLabel" :chart-data="batteryData"
-                :title="`Battery (V)`" is="BatteryChartFiltered">
-              </Chart>
             </div>
+          </div>
+          <div class="modal fade" id="approveTaksasi" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="approveTaksasiLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form @submit.prevent="tresholdDataUpload">
+                  <div class="modal-header">
+                    <h5 class="modal-title text-success" id="approveTaksasiLabel">
+                      Approve Taksasi
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+
+                      <DatePicker name="from" v-model="startDate" type="datetime" format="DD/MM/YYYY HH:mm"
+                        :minute-step="5" placeholder="Select first date"></DatePicker>
+                      <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+                      <DatePicker :minute-step="5" name="to" v-model="endDate" type="datetime" format="DD/MM/YYYY HH:mm"
+                        placeholder="Select last date"></DatePicker>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                      Close
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-success" data-bs-dismiss="modal">
+                      Approve
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, taksasiData]"
+            :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
+            :title2="`${station.chart[0].sensor_data[2].sensor_name} (${station.chart[0].sensor_data[2].notation})`"
+            is="LineChartFiltered">
+          </Chart>
+
+          <Chart v-else style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, null]"
+            :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
+            :title2="null"
+            is="LineChartFiltered">
+          </Chart>
+
+          
+
+        </div>
+      </div>
+      <div>
+        <div>
+          <div class="border mx-auto bg-white mb-2">
+            <div>
+              <h6 class="px-2 pt-2">
+                Data {{ station.chart[0].sensor_data[1].sensor_name }} ({{ station.chart[0].sensor_data[1].notation }})
+              </h6>
+            </div>
+            <Chart style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
+              :chart-data="totalData"
+              :title="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
+              is="TotalChartFiltered">
+            </Chart>
           </div>
         </div>
       </div>
-
     </div>
+
+
+    <div v-if="role == 'QA' && stationQA">
+      <div class="comShadow" style="border-radius: 15px">
+        <div class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
+          <div>
+            <h6 class="px-2 pt-2">
+              Jumlah Data
+            </h6>
+          </div>
+
+          <Chart style="height: 25vh" :label="formatAllDatesQA(labelQA)" :chart-data="sumDataQA" :title="`Jumlah Data`"
+            is="TotalChartBarFiltered">
+          </Chart>
+        </div>
+      </div>
+
+      <div class="comShadow" style="border-radius: 15px">
+        <div class="box-sm border mx-auto bg-white mb-2" style="border-radius: 15px">
+          <div>
+            <h6 class="px-2 pt-2">
+              Data Persentase (%)
+            </h6>
+          </div>
+
+          <Chart style="height: 25vh" :label="formatAllDatesQA(labelQA)" :chart-data="percentDataQA"
+            :title="`Persentase Data (%)`" is="TotalChartBarFiltered">
+          </Chart>
+        </div>
+      </div>
+
+
+      <div class="comShadow" style="border-radius: 15px">
+        <div class="box-sm border mx-auto bg-white" style="border-radius: 15px">
+          <div>
+            <h6 class="px-2">
+              Jumlah Gangguan
+            </h6>
+          </div>
+          <Chart style="height: 25vh" :label="formatAllDatesQA(labelQA)" :chart-data="mtcDataQA"
+            :title="`Jumlah Gangguan`" is="TotalChartBarFiltered">
+          </Chart>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import LineChartFiltered from "@/components/Chart/LineChartFiltered";
 import TotalChartFiltered from "@/components/Chart/TotalChartFiltered";
-import BatteryChartFiltered from "@/components/Chart/BatteryChartFiltered";
-
-import mtc_i from "@/assets/icons/map/mtc.svg";
-import ok_i from "@/assets/icons/map/ok.svg";
-import s1_i from "@/assets/icons/map/s1.svg";
-import s2_i from "@/assets/icons/map/s2.svg";
-import s3_i from "@/assets/icons/map/s3.svg";
+import TotalChartBarFiltered from "@/components/Chart/TotalChartBarFiltered";
 
 export default {
-  name: "Slider",
-  props: ["debitData", "debitLabel", "totalData", "batteryData", "stations", "status", "ava_width",],
+  name: "ChartData",
+  props: ["debitData", "totalData", "taksasiData","label", "station", "ava_width", "stationQA", "percentDataQA", "sumDataQA", "labelQA", "mtcDataQA", "profile"],
+
   components: {
+    TotalChartBarFiltered,
     LineChartFiltered,
-    BatteryChartFiltered,
     TotalChartFiltered,
   },
   data() {
     return {
-      mtc_i,
-      ok_i,
-      s1_i,
-      s2_i,
-      s3_i,
       total_s: null,
+      taksasi: false,
+      taksasiType: [false, true],
+      startDate: null,
+      endDate: null,
     };
-  },
-  computed: {
-    chartTitle() {
-      return this.stations.length > 0 ? `${this.stations[0].sensor[0]} (${this.stations[0].symbol[0][0]})` : 'Chart';
-    }
   },
 
   methods: {
-    parseNoteString(note) {
-      const keyValuePairs = note.slice(1, -1).split(', ');
-      const parsedObject = keyValuePairs.reduce((obj, pair) => {
-        const index = pair.indexOf(':');
-        if (index > -1) {
-          const key = pair.slice(0, index).trim();
-          const value = pair.slice(index + 1).trim();
-          obj[key] = value;
-        }
-        return obj;
-      }, {});
+    formatDate(dateString) {
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date)) throw new Error("Invalid date");
 
-      return parsedObject;
-    },
-    getBalai(note) {
-      const parsedNote = this.parseNoteString(note);
-      return parsedNote['balai'];
-    },
-    formatDate(date) {
-      var monthShortNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
-      ];
-      var d = new Date(date),
-        year = d.getFullYear(),
-        month = "" + d.getMonth(),
-        day = "" + d.getDate();
-
-      if (day.length < 2) day = "0" + day;
-      return [day, monthShortNames[month], year].join(" ");
-    },
-    formatTime(date) {
-      var d = new Date(date),
-        hour = "" + d.getHours(),
-        minute = "" + d.getMinutes(),
-        second = d.getSeconds();
-
-      if (hour.length < 2) hour = "0" + hour;
-      if (minute.length < 2) minute = "0" + minute;
-      if (second.length < 2) second = "0" + second;
-
-      return [hour, minute].join(":");
-    },
-    formatPrevDate(date) {
-      var monthShortNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
-      ];
-      var days = -1;
-
-      var d = new Date(date);
-
-      var d_1 = new Date(d.getTime() + days * 24 * 60 * 60 * 1000),
-        day_1 = "" + d_1.getDate(),
-        month_1 = "" + d_1.getMonth(),
-        year_1 = d_1.getFullYear();
-
-      if (day_1.length < 2) day_1 = "0" + day_1;
-
-      return [day_1, monthShortNames[month_1], year_1].join(" ");
-    },
-    cards_f(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          label: card,
-          icon: b[i],
-          symbol: c[i],
-          data: d[i],
-          chart_type: e[i],
+        const options = {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Asia/Jakarta',
         };
-      });
+        return new Intl.DateTimeFormat('en-GB', options).format(date);
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        return dateString;
+      }
     },
-    chart_f(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          label: card,
-          chart_type: b[i],
-          data: c[i],
-          sensor: d[i],
-          date: e[i],
-        };
-      });
+    formatAllDates(timeArray) {
+      return timeArray.map(this.formatDate);
     },
+    formatDateQA(dateString) {
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date)) throw new Error("Invalid date");
 
-    chart_f2(a, b, c, d, e, g, h) {
-      return a.map((card, i) => {
-        return {
-          mix: card,
-          sensor: b[i],
-          chart_type: c[i],
-          chart_label: d[i],
-          chart_data: e[i],
-
-          chart_icon: g[i],
-          symbol: h[i],
+        const options = {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          timeZone: 'Asia/Jakarta',
         };
-      });
+        return new Intl.DateTimeFormat('en-GB', options).format(date);
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        return dateString;
+      }
     },
-    // chart_f2(a, b, c, d, e, f, g, h) {
-    //   return a.map((card, i) => {
-    //     return {
-    //       mix: card,
-    //       sensor: b[i],
-    //       chart_type: c[i],
-    //       chart_label: d[i],
-    //       chart_data: e[i],
-    //       chart_date: f[i],
-    //       chart_icon: g[i],
-    //       symbol: h[i],
-    //     };
-    //   });
-    // },
-    // chart_f2nd(a, b, c, d, e, f, g, h) {
-    //   return a.map((card, i) => {
-    //     // Use the second element if it exists, otherwise fallback to the first element
-    //     return {
-    //       mix: a[1] !== undefined ? a[1] : a[0],
-    //       sensor: b[1] !== undefined ? b[1] : b[0],
-    //       chart_type: c[1] !== undefined ? c[1] : c[0],
-    //       chart_label: d[1] !== undefined ? d[1] : d[0],
-    //       chart_data: e[1] !== undefined ? e[1] : e[0],
-    //       // chart_date: f[1] !== undefined ? f[1] : f[0],
-    //       chart_icon: g[1] !== undefined ? g[1] : g[0],
-    //       symbol: h[1] !== undefined ? h[1] : h[0],
-    //     };
-    //   });
-    // },
-    chart_f2nd(a, b, c, d, e, g, h) {
-      return a.map(() => {
-        return {
-          mix: a[1] !== undefined ? a[1] : a[0],
-          sensor: b[1] !== undefined ? b[1] : b[0],
-          chart_type: c[1] !== undefined ? c[1] : c[0],
-          chart_label: d[1] !== undefined ? d[1] : d[0],
-          chart_data: e[1] !== undefined ? e[1] : e[0],
-
-          chart_icon: g[1] !== undefined ? g[1] : g[0],
-          symbol: h[1] !== undefined ? h[1] : h[0],
-        };
-      });
-    },
-    chart_f3(a, b, c, d, e) {
-      return a.map((card, i) => {
-        return {
-          mix: card,
-          sensor: b[i],
-          chart_type: c[i],
-          chart_label: d[i],
-          chart_data: e[i],
-        };
-      });
+    formatAllDatesQA(timeArray) {
+      return timeArray.map(this.formatDateQA);
     },
   },
 
   created() {
-    this.gAuthStation();
-    var x = this.stations[1][0].chart.chart_sensor;
-    this.total_s = x.flat().length;
-    // console.log(this.debitData);
-
-
-  },
-
-  mounted() {
-    this.ava_width = screen.availWidth;
-
+    this.extractUserInfo()
   },
 };
 </script>

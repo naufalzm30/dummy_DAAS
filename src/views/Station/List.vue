@@ -2,8 +2,6 @@
   <div>
     <Header />
     <div class="mobile-width d-flex justify-content-between align-items-center">
-      <!-- {{ profile.station }}
-      {{ profile.user.username }}, {{ profile.station.station_name }} -->
       <div class="bwsTitle mobile-top">
         {{ $app_title }}
       </div>
@@ -12,11 +10,11 @@
       <div class="d-flex justify-content-between align-items-center">
         <div class="subTitle">Daftar Stasiun</div>
         <div>
-          <router-link v-if="role === 'is_superuser'" :to="{ name: 'AddStation' }" type="button"
+          <router-link v-if="role === 'SuperAdmin'" :to="{ name: 'AddStation' }" type="button"
             class="btn btn-primary float-right my-2" style="padding: 5px 10px">Tambah Data</router-link>
         </div>
       </div>
-      
+
       <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']">
         <div :data-page-count="ds.dsPagecount">
           <dataset-search ds-search-placeholder="Search..." />
@@ -40,22 +38,26 @@
                 </div>
                 <dataset-item tag="tbody">
                   <template #default="{ row, rowIndex }">
+
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.station_name }}</td>
                       <td>{{ row.location }}</td>
-                      <td v-if="role == 'is_superuser'">{{ getBalai(row.note) }}</td>
+                      <td v-if="role == 'SuperAdmin'">{{ row.balai.balai_name }}</td>
                       <td>{{ row.latitude }}</td>
                       <td>{{ row.longitude }}</td>
                       <td>
-                        <router-link v-if="profile.station == null" type="button" class="btn btn-primary btn-sm mx-1"
-                          :to="{ path: '/station/data/' + row.id + '/0'}">Data</router-link>
-                        <router-link v-else type="button" class="btn btn-primary btn-sm mx-1"
-                          :to="{ path: '/station/data/' + row.id + '/' + profile.station.id }">Data</router-link>
-                        <span v-if="role == 'is_staff' || role == 'is_superuser'">
+                        <router-link type="button" class="btn btn-primary btn-sm mx-1"
+                          :to="{ path: `/station/data/${row.station_serial_id}` }">Data</router-link>
+                        <span v-if="role == 'SuperAdmin'">
                           <router-link type="button" class="btn btn-success btn-sm mx-1"
-                            :to="`/station/update/0/${row.id}`">Edit</router-link>
+                            :to="`/station/update/${row.station_serial_id}/`">Edit</router-link>
                         </span>
+                        <!-- <span>
+                          <button type="button" class="btn btn-danger btn-sm mx-1" v-on:click="deleteData(row.station_serial_id)">
+                            Delete {{ row.station_name }}
+                          </button>
+                        </span> -->
                       </td>
                     </tr>
                   </template>
@@ -84,7 +86,6 @@ import {
   DatasetInfo,
   DatasetPager,
   DatasetSearch,
-  // DatasetShow,
 } from "vue-dataset";
 
 export default {
@@ -96,7 +97,6 @@ export default {
     DatasetInfo,
     DatasetPager,
     DatasetSearch,
-    // DatasetShow,
   },
   data: function () {
     return {
@@ -159,26 +159,37 @@ export default {
       }, []);
     },
   },
- 
-  methods: {
-    parseNoteString(note) {
-      const keyValuePairs = note.slice(1, -1).split(', ');
-      const parsedObject = keyValuePairs.reduce((obj, pair) => {
-        const index = pair.indexOf(':');
-        if (index > -1) {
-          const key = pair.slice(0, index).trim();
-          const value = pair.slice(index + 1).trim();
-          obj[key] = value;
-        }
-        return obj;
-      }, {});
 
-      return parsedObject;
-    },
-    getBalai(note) {
-      const parsedNote = this.parseNoteString(note);
-      return parsedNote['balai'];
-    },
+  methods: {
+    // async delete(id) {
+    //   try {
+    //     const response = await axios.delete(`${this.$baseURL}/pdam/station/${id}`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     });
+    //     if (response.status == 204) {
+    //       await this.loadData(this.currentPage);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error deleting data:", error);
+    //   }
+    // },
+    // deleteData(id) {
+    //   this.$swal({
+    //     title: `Are you sure?`,
+    //     text: "You won't be able to revert this!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Yes, delete it!",
+    //   }).then((result) => {
+    //     if (result.isConfirmed) {
+    //       this.delete(id);
+    //     }
+    //   });
+    // },
     ...mapActions(['updateUserStationList']),
     click(event, i) {
       let toset;
@@ -202,69 +213,38 @@ export default {
       sortEl.sort = toset;
     },
     async loadData() {
-      // console.log('role: ', this.role);
-      if (this.role == "is_superuser") {
+      if (this.role == "SuperAdmin") {
         this.cols = this.colSuper;
-        this.station = 0
-      } else {
-        this.station = this.profile.station.id
-      }
+      } 
+      // else {
+      //   console.log(this.cols);
+      // }
 
-
-      if (this.profile.station == null) {
       await axios
-        .get(`${this.$baseURL}/station/0`, {
+        .get(`${this.$baseURL}/pdam/station/`, {
           headers: {
-            Authorization: `Token ${this.token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((r) => {
-
-          if (r.data.length > 1) {
-            this.stations = r.data;
-          } else {
-            this.stations = [r.data];
-          }
-
+          // console.log(r);
+          
+          this.stations = r.data.data;
           if (r.status == 200) {
             this.loading_i = false;
           }
+        }).catch((error) => {
+          if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            this.logoutUser();
+          } else {
+            console.error('Error msg: ', error);
+          }
         });
-      } else if (this.profile.station != null) {
-        await axios
-          .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          })
-          .then((r) => {
-
-            if (r.data.length > 1) {
-              this.stations = r.data;
-            } else {
-              this.stations = [r.data];
-            }
-
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-            this.userStationList = this.stations.map(station => station.id)
-            this.updateUserStationList(this.userStationList);
-            // console.log('L ist.vue', this.userStationList);
-          });
-      }
     },
   },
   created() {
     this.extractUserInfo()
-    this.gAuthStation();
     this.loadData();
-
-
-  },
-  mounted() {
-    // this.gBalai();
-    this.updateUserStationList(this.userStationList);
   },
 };
 </script>

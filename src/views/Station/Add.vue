@@ -4,11 +4,11 @@
     <form @submit.prevent="submit">
       <div class="mobile-width">
         <div class="bwsTitle mobile-top">
-          {{ $app_title }}
+          {{ $app_title }} {{ role }}
         </div>
         <div class="row">
           <div class="d-flex justify-content-between align-items-center">
-            <div class="subTitle">Tambah Pos Baru</div>
+            <div class="subTitle">Tambah Stasiun</div>
             <div>
               <router-link :to="{ name: 'Station' }" type="button"
                 class="btn btn-light border mx-4 bg-white">Cancel</router-link>
@@ -16,70 +16,63 @@
             </div>
           </div>
         </div>
-
-        <div class="row mt-1">
+        <div class="row ">
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">Data Stasiun</div>
               <div class="card-body">
-                <div class="col-md pb-3">
+                <div class="col-md pb-1">
                   <div class="form-group">
                     <label for="inputNaPo">Nama Stasiun*</label>
-                    <input v-model="station_name" type="text" class="form-control" id="inputNaPo"
-                      placeholder="Nama Pos" required/>
+                    <input v-model="item.station_name" type="text" class="form-control" id="inputNaPo"
+                      placeholder="Nama Stasiun" required />
                   </div>
                 </div>
-                <div class="col-md pb-3">
+                <div class="col-md py-1">
                   <div class="form-group">
-                    <label for="inputLo">Lokasi*</label>
-                    <input v-model="location" type="text" class="form-control" id="inputLo" placeholder="Lokasi" required/>
+                    <label for="inputLo">Lokasi</label>
+                    <input v-model="item.location" type="text" class="form-control" id="inputLo" placeholder="Lokasi" />
                   </div>
                 </div>
 
-                <div class="col-md pb-3">
+                <div class="col-md py-1">
                   <div class="form-group">
-                    <label for="inputLo">Latitude*</label>
-                    <input v-model="latitude" type="number" class="form-control" id="inputLo" placeholder="Latitude"
-                      step="0.000000001" required/>
+                    <label for="inputLa">Latitude*</label>
+                    <input v-model="item.latitude" type="number" class="form-control" id="inputLa" step="0.000000001"
+                      placeholder="Latitude" required />
                   </div>
                 </div>
-                <div class="col-md pb-3">
+                <div class="col-md py-1">
                   <div class="form-group">
                     <label for="inputLo">Longitude*</label>
-                    <input v-model="longitude" type="number" class="form-control" id="inputLo" placeholder="Longitude"
-                      step="0.000000001" required/>
+                    <input v-model="item.longitude" type="number" class="form-control" id="inputLo" step="0.000000001"
+                      placeholder="Longitude" required />
                   </div>
                 </div>
-
-                
               </div>
             </div>
             <div class="card">
               <div class="card-header">Foto Stasiun</div>
               <div class="card-body">
-                <!-- -----DRAND AND DROP----- -->
-
-                <div v-if="!file">
+                <div v-if="!item.image">
                   <div :class="['dropZone', dragging ? 'dropZone-over' : '']" @dragenter="dragging = true"
                     @dragleave="dragging = false">
                     <div class="dropZone-info" @drag="onChange">
-                      <img :src="login_i" class="p-3" />
+                      <img :src="item.image" style="max-width: 120px; max-height: 60px" />
                       <div class="dropZone-title">
                         <span style="color: #3056d3">Click to upload</span> or
                         drag and drop
                       </div>
                       <div class="dropZone-upload-limit-info">
                         <div>PNG, JPG or JPEG</div>
-                        <div>(max 5 MB)</div>
                       </div>
                     </div>
-                    <input type="file" @change="onChange" />
+                    <input type="file" @change="updateImage" />
                   </div>
                 </div>
-
                 <div v-else class="dropZone-uploaded">
                   <div class="dropZone-uploaded-info">
-                    <img v-if="imagePath" :src="imagePath" style="max-width: 120px; max-height: 60px" />
+                    <img :src="item.image" style="max-width: 120px; max-height: 60px" />
                     <span class="dropZone-filename p-1">{{ file.name }}</span>
                     <button type="button" class="btn btn-primary removeFile p-1" @click="removeFile">
                       Remove File
@@ -88,43 +81,40 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="col-md-6">
 
-            <div class="card pt-1" v-if="role == 'is_superuser'">
+            <div class="card pt-1">
               <div class="card-header">Data Logger</div>
               <div class="card-body">
                 <div class="col-md">
-                  <div class="col-md pb-3">
+                  <div class="col-md py-1">
                     <div class="form-group">
-                      <label for="floatingInput">Serial Number Logger</label><input v-model="sn_logger" type="text"
+                      <label for="floatingInput">Serial Number Logger</label><input v-model="item.sn_logger" type="text"
                         class="form-control" placeholder="Serial Number Logger" />
                     </div>
                   </div>
                 </div>
                 <div class="col-md">
-                  <div class="col-md pb-3">
+                  <div class="col-md py-1">
                     <div class="form-group">
                       <label for="floatingInput">Serial Number Modem</label>
-                      <input v-model="sn_modem" type="text" class="form-control" placeholder="Serial Number Modem" />
+                      <input v-model="item.sn_modem" type="text" class="form-control"
+                        placeholder="Serial Number Modem" />
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md">
-                  <div class="col-md pb-3">
+                  <div class="col-md py-1">
                     <div class="form-group">
-                      <label for="floatingInput">Topic MQTT</label>
-                      <input v-model="topic_MQTT" type="text" class="form-control" placeholder="Topic MQTT" />
+                      <label for="floatingInput">Topic MQTT*</label>
+                      <input v-model="item.topic" type="text" class="form-control" placeholder="Topic MQTT" required />
                     </div>
                   </div>
                 </div>
-
                 <div class="col-md">
-                  <div class="col-md pb-3">
+                  <div class="col-md py-1">
                     <div class="form-group">
                       <label for="floatingInput">Maintenance Status</label>
-                      <select class="form-select" v-model="maintenance">
+                      <select class="form-select" v-model="item.maintenance_status">
                         <option v-for="item in maintStatus" :key="item.id" :value="item">
                           {{ item }}
                         </option>
@@ -132,42 +122,94 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Data Produksi</div>
+              <div class="card-body">
+                <div class="col-md py-1">
+                  <label for="floatingInput">Produksi*</label>
 
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Maintenance Date</label><input v-model="created_at"
-                        type="datetime-local" class="form-control" placeholder="Maintenance Date" />
-                    </div>
+                  <select class="form-select" v-model="item.balai" required>
+                    <option v-for="item in produksis" :key="item.id" :value="item.id">
+                      {{ item.balai_name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="UkuranSensor">Ukuran Sensor</label>
+                    <input v-model="item.sensor_size" type="text" class="form-control" id="UkuranSensor"
+                      placeholder="Ukuran Sensor" />
                   </div>
                 </div>
-
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Hide Status</label><select class="form-select" v-model="hide">
-                        <option v-for="item in hideStatus" :key="item.id" :value="item">
-                          {{ item }}
-                        </option>
-                      </select>
-                    </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="HargaSatuan">Harga Satuan</label>
+                    <input v-model="item.unit_price" type="number" class="form-control" id="HargaSatuan"
+                      placeholder="Harga Satuan" />
                   </div>
                 </div>
-
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Catatan</label>
-                      <textarea v-model="note" class="form-control" id="exampleFormControlTextarea1"
-                        rows="3"></textarea>
-                    </div>
+                <div v-if="item.balai == 4" class="col-md py-1">
+                  <div class="form-group">
+                    <label for="In/Out Interzone">In/Out Interzone</label>
+                    <input v-model="item.interzone" type="text" class="form-control" id="In/Out Interzone"
+                      placeholder="Interzone" />
+                  </div>
+                </div>
+                <div v-else class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Nameplate">Nameplate Head</label>
+                    <input v-model="item.nameplate_head" type="text" class="form-control" id="Nameplate"
+                      placeholder="Nameplate Head" />
+                  </div>
+                </div>
+                <div v-if="item.balai == 4" class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Max">Max Flow</label>
+                    <input v-model="item.max_flow" type="text" class="form-control" id="Max" placeholder="Max Flow" />
+                  </div>
+                  <div class="form-group">
+                    <label for="Diameter">Diameter Pipa</label>
+                    <input v-model="item.pipe_diameter" type="text" class="form-control" id="Diameter"
+                      placeholder="Diameter Pipa" />
+                  </div>
+                </div>
+                <div v-else class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Kapasitas">Kapasitas</label>
+                    <input v-model="item.capacity" type="text" class="form-control" id="Kapasitas"
+                      placeholder="Kapasitas" />
+                  </div>
+                  <div class="form-group">
+                    <label for="Jumlah">Jumlah Operasi</label>
+                    <input v-model="item.sum_operation" type="number" class="form-control" id="Jumlah"
+                      placeholder="Jumlah Operasi" />
+                  </div>
+                </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Percent">Percent Cal</label>
+                    <input v-model="item.percent_cal" type="number" class="form-control" id="Percent" step="0.01"
+                      placeholder="Percent Cal" />
+                  </div>
+                </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="floatingInput">Factor Cal</label>
+                    <select class="form-select" v-model="item.factor_cal">
+                      <option v-for="item in maintStatus" :key="item.id" :value="item">
+                        {{ item }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </form>
   </div>
@@ -177,66 +219,64 @@
 import Header from "@/components/Public/Header.vue";
 import axios from "axios";
 import moment from "moment";
-// import $ from "jquery";
 import login_i from "@/assets/icons/menu/upload.svg";
+import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 export default {
   name: "AddStation",
   components: {
     Header,
+    // logoPDAM
   },
 
   data() {
     return {
-      totalSensor: 1,
       login_i,
-      //DRAGNDROP
-      // file: '',
       dragging: false,
-      //DRAGNDROP END
-      channels: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-      ],
-      
-      provinsis: [],
-      sensorTypes: [],
-      stationTypes: [],
       snLoggers: [],
       snModems: [],
       maintStatus: [false, true],
-      hideStatus: [false, true],
       file: "",
       reader: "",
+      produksis: [],
+      item: {
+        station_name: null,
+        location: null,
+        topic: null,
+        percent_cal: 0,
+        factor_cal: true,
+        maintenance_status: false,
+        elevation: 0,
+        sn_modem: null,
+        sn_logger: null,
+        image: null,
+        latitude: null,
+        longitude: null,
+        nameplate_head: null,
+        sum_operation: null,
+        capacity: null,
+        interzone: null,
+        max_flow: null,
+        pipe_diameter: null,
+        unit_price: null,
+        sensor_size: null,
+        logger_type: 1,
+        created_by: null,
+        balai: null,
 
-      station_name: "",
-      station_type: null,
-      provinsi: null,
-      
-      location: "",
-      sungai: null,
-      sn_logger: null,
-      sn_modem: null,
-      latitude: null,
-      longitude: null,
-      elevasi: null,
-      imagePath: null,
-      topic_MQTT: "",
-      observator: "",
-      observator_phone: "",
-      map_icon: null,
-      siaga: null,
-      created_by: null,
-      maintenance: false,
-      hide: false,
-      note: null,
-      // DATA -------------------
-      created_at: null,
+      },
     };
   },
   methods: {
-
+    removeFile() {
+      this.item.image = null;
+      this.fileName = '';
+      const fileInput = this.$el.querySelector('input[type="file"]');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    },
     onChange(e) {
-      // var files = e.target.files || e.dataTransfer.files;
       this.file = e.target.files.item(0);
       this.reader = new FileReader();
       this.reader.addEventListener("load", this.imageLoaded);
@@ -246,20 +286,11 @@ export default {
         this.dragging = false;
         return;
       }
-
       this.createFile(this.file[0]);
     },
     createFile(file) {
       if (!file.type.match("image.*")) {
         alert("please select image file");
-        // this.$swal({
-        //   position: "top-end",
-        //   width: "300px",
-        //   icon: "success",
-        //   title: "Your work has been saved",
-        //   showConfirmButton: false,
-        //   timer: 1500,
-        // });
         this.dragging = false;
         return;
       }
@@ -274,10 +305,6 @@ export default {
       console.log(this.file);
       this.dragging = false;
     },
-    removeFile() {
-      this.file = "";
-    },
-    // END DRAG N DROP
 
     fileSelected(event) {
       this.file = event.target.files.item(0);
@@ -288,50 +315,109 @@ export default {
     imageLoaded(event) {
       this.imagePath = event.target.result;
     },
+    // async submitStation() {
+    //   try {
+    //     const config = {
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     };
+
+    //     const loggerTypeId = this.item.logger_type && this.item.logger_type.id ? this.item.logger_type.id : this.item.logger_type;
+    //     const balaiId = this.item.balai && this.item.balai.id ? this.item.balai.id : this.item.balai;
+
+    //     const updatedItem = {
+    //       ...this.item,
+    //       logger_type: loggerTypeId,
+    //       balai: balaiId,
+    //     };
+
+    //     await axios.post(`${this.$baseURL}/pdam/station/`, updatedItem, config);
+    //     this.$router.push({ name: "Station" });
+    //   } catch (error) {
+    //     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    //       this.logoutUser();
+    //     } else {
+    //       console.error('Error msg: ', error);
+    //     }
+    //   }
+    // },
 
     async submitStation() {
-      const form = new FormData();
-      form.append(this.file, this.file.name);
+      try {
+        const formData = new FormData();
 
-      await axios
-        .post(
-          `${this.$baseURL}/station/0`,
-          {
-            // station_name: {
+        // Handle image
+        if (this.item.image && !(this.item.image.startsWith('http'))) {
+          if (this.item.image instanceof File) {
+            // If it's a File object, use it directly
+            formData.append('image', this.item.image);
+          } else if (this.item.image.startsWith('data:image')) {
+            // If it's a data URL (from FileReader)
+            const response = await fetch(this.item.image);
+            const blob = await response.blob();
+            formData.append('image', new File([blob], 'image.jpg', { type: 'image/jpeg' }));
+          } else {
+            throw new Error('Invalid image format');
+          }
+        } else {
+          // If no image selected, send logoPDAM or handle appropriately
+          // For example, sending a default image or null
+          const response = await fetch(logoPDAM);
+          const blob = await response.blob();
+          formData.append('image', new File([blob], 'logoPDAM.png', { type: 'image/png' }));
+        }
 
-            // },
-            created_at: this.created_at,
-            station_name: this.station_name,
-            location: this.location,
+        const loggerTypeId = this.item.logger_type && this.item.logger_type.id ? this.item.logger_type.id : this.item.logger_type;
+        const balaiId = this.item.balai && this.item.balai.id ? this.item.balai.id : this.item.balai;
 
-            latitude: this.latitude,
-            longitude: this.longitude,
+        const updatedItem = {
+          ...this.item,
+          logger_type: loggerTypeId,
+          balai: balaiId,
+          // image: this.item.image, // Include the 'image' field, even if it's null
+        };
 
-            image: this.imagePath,
-            topic_MQTT: this.topic_MQTT,
-            observator: this.observator,
-            observator_phone: this.observator_phone,
-            map_icon: this.map_icon,
-
-            sn_logger: this.sn_logger,
-            sn_modem: this.sn_modem,
-
-            created_by: this.created_by,
-            maintenance: this.maintenance,
-            hide: this.hide,
-            note: this.note,
+        for (const key in updatedItem) {
+          formData.append(key, updatedItem[key]);
+        }
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${this.token}`,
           },
-          {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          }
-        )
-        .then((r) => {
-          if (r.status == 201) {
-            this.$router.push({ name: "Station" });
-          }
-        });
+        };
+
+        await axios.post(`${this.$baseURL}/pdam/station/`, formData, config);
+
+        this.$router.push({ name: "Station" });
+      } catch (error) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
+        }
+      }
+    },
+
+    updateImage(event) {
+      let file;
+      if (event.target.files) {
+        file = event.target.files[0];
+      } else if (event.dataTransfer) {
+        file = event.dataTransfer.files[0];
+      }
+      const allowedExtensions = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedExtensions.includes(file.type)) {
+        alert('Invalid file format. Please upload a PNG, JPEG or JPG image.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.item.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
     },
     submit() {
       this.$swal({
@@ -346,27 +432,36 @@ export default {
       this.submitStation();
     },
   },
-  created() {
-    this.gAuthUser();
- 
+  async created() {
+    this.extractUserInfo()
+    await axios
+      .get(`${this.$baseURL}/balai/`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((r) => {
+        this.produksis = r.data.data
+      }).catch((error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
+        }
+      });
+
 
     var date = new Date();
     this.created_at = moment(date).format("YYYY-MM-DDThh:mm");
   },
-  async mounted() {
-   
-  },
-  //DRAGNDROP
   computed: {
     extension() {
       return this.file ? this.file.name.split(".").pop() : "";
     },
   },
-  //DRAGNDROP END
 };
 </script>
 <style scoped src="@/assets/css/figma.css"></style>
-
 <style scoped>
 .dropZone {
   width: 50%;

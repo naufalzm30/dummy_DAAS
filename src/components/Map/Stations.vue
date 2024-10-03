@@ -1,27 +1,22 @@
 <template>
   <div>
-    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center" style="min-height: 35vh">
+    <div v-if="loading_i && role !== 'QA'" class="d-flex flex-column justify-content-center align-items-center"
+      style="min-height: 35vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-    <span class="d-none">
-      {{ stations }}
-      <hr />
-      {{ backupStat }}
-    </span>
-    <!-- {{ userStationList }} -->
-    <div class="box" v-if="!loading_i">
-      <div class="tab-content station-list" id="tabs-tabContent">
-
-        <div v-if="total_arr >= 1" class="tableFixHead tab-pane fade" :class="{
-      active: total_arr >= 1 && total_awlr < 1,
-      show: total_arr >= 1 && total_awlr < 1,
-      h100: ava_width <= 850,
-    }" id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+    <div v-if="loading_i && role === 'QA'" class="d-flex flex-column justify-content-center align-items-center"
+      style="min-height: 90vh">
+      <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
+    </div>
+    <div v-if="role !== 'QA'" class="box">
+      <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
+        <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
+          id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
 
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
-                <th v-for="(head, index) in arr_head" :key="index"
+                <th v-for="(head, index) in table_head" :key="index"
                   :class="{ thClass: index >= 0, sticky: index === 2 }">
                   {{ head }}
                 </th>
@@ -29,129 +24,146 @@
             </thead>
 
             <tbody>
-              <tr v-for="(station, index) in stations" :key="station[0].id" @click="selectStation(station)"
+              <tr v-for="(station, index) in localStations" :key="station.station_serial_id" @click="selectStation(station)"
                 style="cursor: pointer">
                 <td>{{ index + 1 }}</td>
-                <td>
-                  <span v-if="station[1].table.siaga == []"> </span>
-                  <span v-else-if="station[1].table.siaga == 'MAINTENANCE'">
-                    <img :src="mtc_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 1'">
-                    <img :src="s1_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 2'">
-                    <img :src="s2_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'SIAGA 3'">
-                    <img :src="s3_i" class="statSZ" />
-                  </span>
-                  <span v-else-if="station[1].table.siaga == 'OK'">
-                    <img :src="ok_i" class="statSZ" />
-                  </span>
+                <!-- <td v-if="station.maintenance"
+                  style="display: flex; flex-direction: column; align-items: center; font-size: 0.7rem;">
+                  <div class="statusText">
+                    <span class="dotMTC mx-1"></span> <span style="color: black;">MTC</span>
+                  </div>
+                </td> -->
+                <td style="display: flex; flex-direction: column; align-items: center; font-size: 0.7rem;">
+                  <div v-if="station.station_status == 'OK'" class="statusText">
+                    <span class="dotOK mx-1"></span> <span style="color: #219653;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'maintenance'" class="statusText">
+                    <span class="dotMTC mx-1"></span> <span style="color: black;">MTC</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'Min Threshold'" class="statusText">
+                    <span class="dotMin mx-1"></span> <span style="color: #00B2FF;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else-if="station.station_status == 'Max Threshold'" class="statusText">
+                    <span class="dotMax mx-1"></span> <span style="color: #D34053;">{{ station.station_status }}</span>
+                  </div>
+                  <div v-else class="statusText">
+                    <span class="dotMax mx-1"></span> {{ station.station_status }}
+                  </div>
                 </td>
                 <td>
-                  {{ station[0].station_name }}
+                  {{ station.station_name }}
                 </td>
                 <td>
-                  <router-link v-if="profile.station == null" type="button" class="btn btn-sm btn-primary m-0 p-0"
+                  <router-link v-if="role == 'SuperAdmin'" type="button" class="btn btn-sm btn-primary m-0 p-0"
                     style="font-size: 0.8rem; padding: 0 5px!important;"
-                    :to="{ path: '/station/data/' + station[0].id + '/0' }">Data</router-link>
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Data</router-link>
                   <router-link v-else type="button" class="btn btn-primary btn-sm m-0 p-0"
                     style="font-size: 0.8rem; padding: 0 5px!important;"
-                    :to="{ path: '/station/data/' + station[0].id + '/' + profile.station.id }">Data</router-link>
-                </td>
-
-
-                <td>
-                  {{ formatDate(station[1].table.date) }}
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Data</router-link>
                 </td>
                 <td>
-                  {{ formatTime(station[1].table.date) }}
+                  {{ formatDate(station.last_time) }}
                 </td>
-
-                <td v-for="(sensor, index) in conf_2(
-      station[1].table.sensor_data,
-      station[1].table.array_table_symbol
-
-    )" :key="index">
-                  {{ sensor.data }}
-                  {{ sensor.symbol }}
-
+                <td>
+                  {{ formatTime(station.last_time) }}
                 </td>
+                <td v-for="(sensor, index) in station.last_data" :key="index">
+                  {{ sensor.value }} {{ sensor.notation }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="box">
+      <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
+        <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
+          id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+
+          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
+            <thead class="table-light">
+              <tr>
+                <th v-for="(head, index) in table_headQA" :key="index"
+                  :class="{ thClass: index >= 0, sticky: index === 2 }">
+                  {{ head }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(station, index) in stationsQA" :key="station.station_serial_id"
+                @click="selectStationQA(station)" style="cursor: pointer">
+                <td>{{ index + 1 }}</td>
+
+                <td>
+                  {{ station.station_name }}
+                </td>
+                <td>
+
+                  <router-link type="button" class="btn btn-primary btn-sm m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Data</router-link>
+                </td>
+                <td>
+                  {{ formatDate(station.data[0].date) }}
+                </td>
+                <td>{{ station.data[0].sum }}</td>
+                <td>{{ station.data[0].percentage }} %</td>
+                <td>{{ station.data[0].maintenance }}</td>
+
 
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import awlr_i from "@/assets/icons/map/awlr.svg";
-import arr_i from "@/assets/icons/map/arr.svg";
-import mtc_i from "@/assets/icons/map/mtc.svg";
-import ok_i from "@/assets/icons/map/ok.svg";
-import s1_i from "@/assets/icons/map/s1.svg";
-import s2_i from "@/assets/icons/map/s2.svg";
-import s3_i from "@/assets/icons/map/s3.svg";
-import { mapActions } from 'vuex';
 
 export default {
-  name: "stations",
+  name: "Stations",
+  props: ['stationsQA', 'stations', 'loading_i'],
   data() {
     return {
-      stations: [],
+
       users: [],
-      userStationList: [],
-      backupStat: [],
-      awlr_stations: [],
-      arr_stations: [],
-
-      awlr_head: [],
-      arr_head: [],
-
-
-      total_awlr: null,
-      total_arr: null,
-
-
-      awlr_head_pre: [],
-      arr_head_pre: [],
-
+      st_stations: [],
+      st_stationsQA: [],
+      table_head: [],
+      table_headQA: [],
+      total_stat: null,
+      total_statQA: null,
+      table_head_pre: [],
       role: null,
       balai: null,
       indexSt: null,
-      loading_i: true,
+      // loading_i: true,
       ava_width: null,
       ava_height: null,
-      awlr_i,
-      arr_i,
-
-      mtc_i,
-      ok_i,
-      s1_i,
-      s2_i,
-      s3_i,
     };
   },
+  computed: {
+    localStations: {
+      get() {
+        return this.stations;
+      },
+      set(newValue) {
+        this.$emit('update:stations', newValue);
+      }
+    }
+  },
   methods: {
-    ...mapActions(['updateUserStationList']),
-
     selectStation(station) {
       this.$emit('station-selected', station);
     },
-    conf_2(a, b) {
-      return a.map((card, i) => {
-        return {
-          data: card,
-          symbol: b[i],
-        };
-      });
+    selectStationQA(stationQA) {
+      this.$emit('stationqa-selected', stationQA);
     },
     formatDate(date) {
       var monthShortNames = [
@@ -188,176 +200,52 @@ export default {
 
       return [hour, minute].join(":");
     },
-    async loadUser() {
-
-      if (this.profile.station == null) {
-        await axios
-          .get(`${this.$baseURL}/station/0`, {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          })
-          .then((r) => {
-
-            if (r.data.length > 1) {
-              this.users = r.data;
-            } else {
-              this.users = [r.data];
-            }
-
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-          });
-      } else if (this.profile.station != null) {
-        await axios
-          .get(`${this.$baseURL}/station/role/${this.profile.station.id}`, {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          })
-          .then((r) => {
-
-            if (r.data.length > 1) {
-              this.users = r.data;
-            } else {
-              this.users = [r.data];
-            }
-
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-            this.userStationList = this.users.map(station => station.id)
-            this.updateUserStationList(this.userStationList);
-            // console.log('L ist.vue', this.userStationList);
-          });
-      }
-    },
 
     async loadStations() {
-      if (this.profile.station == null) {
-        await axios
-          .get(`${this.$baseURL}/home-data/`)
-          .then((r) => {
-            this.stations = r.data;
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-          })
-          .catch(function (e) {
-            console.log(e);
-          });
-      } else if (this.profile.station != null) {
-        await axios
-          .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
-          .then((r) => {
-            this.stations = r.data;
-            if (r.status == 200) {
-              this.loading_i = false;
-            }
-          })
-          .catch(function (e) {
-            console.log(e);
-          });
-      }
+      
+      this.processStations();
 
-      for (let i = 0; i < this.stations.length; i++) {
-        if (this.stations[i][0].station_type == 1) {
-          this.arr_stations.push(this.stations[i]);
-        }
-      }
-
-      let total_arr = this.stations
-        .map((x) => x[0].station_type)
-        .filter((x) => x == 1).length;
-
-      this.total_arr = total_arr;
-
-      this.arr_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu"];
-
-
-      for (let i = 0; i < this.stations.length; i++) {
-
-        if (this.stations[i][0].station_type == 1) {
-          this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
-        }
-
-      }
-      let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
-      this.arr_head.splice.apply(this.arr_head, [6, 0].concat(arr_uniq));
-
-
-
-      setInterval(
-        function () {
-
-          if (this.profile.station == null) {
-            axios
-              .get(`${this.$baseURL}/home-data/`)
-              .then((r) => {
-                this.stations = r.data;
-                if (r.status == 200) {
-                  this.loading_i = false;
-                }
-              })
-              .catch(function (e) {
-                console.log(e);
-              });
-          } else if (this.profile.station != null) {
-            axios
-              .get(`${this.$baseURL}/home-data/${this.profile.station.id}`)
-              .then((r) => {
-                this.stations = r.data;
-                if (r.status == 200) {
-                  this.loading_i = false;
-                }
-              })
-              .catch(function (e) {
-                console.log(e);
-              });
-          }
-          for (let i = 0; i < this.stations.length; i++) {
-            if (this.stations[i][0].station_type == 1) {
-              this.arr_stations = [];
-              for (let i = 0; i < this.stations.length; i++) {
-                if (this.stations[i][0].station_type == 1) {
-                  this.arr_stations.push(this.stations[i]);
-                }
-              }
-            }
-
-          }
-        }.bind(this),
-        300000
-      );
-      // console.log('before interval');
-
-
-      setInterval(
-        function () {
-
-          this.arr_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu"];
-
-          for (let i = 0; i < this.stations.length; i++) {
-
-            if (this.stations[i][0].station_type == 1) {
-              this.arr_head_pre.push(this.stations[i][1].table.array_table_label);
-            }
-
-          }
-          let arr_uniq = Array.from(new Set(this.arr_head_pre[0]));
-          this.arr_head.splice.apply(this.arr_head, [6, 0].concat(arr_uniq));
-
-
-
-        }.bind(this),
-        300000
-      );
+      setInterval(async () => {
+        await this.fetchStations();
+        this.processStations();
+      }, 300000);
     },
-    getYear(x) {
-      var d = new Date(x),
-        year = d.getFullYear();
-      return year;
+    async loadStationsQA() {
+      this.processStationsQA();
+    },
+
+    async fetchStations() {
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        this.localStations = response.data.data;
+        this.loading_i = response.status === 200 ? false : true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    processStations() {
+      // console.log('tset');
+      
+      this.st_stations = [...this.localStations];
+      this.total_stat = this.localStations.length;
+      this.table_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu", "Flowmeter", "Totalizer"];
+      // this.localStations.forEach(station => {
+      //   station.last_data.forEach(data => {
+      //     if (data.sensor_name && !this.table_head.includes(data.sensor_name)) { 
+      //       this.table_head.push(data.sensor_name);
+      //     }
+      //   });
+      // });
+    },
+
+    processStationsQA() {
+      this.st_stationsQA = [...this.stationsQA];
+      this.total_statQA = this.stationsQA.length;
+      this.table_headQA = ["No", "Nama Stasiun", "Data", "Tanggal", "Jumlah Data", "Persentase Data", "Jumlah Gangguan"];
     },
     handleScroll() {
       const stickyCol = document.querySelector("th.sticky");
@@ -380,33 +268,19 @@ export default {
 
   created() {
     this.extractUserInfo()
-
     this.ava_width = screen.availWidth;
     this.ava_height = screen.availHeight;
 
-    let user = localStorage.getItem("user-info") || {};
-    if (typeof user == "object") {
-      this.balai = this.$fixedBalai;
-    } else if (typeof user == "string") {
-      this.role = JSON.parse(user).profile.role;
-      this.user_id = JSON.parse(user).profile.user.id;
-      this.balai = JSON.parse(user).profile.balai.id;
-      if (this.role == "is_superuser") {
-        this.balai = 0;
-      }
-    }
-    this.loadUser();
-
   },
   mounted() {
-    this.loadStations();
-    this.formatDate();
-    this.formatTime();
-    window.addEventListener("scroll", this.handleScroll);
-    this.updateUserStationList(this.userStationList);
-  },
-  destroyed() {
-    window.removeEventListener("scroll", this.handleScroll);
+
+
+    if (this.role !== 'QA') {
+      this.loadStations();
+    } else {
+      this.loadStationsQA();
+    }
+    // this.updateUserStationList(this.userStationList);
   },
 };
 </script>
@@ -414,7 +288,12 @@ export default {
 <style scoped>
 .tableFixHead {
   overflow-y: scroll;
-  height: 37vh;
+  height: 40vh;
+}
+
+.tableQA {
+  overflow-y: scroll;
+  height: 92vh;
 }
 
 .tableFixHead table {

@@ -1,4 +1,4 @@
-<template>
+<template >
   <div>
     <Header />
     <div class="mobile-width">
@@ -50,7 +50,7 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">Data Station</div>
-              
+
               <div class="card-body">
                 <div class="col-md pb-3" v-if="role == 'is_superuser'">
                   <label for="floatingInput">Station*</label>
@@ -61,7 +61,7 @@
                   </select>
                 </div>
 
-               
+
                 <div class="col-md pb-3">
                   <div class="form-group">
                     <label for="inputPhone">Phone</label>
@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       stations: [],
-      
+
       item: {
         user: "",
         password: "",
@@ -107,11 +107,11 @@ export default {
     async updateUser() {
       await axios
         .put(
-          `${this.$baseURL}/user/${this.itemStation}/${this.$route.params.id}`,
+          `${this.$baseURL}/user/${this.$route.params.id}`,
           this.item,
           {
             headers: {
-              Authorization: `Token ${this.token}`,
+              Authorization: `Bearer ${this.token}`,
             },
           }
         )
@@ -139,29 +139,33 @@ export default {
     },
   },
   async mounted() {
-    if (this.$route.params.balai_id != 0) {
+    if (this.role != "SuperAdmin") {
       localStorage.clear();
       this.$router.push({ name: "Login" });
     }
 
     await axios
-      .get(`${this.$baseURL}/user/0/${this.$route.params.id}`, {
+      .get(`${this.$baseURL}/user/${this.$route.params.id}/`, {
         headers: {
-          Authorization: `Token ${this.token}`,
+          Authorization: `Bearer ${this.token}`,
         },
       })
       .then((r) => {
-        this.item = r.data[0];
-  
-  this.itemStation = this.item.station
-  console.log(this.itemStation);
+        // console.log(r);
+
+        this.item = r.data.data;
+      }).catch((error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
+        }
       });
-  
+
   },
 
   async created() {
-    this.gAuthUser();
-    this.stations = await this.fetchData(`${this.$baseURL}/station/0`);
+    this.extractUserInfo()
   },
 };
 </script>

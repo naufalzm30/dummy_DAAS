@@ -9,31 +9,14 @@ import Station from "@/views/Station/List.vue";
 import AddStation from "@/views/Station/Add.vue";
 import UpdateStation from "@/views/Station/Update.vue";
 import DataStation from "@/views/Station/Data.vue";
-import Balai from "@/views/Balai/List.vue";
-import AddBalai from "@/views/Balai/Add.vue";
-import UpdateBalai from "@/views/Balai/Update.vue";
 import User from "@/views/User/List.vue";
 import AddUser from "@/views/User/Add.vue";
-import UpdateUser from "@/views/User/Update.vue";
-import Sensor from "@/views/Sensor/List.vue";
-import AddSensor from "@/views/Sensor/Add.vue";
-import UpdateSensor from "@/views/Sensor/Update.vue";
-import Provinsi from "@/views/Provinsi/List.vue";
-import AddProvinsi from "@/views/Provinsi/Add.vue";
-import UpdateProvinsi from "@/views/Provinsi/Update.vue";
-import Logger from "@/views/Logger/List.vue";
-import AddLogger from "@/views/Logger/Add.vue";
-import UpdateLogger from "@/views/Logger/Update.vue";
-import Modem from "@/views/Modem/List.vue";
-import AddModem from "@/views/Modem/Add.vue";
-import UpdateModem from "@/views/Modem/Update.vue";
-import Icon from "@/views/Icon/List.vue";
-import AddIcon from "@/views/Icon/Add.vue";
-import UpdateIcon from "@/views/Icon/Update.vue";
-import Backup from "@/views/B_ackup/List.vue";
-import AddBackup from "@/views/B_ackup/Add.vue";
-import UpdateBackup from "@/views/B_ackup/Update.vue";
-import SensorMod from "@/views/SensorMod/List.vue";
+import Notification from "@/views/Notification/List.vue";
+
+// import Produksi from "@/views/Produksi/List.vue";
+// import AddProduksi from "@/views/Produksi/Add.vue";
+// import UpdateUser from "@/views/User/Update.vue";
+
 
 Vue.use(VueRouter);
 
@@ -53,22 +36,26 @@ const ifAuthenticated = (to, from, next) => {
   next("/login");
 };
 
+// New role-based guard
+const ifAuthorized = (role) => (to, from, next) => {
+  const userRole = store.getters.userRole || localStorage.getItem('userRole'); // Get role from Vuex or localStorage
+  if (store.getters.isAuthenticated && userRole === role) {
+    next();
+  } else {
+    next("/"); // Redirect to home or an unauthorized page if role check fails
+  }
+};
+
 let routes = [];
 
-// if (document.title == "WEATHER-VUE") {
+
   routes.push({
     path: "/",
     component: Home,
     name: "Home",
     beforeEnter: ifAuthenticated,
   });
-// } else {
-//   routes.push({
-//     path: "/",
-//     component: Home,
-//     name: "Home",
-//   });
-// }
+
 
 routes.push(
   {
@@ -84,183 +71,64 @@ routes.push(
     beforeEnter: ifAuthenticated,
   },
   {
-    path: "/station/:balai_id",
+    path: "/station",
     component: Station,
     name: "Station",
     beforeEnter: ifAuthenticated,
   },
   {
-    path: "/station/:balai_id/add",
+    path: "/station/add",
     component: AddStation,
     name: "AddStation",
-    beforeEnter: ifAuthenticated,
+    beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/station/update/:balai_id/:id",
+    path: "/station/update/:id",
     name: "UpdateStation",
     component: UpdateStation,
-    beforeEnter: ifAuthenticated,
+    beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/station/data/:id/:user_id",
+    path: "/station/data/:id",
     name: "DataStation",
     component: DataStation,
     beforeEnter: ifAuthenticated,
   },
-
   {
-    path: "/user/:balai_id",
+    path: "/user",
     component: User,
     name: "User",
-    beforeEnter: ifAuthenticated,
+    beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/user/:balai_id/add",
+    path: "/user/add",
     component: AddUser,
     name: "AddUser",
-    beforeEnter: ifAuthenticated,
+    beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/user/update/:balai_id/:id",
-    name: "UpdateUser",
-    component: UpdateUser,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/sensor",
-    component: Sensor,
-    name: "Sensor",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/sensor/add",
-    component: AddSensor,
-    name: "AddSensor",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/sensor/update/:id",
-    name: "UpdateSensor",
-    component: UpdateSensor,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/balai",
-    component: Balai,
-    name: "Balai",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/balai/add",
-    component: AddBalai,
-    name: "AddBalai",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/balai/update/:id",
-    name: "UpdateBalai",
-    component: UpdateBalai,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/provinsi",
-    component: Provinsi,
-    name: "Provinsi",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/provinsi/add",
-    component: AddProvinsi,
-    name: "AddProvinsi",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/provinsi/update/:id",
-    name: "UpdateProvinsi",
-    component: UpdateProvinsi,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/logger",
-    component: Logger,
-    name: "Logger",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/logger/add",
-    component: AddLogger,
-    name: "AddLogger",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/logger/update/:id",
-    name: "UpdateLogger",
-    component: UpdateLogger,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/modem",
-    component: Modem,
-    name: "Modem",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/modem/add",
-    component: AddModem,
-    name: "AddModem",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/modem/update/:id",
-    name: "UpdateModem",
-    component: UpdateModem,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/icon",
-    component: Icon,
-    name: "Icon",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/icon/add",
-    component: AddIcon,
-    name: "AddIcon",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/icon/update/:id",
-    name: "UpdateIcon",
-    component: UpdateIcon,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/backup",
-    component: Backup,
-    name: "Backup",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/backup/add",
-    component: AddBackup,
-    name: "AddBackup",
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/backup/update/:id",
-    name: "UpdateBackup",
-    component: UpdateBackup,
-    beforeEnter: ifAuthenticated,
-  },
-  {
-    path: "/sensormod",
-    component: SensorMod,
-    name: "SensorMod",
-    beforeEnter: ifAuthenticated,
+    path: "/notification",
+    component: Notification,
+    name: "Notification",
+    beforeEnter: ifAuthorized("SuperAdmin"),
   },
   // {
-  //     path: '/:pathMatch(.*)*',
-  //     component: Login
+  //   path: "/produksi",
+  //   component: Produksi,
+  //   name: "Produksi",
+  //   beforeEnter: ifAuthorized("SuperAdmin"),
+  // },
+  // {
+  //   path: "/produksi/add",
+  //   component: AddProduksi,
+  //   name: "AddProduksi",
+  //   beforeEnter: ifAuthorized("SuperAdmin"),
+  // },
+  // {
+  //   path: "/user/update/:id",
+  //   name: "UpdateUser",
+  //   component: UpdateUser,
+  //   beforeEnter: ifAuthenticated,
   // },
   {
     path: "/:pathMatch(.*)*",
@@ -271,6 +139,7 @@ routes.push(
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
+  // base: process.env.VUE_APP_API_URL,
   routes,
 });
 

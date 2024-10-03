@@ -6,30 +6,6 @@
 
 <script>
 export default {
-  mounted() {
-    this.$store.dispatch("startInactivityTimer");
-    ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
-      window.addEventListener(event, this.handleUserActivity);
-    });
-
-    // window.addEventListener("beforeunload", this.handleTabClose);
-  },
-  beforeDestroy() {
-    ["mousemove", "keydown", "mousedown", "touchstart"].forEach((event) => {
-      window.removeEventListener(event, this.handleUserActivity);
-    });
-    // window.removeEventListener("beforeunload", this.handleTabClose);
-
-    this.$store.dispatch("clearInactivityTimer");
-  },
-  methods: {
-    handleUserActivity() {
-      this.$store.dispatch("resetInactivityTimer");
-    },
-    // handleTabClose() {
-    //   this.$store.dispatch("userLogout");
-    // },
-  },
   
 };
 </script>
@@ -90,7 +66,7 @@ u {
 
 .bwsTitle {
   text-transform: uppercase;
-  color: #092581;
+  color: #00B2FF;
   font-size: 1.3rem;
   font-weight: 500;
 }

@@ -1,87 +1,123 @@
 <template>
   <div>
-    <span v-for="item in stations" :key="item.id">
-      <div v-if="item.id == $route.params.id" class="row">
-        <div class="left-container" :class="{ p012: item.station_type == 3 }">
-          <TableMap :stations="item" :status="status" :loading_i="loading_i" class="mx-auto comShadow border"
-            style="border-radius: 15px" />
+
+    <div class="left-container">
+      <TableMap v-if="role !== 'QA'" :loading_i="loading_i" class="mx-auto comShadow border"
+        style="border-radius: 15px" :profile="profile"/>
+
+      <div v-else class="card box-sm comShadow" style="box-shadow: 10px; border-radius: 10px;">
+        <div class="row" v-if="profile">
+          <div class="col-md-4 p-0 imgSZ">
+            <img :src="`${profile.image}`" class="img-fluid" alt="station-img" style="
+              object-fit: cover;
+              border-radius: 10px 0px 0px 10px;
+              margin-left: 12px;
+              width: 95%;
+            " />
+          </div>
+          <div class="col-md-8 my-2">
+            <div class="d-flex align-items-center">
+              <div class="col-md-10 col-10">
+                <div style="font-weight: 500; font-size: 1.1rem">
+                  {{ profile.station_name }}
+                </div>
+              </div>
+            </div>
+            <div style="font-size: 0.8rem; color: gray;">
+              {{ formatDate(summaryQA.data[summaryQA.data.length - 1].date) }} s/d {{ formatDate(summaryQA.data[0].date)
+              }}
+            </div>
+            <div class="row mt-1 mx-0">
+
+              <table style="width: 60%; ">
+                <tr>
+                  <td style="font-size: 1rem">Rata-Rata Data Masuk</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.average_all_data }} </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 1rem">Target Data Seluruhnya</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 1rem">Jumlah Data Seluruhnya</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 1rem">Data Tidak Terkirim</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.sum_maintenance }} </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 1rem">Jumlah Gangguan</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.sum_maintenance }} </td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-    </span>
-
-    <div style="border-radius: 15px" class="mt-2">
-      <!-- {{ filterData }} -->
-      <dataset class="box comShadow px-3" v-slot="{ ds }" :ds-data="filterData" :ds-sortby="sortBy">
-        <div class="row" :data-page-count="ds.dsPagecount">
+    </div>
+    <div v-if="role !== 'QA'" style="border-radius: 15px" class="mt-2">
+      <dataset v-if="dataStation" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStation" :ds-sortby="sortBy">
+        <div class="row " :data-page-count="ds.dsPagecount">
           <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
             <div class="dropdown col">
               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Summary Data"
                 style="font-size: 0.8rem">
-
                 <span><i class="zmdi zmdi-search"></i></span>
               </button>
-              <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
+
+              <ul class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
                 <li class="dropdown-item py-0" style="font-size: 0.9rem;">
-                  Jumlah Data: {{ detailAPI.jumlah_data }}
+                  Jumlah Data:
+
+                  {{ summary.total_data }}
                 </li>
                 <li class="dropdown-item py-0" style="font-size: 0.9rem;">
-                  Rata Debit: {{ detailAPI.rata_debit }} L/s
+                  Rata Debit: {{ summary.average_flow }} L/s
                 </li>
                 <li class="dropdown-item py-0" style="font-size: 0.9rem;">
-                  Total Volume: {{ detailAPI.total_volume }} m³
+                  Total Volume: {{ summary.sum_volume }} m³
                 </li>
-                <li v-if="role == 'is_superuser'" class="dropdown-item py-0" style="font-size: 0.9rem;">
-                  Persentase Data: {{ persenData }}
+                <li v-if="role == 'SuperAdmin'" class="dropdown-item py-0" style="font-size: 0.9rem;">
+                  Persentase Data: {{ summary.data_precentage }} %
                 </li>
               </ul>
             </div>
           </div>
 
           <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
-            <div class="dropdown col">
+            <div v-if="role == 'Admin'" class="dropdown col">
               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Upload file CSV"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Upload File"
                 style="font-size: 0.8rem">
                 <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                   style="font-size: 1.2rem; margin-right: 3px"></i>
                 <span><i class="zmdi zmdi-upload"></i></span>
               </button>
-              <ul v-if="detailAPI" class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
+              <ul class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
                 <li class="dropdown-submenu">
-                  <a class="dropdown-item dropdown-toggle py-0" href="#" style="font-size: 0.9rem">Threshold </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item py-0" href="#" @click.prevent="formatThreshold"
-                        style="font-size: 0.9rem">Download
-                        Format Threshold</a>
-                    </li>
-                    <li>
-                      <a data-bs-toggle="modal" data-bs-target="#thresholdData" class="dropdown-item py-0" href="#"
-                        style="font-size: 0.9rem">Upload Threshold</a>
-                    </li>
-                  </ul>
+                  <a data-bs-toggle="modal" data-bs-target="#thresholdData" class="dropdown-item py-0" href="#"
+                    style="font-size: 0.9rem">Threshold</a>
                 </li>
-                <!-- Nested Subsubmenu -->
-                
-                
-                <li v-if="role == 'is_staff' && uploadVal == '1'" class="dropdown-submenu">
+
+                <li class="dropdown-submenu">
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item dropdown-toggle py-0" href="#" style="font-size: 0.9rem">Data Sensor</a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item py-0" href="#" @click.prevent="formatData"
-                        style="font-size: 0.9rem">Download
-                        Format Data Sensor</a>
-                    </li>
-                    <li>
-                      <a data-bs-toggle="modal" data-bs-target="#sensorData" class="dropdown-item py-0" href="#"
-                        style="font-size: 0.9rem">Upload Data Sensor</a>
-                    </li>
-                  </ul>
+                  <a data-bs-toggle="modal" data-bs-target="#sensorData" class="dropdown-item py-0" href="#"
+                    style="font-size: 0.9rem">Data Sensor</a>
                 </li>
               </ul>
             </div>
+
+            <div v-else>
+              <button class="btn btn-sm btn-primary" type="button" title="Upload Threshold" style="font-size: 0.8rem"
+                data-bs-toggle="modal" data-bs-target="#thresholdData">
+                <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"></i>
+                <span><i class="zmdi zmdi-upload"></i></span>
+              </button>
+            </div>
+
           </div>
 
           <div class="modal fade" id="thresholdData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -91,28 +127,25 @@
                 <form @submit.prevent="tresholdDataUpload">
                   <div class="modal-header">
                     <h5 class="modal-title" id="thresholdDataLabel">
-                      Upload File
-                      <span v-for="item in stations" :key="item.id">
-                        <span v-if="item.id == $route.params.id">
-                          {{ item.station_name }}
-                        </span>
-                      </span>
+                      Upload Threshold
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div>
+                      <!-- <p>Threshold 24 Jam</p> -->
                       <label>
                         <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
                       </label>
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
-                      Close
+                    <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal"
+                      @click.prevent="formatThreshold">
+                      Download Format
                     </button>
                     <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
-                      Upload
+                      Upload Threshold
                     </button>
                   </div>
                 </form>
@@ -126,12 +159,7 @@
                 <form @submit.prevent="sensorDataUpload">
                   <div class="modal-header">
                     <h5 class="modal-title" id="sensorDataLabel">
-                      Upload File
-                      <span v-for="item in stations" :key="item.id">
-                        <span v-if="item.id == $route.params.id">
-                          {{ item.station_name }}
-                        </span>
-                      </span>
+                      Upload Data Sensor
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
@@ -143,29 +171,28 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
-                      Close
+                    <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal"
+                      @click.prevent="formatData">
+                      Download Format
                     </button>
                     <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
-                      Upload
+                      Upload Data Sensor
                     </button>
                   </div>
                 </form>
               </div>
             </div>
           </div>
-          <div class="col-md d-flex justify-content-end" style="margin-top: 1rem;">
-            <div v-if="role != 'is_guess'">
+
+          <div class="col-md d-flex justify-content-end" :class="{ 'justify-content-center': role == 'QA' }"
+            style="margin-top: 1rem;">
+            <div>
               <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
-              <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"
-                style="font-size: 1.2rem"></i>
-              <!-- <input name="from" type="datetime-local" v-model="startDate" @change="search" title="Data Awal"
-                style="font-size: 0.7rem" /> -->
-              <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="DD/MM/YYYY HH:mm" placeholder="Select first date"></DatePicker>
+              <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
+                placeholder="Select first date" :minute-step="5"></DatePicker>
               <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
-              <!-- <input name="" type="datetime-local" v-model="endDate" @change="search" title="Data Akhir"
-                style="font-size: 0.7rem" /> -->
-              <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="DD/MM/YYYY HH:mm" placeholder="Select last date"></DatePicker>
+              <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
+                placeholder="Select last date" :minute-step="5"></DatePicker>
             </div>
           </div>
 
@@ -181,15 +208,16 @@
 
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                 <li>
-                  <a class="dropdown-item py-0" href="#" @click.prevent="download" style="font-size: 0.9rem">Semua
+                  <a class="dropdown-item py-0" href="#" @click.prevent="downloadAll" style="font-size: 0.9rem">Semua
                     Data</a>
                 </li>
-                <li v-if="role == 'is_superuser'">
+                <!-- <li v-if="role == 'SuperAdmin'">
                   <a class="dropdown-item py-0" href="#" @click.prevent="hourlyData" style="font-size: 0.9rem">Data per
                     jam</a>
-                </li>
-                <li v-if="role == 'is_superuser'">
-                  <a class="dropdown-item py-0" href="#" @click.prevent="dailyData" style="font-size: 0.9rem">Data per
+                </li> -->
+                <li v-if="role == 'SuperAdmin'">
+                  <a class="dropdown-item py-0" href="#" @click.prevent="downloadDaily" style="font-size: 0.9rem">Data
+                    per
                     hari</a>
                 </li>
               </ul>
@@ -197,7 +225,8 @@
           </div>
 
         </div>
-        <p v-if="csv_code">File status: {{ csv_code }}</p>
+        <!-- <p v-if="csv_code">File stat us: {{ csv_code }}</p> -->
+
         <div class="row mt-1">
           <div class="col-md-12">
             <div class="table-responsive">
@@ -216,16 +245,23 @@
                   <template #default="{ row, index }">
                     <tr>
                       <td scope="row">{{ index + 1 }}</td>
-                      <td>{{ formatDate(row.waktu) }}</td>
-                      <td>{{ formatTime(row.waktu) }}</td>
-                      <td v-for="(item, index) in conf_2(
-      row.weather_data,
-      row.symbol
-    )" :key="index + 2">
-                        {{ item.data }} {{ item.symbol }}
+                      <td>{{ formatDate(row.time) }}</td>
+                      <td>{{ formatTime(row.time) }}</td>
+                      <td v-for="(sensor, index) in row.sensor_data" :key="index">
+                        <span>{{ sensor.value }} </span>
+                        <span>{{ sensor.notation }}</span>
                       </td>
-                      <td v-if="balai == 0">{{ row.bat.toFixed(2) }} v</td>
-                      <td v-if="balai == 0">{{ row.temp.toFixed(2) }} C</td>
+                      <td>
+                        <div v-if="row.status == 'OK'" style="font-size: 0.8rem;"><span style="color: #219653;">{{
+                          row.status }}</span></div>
+                        <div v-else-if="row.status == 'maintenance'" style="font-size: 0.8rem;"> <span
+                            style="color: black;">MTC</span></div>
+                        <div v-else-if="row.status == 'Min Threshold'" style="font-size: 0.8rem;"> <span
+                            style="color: #00B2FF;">{{ row.status }}</span></div>
+                        <div v-else-if="row.status == 'Max Threshold'" style="font-size: 0.8rem;"> <span
+                            style="color: #D34053;">{{ row.status }}</span></div>
+                        <div v-else>{{ row.status }}</div>
+                      </td>
                     </tr>
                   </template>
                 </dataset-item>
@@ -238,14 +274,87 @@
           <dataset-pager style="font-size: 0.9rem" />
         </div>
       </dataset>
+    </div>
+    <div v-else style="border-radius: 15px" class="mt-2">
+      <dataset v-if="dataStationQA" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStationQA"
+        :ds-sortby="sortBy">
+        <div class="row " :data-page-count="ds.dsPagecount">
+          <div class="col-md d-flex justify-content-end" :class="{ 'justify-content-center': role == 'QA' }"
+            style="margin-top: 1rem;">
+            <div>
+              <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
+              <!-- <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"style="font-size: 1.2rem"></i> -->
+              <DatePicker name="from" v-model="startDate" @change="search" format="YYYY-MM-DD HH:mm" type="datetime"
+                :default-value="new Date().setHours(0, 0, 0, 0)" :hour-options="hourStart" :minute-options="minuteStart"
+                placeholder="Select first date">
+              </DatePicker>
+              <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+              <DatePicker name="to" v-model="endDate" @change="search" format="YYYY-MM-DD HH:mm" type="datetime"
+                :default-value="new Date().setHours(23, 59, 0, 0)" :hour-options="hourEnd" :minute-options="minuteEnd"
+                placeholder="Select last date">
+              </DatePicker>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between px-0 py-2 " :class="{ 'px-5': ava_width > 768 }">
+            <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll" style="font-size: 0.8rem">
+              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>Data/Hari
+            </button>
+            <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll" style="font-size: 0.8rem">
+              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>Gangguan
+            </button>
+            <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll" style="font-size: 0.8rem">
+              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>Verifikasi
+            </button>
+            <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll" style="font-size: 0.8rem">
+              <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>Insidentil
+            </button>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <table
+                class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="thClass">#</th>
+                    <th v-for="(th, index) in colsQA" :key="th.field" :class="['sort', th.sort]"
+                      @click="click($event, index)" class="thClass">
+                      {{ th.name }} <i class="gg-select float-right"></i>
+                    </th>
+                  </tr>
+                </thead>
+                <dataset-item tag="tbody">
+                  <template #default="{ row, index }">
+                    <tr>
+                      <td scope="row">{{ index + 1 }}</td>
+                      <td>{{ formatDate(row.date) }}</td>
+                      <td>{{ row.sum }}</td>
+                      <td>{{ row.percentage }} %</td>
+                      <td>{{ row.maintenance }}</td>
+                    </tr>
+                  </template>
+                </dataset-item>
+              </table>
+            </div>
+          </div>
+        </div>
 
+        <div class="d-flex flex-md-row flex-column justify-content-end align-items-center">
+          <dataset-pager style="font-size: 0.9rem" />
+        </div>
+      </dataset>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-
+import moment from 'moment';
 import TableMap from "@/components/Station/Data/TableMap.vue";
 
 import {
@@ -265,36 +374,31 @@ export default {
     TableMap,
 
   },
-  props: ["stations", "loading_i", "status"],
+  props: ["station", "loading_i", "profile"],
 
   data: function () {
     return {
-      csv_code: null,
-      file: null,
-      csvFile: null,
-      namaPos: "",
-      type: "",
-      role: undefined,
-      json_data: [],
-      nama: "",
-      cols: [],
-      selectedType: "",
       startDate: null,
       endDate: null,
-      sensors: [],
-      first_date: null,
-      last_date: null,
-      loading_detail: false,
+      loading_data: false,
+      dataStation: null,
+      dataStationQA: null,
+      summary: null,
+      summaryQA: null,
+      cols: [],
+      colsQA: [],
+      nama: "",
       loading_upload: false,
       loading_dw: false,
-      loading_date_data: false,
-      loading_data: false,
-      localStations: this.stations.slice(),
-      detailAPI: null,
-      persenData: null,
-      noteBalai: null,
-      datetime: null,
-      uploadVal: null
+      uploadVal: null,
+      // profile: null,
+      ava_width: null,
+
+      hourStart: Array.from({ length: 1 }).map((_, i) => i + 0),
+      hourEnd: Array.from({ length: 1 }).map((_, i) => i + 23),
+      
+      minuteStart: Array.from({ length: 1 }).map((_, i) => i + 0),
+      minuteEnd: Array.from({ length: 1 }).map((_, i) => i + 59),
     };
   },
   computed: {
@@ -306,41 +410,103 @@ export default {
         return acc;
       }, []);
     },
-    filterData() {
-      let filterType = this.selectedType;
-      let startDate = this.localStart(this.startDate);
-      let endDate = this.localEnd(this.endDate);
-
-      const itemsByType = filterType
-        ? this.json_data.filter((item) => item.type === filterType)
-        : this.json_data;
-
-
-
-      return itemsByType.filter((item) => {
-        const itemDate = new Date(item.waktu);
-        if (startDate && endDate) {
-          return startDate <= itemDate && itemDate <= endDate;
-        }
-        if (startDate && !endDate) {
-          return startDate <= itemDate;
-        }
-        if (!startDate && endDate) {
-          return itemDate <= endDate;
-        }
-
-
-        return true;
-      });
-    },
-
   },
   watch: {
-    filterData(newVal) {
+    dataStation(newVal) {
       this.$emit('update-filtered-data', newVal);
-    }
+    },
+    dataStationQA(newVal) {
+      this.$emit('update-filtered-dataQA', newVal);
+    },
   },
+
   methods: {
+    async loadData(from = null, until = null) {
+      this.loading_data = true;
+      let result = await axios
+        .get(`${this.$baseURL}/pdam/station_data/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+
+      this.dataStation = result.data.data[0].chart
+      let sensor_label = this.dataStation[0].sensor_data;
+      this.nama = result.data.data[0].station_name
+
+      this.summary = result.data.data[0]
+
+      this.cols = [
+        { name: "Tanggal" },
+        { name: "Waktu" },
+      ];
+
+      for (let i = 0; i < sensor_label.length; i++) {
+        this.cols.push({
+          name: sensor_label[i].sensor_name,
+        });
+      }
+
+      this.cols.push({
+        name: "Status"
+      })
+
+      if (result.status == 200) {
+        this.loading_data = false;
+      }
+    },
+    async loadDataQA(from = null, until = null) {
+      this.loading_data = true;
+      let result = await axios
+        .get(`${this.$baseURL}/pdam/QA/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+
+      // console.log('TableData.vue: ', result.data[0].data);
+      this.dataStationQA = result.data[0].data
+      this.summaryQA = result.data[0]
+
+      this.nama = result.data.station_name
+
+      this.colsQA = [
+        { name: "Tanggal" },
+        { name: "Jumlah Data" },
+        { name: "Persen Data" },
+        { name: "Jumlah Gangguan" },
+      ];
+
+      if (result.status == 200) {
+        this.loading_data = false;
+      }
+    },
+    search() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      // this.loadData(from, until);
+      // this.loadDataQA(from, until);
+      if (this.role !== 'QA') {
+        this.loadData(from, until);
+      } else {
+        this.loadDataQA(from, until);
+      }
+    },
+
     formatDatePicker(date) {
       if (!date) return null;
       // Format date to YYYY-MM-DDTHH:mm
@@ -351,14 +517,6 @@ export default {
       const hours = String(d.getHours()).padStart(2, '0');
       const minutes = String(d.getMinutes()).padStart(2, '0');
       return `${year}-${month}-${day}T${hours}:${minutes}`;
-    },
-    conf_2(a, b) {
-      return a.map((card, i) => {
-        return {
-          data: card,
-          symbol: b[i],
-        };
-      });
     },
     click(event, i) {
       let toset;
@@ -381,77 +539,7 @@ export default {
       }
       sortEl.sort = toset;
     },
-    async reCall() {
-      await axios.get(
-        `${this.$baseURL}/data/${this.$route.params.id}/${this.user_id}`,
-        {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        }
-      );
-    },
-    async loadData() {
-      this.loading_data = true;
-      let result = await axios
-        .get(`${this.$baseURL}/data/${this.$route.params.id}/${this.user_id}`, {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        })
 
-        .catch(function (e) {
-          console.log(e);
-        });
-
-      let raw_table = result.data[1][0].table;
-      this.nama = `${result.data[0].station_name}`;
-      let sensor_label = result.data[1][0].table.array_table_label;
-      let date = raw_table.date;
-      let battery = raw_table.battery;
-      let temperature = raw_table.temperature;
-      let rw_data = raw_table.weather_data;
-      let raw_symbol = raw_table.array_act_symbol;
-
-      let a = {};
-
-      date.forEach((waktu, i) => {
-        let bat = battery[i];
-        let temp = temperature[i];
-        let weather_data = rw_data[i];
-        let symbol = raw_symbol[i];
-
-        a = { waktu, bat, temp, weather_data, symbol };
-
-        this.json_data.push(a);
-      });
-
-      this.cols = [
-        {
-          name: "Tanggal",
-        },
-        {
-          name: "Waktu",
-        },
-      ];
-
-      for (let i = 0; i < sensor_label.length; i++) {
-        this.cols.push({
-          name: sensor_label[i],
-        });
-      }
-      if (this.balai == 0) {
-        this.cols.push({
-          name: "Battery",
-        });
-        this.cols.push({
-          name: "Temperature",
-        });
-      }
-      if (result.status == 200) {
-        this.loading_data = false;
-      }
-    },
 
     localStart(date) {
       if (!date) return null;
@@ -461,90 +549,68 @@ export default {
       if (!date) return null;
       return new Date(date);
     },
-    formatDate(date) {
-      var monthShortNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "Mei",
-        "Jun",
-        "Jul",
-        "Agu",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Des",
-      ];
-      var d = new Date(date),
-        year = d.getFullYear(),
-        month = "" + d.getMonth(),
-        day = "" + d.getDate();
-
-      if (day.length < 2) day = "0" + day;
-      return [day, monthShortNames[month], year].join(" ");
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
     },
-    formatTime(date) {
-      var d = new Date(date),
-        hour = "" + d.getHours(),
-        minute = "" + d.getMinutes(),
-        second = d.getSeconds();
-
-      if (hour.length < 2) hour = "0" + hour;
-      if (minute.length < 2) minute = "0" + minute;
-      if (second.length < 2) second = "0" + second;
-
-      return [hour, minute].join(":");
+    formatTime(dateString) {
+      const date = new Date(dateString);
+      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+      return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
     },
-    download() {
+    async downloadAll() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
       this.loading_dw = true;
-      if (this.role == "is_staff" || this.role == "is_superuser") {
-        axios
-          .post(
-            `${this.$baseURL}/excel/`,
-            {
-              station_id: this.$route.params.id,
-              first_date: this.formatDatePicker(this.startDate),
-              last_date: this.formatDatePicker(this.endDate)
-            },
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Token ${this.token}`,
-              },
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+          responseType: 'blob' // Ensure the response is treated as a blob
+        });
+
+        if (response.status === 200) {
+          const contentDisposition = response.headers['content-disposition'];
+          let filename = 'download'; // Default filename if not present in header
+
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (filenameMatch && filenameMatch[1]) {
+              filename = filenameMatch[1];
             }
-          )
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
+          }
 
+          // Modify filename based on filter
+          if (from != null && until != null) {
+            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
+          } else {
+            filename = `Laporan Pembacaan Sensor ${this.nama}`;
+          }
 
-            if (this.startDate && this.endDate) {
-              link.setAttribute(
-                "download",
-                `Laporan Pembacaan Sensor ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
-              );
-            } else {
-              link.setAttribute(
-                "download",
-                `Laporan Pembacaan Sensor ${this.nama}.xlsx`
-              );
-            }
-
-            document.body.appendChild(link);
-            link.click();
-
-            if (response.status == 200) {
-              this.loading_dw = false;
-            }
-          })
-          .catch((error) => console.log(error));
+          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', filename);
+          document.body.appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading_dw = false;
       }
     },
     hourlyData() {
       this.loading_dw = true;
-      if (this.role == "is_staff" || this.role == "is_superuser") {
+      if (this.role == "Admin" || this.role == "SuperAdmin") {
         axios
           .post(
             `${this.$baseURL}/excel-summary/`,
@@ -557,7 +623,7 @@ export default {
             {
               responseType: "arraybuffer",
               headers: {
-                Authorization: `Token ${this.token}`,
+                Authorization: `Bearer ${this.token}`,
               },
             }
           )
@@ -589,51 +655,55 @@ export default {
           .catch((error) => console.log(error));
       }
     },
-    dailyData() {
+    async downloadDaily() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
       this.loading_dw = true;
-      if (this.role == "is_staff" || this.role == "is_superuser") {
-        axios
-          .post(
-            `${this.$baseURL}/excel-summary-daily/`,
-            {
-              station_id: this.$route.params.id,
-              user_id: this.user_id,
-              first_date: this.formatDatePicker(this.startDate),
-              last_date: this.formatDatePicker(this.endDate)
-            },
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Token ${this.token}`,
-              },
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+            per_day: true
+          },
+          responseType: 'blob' // Ensure the response is treated as a blob
+        });
+
+
+        if (response.status === 200) {
+          const contentDisposition = response.headers['content-disposition'];
+          let filename = 'download'; // Default filename if not present in header
+
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (filenameMatch && filenameMatch[1]) {
+              filename = filenameMatch[1];
             }
-          )
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
+          }
 
+          // Modify filename based on filter
+          if (from != null && until != null) {
+            filename = `Data per hari ${this.nama} ${from} sd ${until}`;
+          } else {
+            filename = `Data per hari ${this.nama}`;
+          }
 
-            if (this.startDate && this.endDate) {
-              link.setAttribute(
-                "download",
-                `Data per hari ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
-              );
-            } else {
-              link.setAttribute(
-                "download",
-                `Data per hari ${this.nama}.xlsx`
-              );
-            }
-
-            document.body.appendChild(link);
-            link.click();
-
-            if (response.status == 200) {
-              this.loading_dw = false;
-            }
-          })
-          .catch((error) => console.log(error));
+          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', filename);
+          document.body.appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading_dw = false;
       }
     },
     async formatData() {
@@ -642,7 +712,7 @@ export default {
           `${this.$baseURL}/input-data-format/`,
           {
             headers: {
-              Authorization: `Token ${this.token}`,
+              Authorization: `Bearer ${this.token}`,
             },
             responseType: 'blob', // Ensure the response is treated as a blob
           }
@@ -671,10 +741,10 @@ export default {
     async formatThreshold() {
       try {
         const response = await axios.get(
-          `${this.$baseURL}/threshold-format/`,
+          `${this.$baseURL}/pdam/download_format_treshold/`,
           {
             headers: {
-              Authorization: `Token ${this.token}`,
+              Authorization: `Bearer ${this.token}`,
             },
             responseType: 'blob', // Ensure the response is treated as a blob
           }
@@ -700,85 +770,7 @@ export default {
         console.error('Error downloading the file', error);
       }
     },
-    async search() {
-      this.loading_date_data = true;
-      await axios
-        .post(
-          `${this.$baseURL}/data-date/`,
-          {
-            station_id: this.$route.params.id,
-            user_id: this.user_id,
-            // first_date: this.startDate,
-            // last_date: this.endDate,
-            first_date: this.formatDatePicker(this.startDate),
-            last_date: this.formatDatePicker(this.endDate)
-          },
-          {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          }
-        )
-        .then((result) => {
-          this.json_data = [];
-          let raw_table = result.data[1][0].table;
-          this.nama = `${result.data[0].station_name}`;
-          let sensor_label = result.data[1][0].table.array_table_label;
 
-          let date = raw_table.date;
-          let battery = raw_table.battery;
-          let temperature = raw_table.temperature;
-          let rw_data = raw_table.weather_data;
-          let raw_symbol = raw_table.array_act_symbol;
-
-          let a = {};
-
-          date.forEach((waktu, i) => {
-            let bat = battery[i];
-            let temp = temperature[i];
-            let weather_data = rw_data[i];
-            let symbol = raw_symbol[i];
-
-            a = { waktu, bat, temp, weather_data, symbol };
-
-            this.json_data.push(a);
-
-          });
-
-          this.cols = [
-            {
-              name: "Tanggal",
-              field: "waktu",
-              sort: "desc",
-            },
-            {
-              name: "Waktu",
-            },
-          ];
-
-          for (let i = 0; i < sensor_label.length; i++) {
-            this.cols.push({
-              name: sensor_label[i],
-            });
-          }
-          if (this.balai == 0) {
-            this.cols.push({
-              name: "Battery",
-            });
-            this.cols.push({
-              name: "Temperature",
-            });
-          }
-          if (result.status == 200) {
-            this.loading_date_data = false;
-          }
-          // console.log('SUMMARY:', result.data[1][0].summary);
-
-          this.detailAPI = result.data[1][0].summary;
-          this.persenData = result.data[0].persentase_data;
-        })
-        .catch((error) => console.log(error));
-    },
     onChangeFileUpload(event) {
       this.csvFile = event.target.files[0];
     },
@@ -791,11 +783,11 @@ export default {
         .post(`${this.$baseURL}/input-data-excel/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Token ${this.token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((r) => {
-          console.log("status: ", r.status);
+          // console.log("status: ", r.status);
 
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
@@ -804,24 +796,23 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
-          // this.csv_code = error;
+          this.csv_code = "Error uploading the file. Please try again.";
         });
     },
     tresholdDataUpload() {
       let formData = new FormData();
-      formData.append("station_id", this.$route.params.id);
-      formData.append("csvFile", this.csvFile);
+      formData.append("station_serial_id", this.$route.params.id);
+      formData.append("file", this.csvFile);
 
       axios
-        .post(`${this.$baseURL}/input-threshold/`, formData, {
+        .post(`${this.$baseURL}/pdam/upload_treshold/${this.$route.params.id}/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Token ${this.token}`,
+            Authorization: `Bearer ${this.token}`,
           },
         })
         .then((r) => {
-          console.log("status: ", r.status);
+          // console.log("status: ", r.status);
 
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
@@ -835,33 +826,38 @@ export default {
         });
     },
     getBalaiValue() {
-      const note = this.stations[0].note;
+      const note = this.station[0].note;
       const match = note.match(/balai:\s*([^,\]]+)/);
       return match ? match[1].trim() : null;
     },
     getUploadValue() {
-      const note = this.stations[0].note;
+      const note = this.station[0].note;
       const match = note.match(/upload:\s*([^,\]]+)/);
       return match ? match[1].trim() : null;
-    }
+    },
+   
   },
   created() {
-    this.gAuthUser();
-    this.loadData();
-  },
-  async mounted() {
-    if (this.filterData.length == 0) {
-      this.detailAPI = this.stations[1][0].summary;
-      this.persenData = this.stations[0].persentase_data;
+    this.extractUserInfo()
+    // console.log('created: role: ', this.role);
+    if (this.role !== 'QA') {
+      this.loadData();
+    } else {
+      this.loadDataQA()
     }
-    // console.log('note', this.getBalaiValue());
-    this.noteBalai = this.getBalaiValue()
-    this.uploadVal = this.getUploadValue()
+    this.ava_width = screen.availWidth;
+
   },
+ 
 };
 </script>
 <style scoped src="@/assets/css/figma.css"></style>
 <style scoped>
+.align-middle {
+  vertical-align: middle;
+  /* Centers the numbers vertically */
+}
+
 select,
 input,
 input:focus {
@@ -935,5 +931,18 @@ td {
 
 .mx-datepicker {
   width: 180px;
+}
+
+.imgSZ img {
+  resize: both;
+  height: 180px;
+  width: 190px;
+}
+
+@media (max-width: 768px) {
+  .imgSZ {
+    height: 170px;
+    /* You can adjust the height as needed */
+  }
 }
 </style>

@@ -15,10 +15,21 @@ export default {
     return {
       gradients: [null],
       mixtypes: [""],
+      gradient: null,
 
     };
   },
   mounted() {
+    this.gradient = this.$refs.canvas
+      .getContext("2d")
+      .createLinearGradient(0, 0, 0, 450);
+    // this.gradient.addColorStop(1, "rgba(59,130,246, 0.08)");
+
+    this.gradient.addColorStop(0, "rgba(253, 188, 92, 0.9)"); // Start with solid orange
+    this.gradient.addColorStop(0.5, "rgba(253, 188, 92, 0)"); // Transition to transparent
+    this.gradient.addColorStop(0.6, "rgba(255, 165, 0, 0.08)"); // Transition to light orange
+    this.gradient.addColorStop(1, "rgba(255, 165, 0, 0.08)"); // End with light orange
+
     this.configureGradients();
     this.configureMixtypes();
 
@@ -27,13 +38,15 @@ export default {
         label: false,
         type: this.mixtype1,
         yAxisID: "A",
-        borderColor: "rgba(99,102,241,1)",
+        borderColor: "rgba(253, 188, 92,1)",
 
         pointBackgroundColor: "rgba(35,137,218, 0.9)",
 
         borderWidth: 2,
         pointBorderColor: "white",
-        backgroundColor: this.gradients[0],
+        // backgroundColor: this.gradients[0],
+        backgroundColor: this.gradient,
+
         data: this.chartData,
         pointRadius: 0,
         lineTension: 0,
@@ -100,13 +113,15 @@ export default {
           label: this.title1,
           type: this.mixtype1,
           yAxisID: "A",
-          borderColor: "rgba(99,102,241,1)",
+          borderColor: "rgba(253, 188, 92,1)",
 
           pointBackgroundColor: "rgba(35,137,218, 0.9)",
 
           borderWidth: 2,
           pointBorderColor: "white",
-          backgroundColor: this.gradients[0],
+          // backgroundColor: this.gradients[0],
+          backgroundColor: this.gradient,
+
           data: this.chartData,
           pointRadius: 0,
           lineTension: 0,

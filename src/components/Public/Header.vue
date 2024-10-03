@@ -1,7 +1,7 @@
 <template>
   <div id="nav">
 
-    <div v-show="isMobileView" style="background: #092581" class="p-2">
+    <div v-show="isMobileView" style="background: #68C0FF" class="p-2">
       <button class="toggle-button" @click="toggleSidebar()" v-show="isMobileView">
         <span :class="className"></span>
         <span :class="className"></span>
@@ -15,57 +15,82 @@
 
       <ul>
         <li class="centered-image">
-          <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" />
-          <img v-else-if="$app_title == 'PDAM SURYA SEMBADA'" :src="logoPDAM" class="mobile-icon"
-            style="max-width: 50px" />
-          <img v-else :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
+          <img :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
         </li>
 
-        <li v-if="role == 'is_superuser'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">SADM </li>
-        <li v-if="role == 'is_staff'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">ADM </li>
-        <li class="centered-image" style="font-size: 0.7rem; color: lightgray;">{{ profile.user.username }} </li>
-
+        <li v-if="this.user.role.role_name == 'SuperAdmin'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">SADM </li>
+        <li v-else-if="this.user.role.role_name == 'Admin'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">ADM</li>
+        <li v-else-if="this.user.role.role_name == 'Guest'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">TAMU</li>
+        <li v-else-if="this.user.role.role_name == 'QA'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">QA</li>
+        <li v-else-if="this.user.role.role_name == 'Direksi'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">Direksi</li>
+        <li v-else class="centered-image" style="font-size: 0.7rem; color: #092581;">{{ this.user.username }}</li>
+        <li v-if="this.user.role.role_name == 'Admin'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">{{ this.user.balai.balai_name }}</li>
         <li class="my-1 mt-3">
-          <router-link :to="{ name: 'Home', params: { balai_id: balai } }" style="display: flex; flex-direction: row"
-            class="active" aria-current="page">
+          <router-link :to="{ name: 'Home', params: { balai_id: this.balai } }"
+            style="display: flex; flex-direction: row" class="active" aria-current="page">
             <img :src="dash_i" class="mr-4" /><span>Dashboard</span>
           </router-link>
         </li>
-        <!-- {{ balai }} -->
-        <li v-if="accessToken"></li>
+
+        <!-- <li v-if="accessToken"></li>
         <div v-else>
           <li class="my-1">
             <hr style="color: white" />
-            <router-link :to="{ name: 'Login', params: { balai_id: balai } }"
+            <router-link :to="{ name: 'Login', params: { balai_id: this.balai } }"
               style="display: flex; flex-direction: row; z-index: 100;">
               <img :src="login_i" class="mr-4" /><span>Sign In</span>
             </router-link>
           </li>
-        </div>
+        </div> -->
 
 
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-      name: 'Station',
-      params: { balai_id: balai, user_id: user_id },
-    }" style="display: flex; flex-direction: row">
+            name: 'Station',
+            params: { balai_id: this.balai, user_id: user_id },
+          }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Station</span>
           </router-link>
         </li>
+        
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-      name: 'User',
-      params: { balai_id: balai },
-    }" style="display: flex; flex-direction: row" v-if="role == 'is_superuser'">
+            name: 'User',
+            params: { balai_id: this.balai },
+          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
         </li>
+        <!-- <li v-if="accessToken" class="nav-item my-1">
+          <router-link :to="{
+            name: 'Produksi',
+            params: { balai_id: this.balai },
+          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
+            <img :src="stat_i" class="mr-4" /><span>Produksi</span>
+          </router-link>
+        </li> -->
+        <hr style="color: white" />
+        <li v-if="accessToken" class="nav-item my-1">
+          <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
+            name: 'Notification',
+          }" style="display: flex; flex-direction: row">
+            <img :src="notif_i" class="mr-4" /><span>Notification</span>
+          </router-link>
+        </li>
         <li v-if="accessToken" class="my-1">
-          <hr style="color: white" />
-          <router-link :to="{ name: 'Logout', params: { balai_id: balai } }" style="display: flex; flex-direction: row">
+          
+          <router-link :to="{ name: 'Logout', params: { balai_id: this.balai } }"
+            style="display: flex; flex-direction: row">
             <img :src="login_i" class="mr-4" /><span>Sign Out</span>
           </router-link>
         </li>
+
       </ul>
     </div>
 
@@ -74,54 +99,71 @@
 
       <ul>
         <li class="centered-image">
-          <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" />
-          <img v-else :src="logoPU" class="mobile-icon" style="max-width: 50px" />
+          <!-- <img v-if="$app_title == 'WEATHER-VUE'" :src="logoBT" class="mobile-icon" style="max-width: 50px" /> -->
+          <img :src="logoPDAM" class="mobile-icon" style="max-width: 50px" />
 
         </li>
-        <li v-if="role == 'is_superuser'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">SADM </li>
-        <li v-if="role == 'is_staff'" class="centered-image pt-2" style="font-size: 0.7rem; color: lightgray;">ADM </li>
-        <li class="centered-image" style="font-size: 0.7rem; color: lightgray;">{{ profile.user.username }} </li>
+        <li v-if="this.user.role.role_name == 'SuperAdmin'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">SADM</li>
+        <li v-else-if="this.user.role.role_name == 'Admin'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">ADM</li>
+        <li v-else-if="this.user.role.role_name == 'Guest'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">TAMU</li>
+        <li v-else-if="this.user.role.role_name == 'QA'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">QA</li>
+        <!-- <li class="centered-image" style="font-size: 0.7rem; color: #092581;">{{ this.user.username }}</li> -->
+        <li v-if="this.user.role.role_name == 'Admin'" class="centered-image pt-2"
+        style="font-size: 0.7rem; color: #092581;">{{ this.user.balai.balai_name }}</li>
         <li class="my-1 mt-3">
-          <router-link :to="{ name: 'Home', params: { balai_id: balai } }" style="display: flex; flex-direction: row"
-            class="active" aria-current="page">
+          <router-link :to="{ name: 'Home', params: { balai_id: this.balai } }"
+            style="display: flex; flex-direction: row" class="active" aria-current="page">
             <img :src="dash_i" class="mr-4" /><span>Dashboard</span>
           </router-link>
         </li>
 
         <li v-if="accessToken"></li>
-
         <div v-else>
-
-
           <li class="my-1">
             <hr style="color: white" />
-            <router-link :to="{ name: 'Login', params: { balai_id: balai } }"
+            <router-link :to="{ name: 'Login', params: { balai_id: this.balai } }"
               style="display: flex; flex-direction: row; z-index: 100;">
               <img :src="login_i" class="mr-4" /><span>Sign In</span>
             </router-link>
           </li>
         </div>
-
-
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-      name: 'Station',
-      params: { balai_id: balai, user_id: user_id },
-    }" style="display: flex; flex-direction: row">
+            name: 'Station',
+            params: { balai_id: this.balai, user_id: user_id },
+          }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Station</span>
           </router-link>
         </li>
+        
         <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
-      name: 'User',
-      params: { balai_id: balai },
-    }" style="display: flex; flex-direction: row" v-if="role == 'is_staff' || role == 'is_superuser'">
+            name: 'User',
+          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
         </li>
+        <!-- <li v-if="accessToken" class="nav-item my-1">
+          <router-link :to="{
+            name: 'Produksi',
+          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
+            <img :src="stat_i" class="mr-4" /><span>Produksi</span>
+          </router-link>
+        </li> -->
+        <hr style="color: white" />
+        <li v-if="accessToken" class="nav-item my-1">
+          <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
+            name: 'Notification',
+          }" style="display: flex; flex-direction: row">
+            <img :src="notif_i" class="mr-4" /><span>Notification</span>
+          </router-link>
+        </li>
         <li v-if="accessToken" class="my-1">
-          <hr style="color: white" />
-          <router-link :to="{ name: 'Logout', params: { balai_id: balai } }" style="display: flex; flex-direction: row">
+          <router-link :to="{ name: 'Logout' }" style="display: flex; flex-direction: row">
             <img :src="login_i" class="mr-4" /><span>Sign Out</span>
           </router-link>
         </li>
@@ -133,30 +175,30 @@
 
 <script>
 import { mapState } from "vuex";
-import axios from "axios";
-// import $ from "jquery";
-import logoPU from "@/assets/icons/logo-pdam.png";
 import logoBT from "@/assets/icons/logo-pdam.png";
 import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 import dash_i from "@/assets/icons/menu/dashboard.svg";
 import login_i from "@/assets/icons/menu/log-in.svg";
+import notif_i from "@/assets/icons/menu/notification.svg";
+
 import data_i from "@/assets/icons/menu/pie-chart.svg";
 import stat_i from "@/assets/icons/menu/box 1.svg";
 import user_i from "@/assets/icons/menu/user.svg";
 
 export default {
-  name: "HeaderPub",
+  name: "Header",
   data() {
     return {
       detBalai: [],
-      role: "is_guess",
+      role: null,
       user_id: null,
-      logoPU,
       logoBT,
       logoPDAM,
       dash_i,
+      notif_i,
       login_i,
+
       data_i,
       stat_i,
       user_i,
@@ -166,50 +208,6 @@ export default {
     };
   },
   computed: mapState(["accessToken"]),
-  async created() {
-    this.extractUserInfo();
-
-    let user = localStorage.getItem("user-info") || {};
-    if (typeof user == "object") {
-      this.balai = this.$proxyFixedBalai;
-      await axios
-        .get(`${this.$baseURL}/balai/non-auth/${this.balai}`)
-        .then((r) => {
-          this.detBalai = r.data[0];
-        })
-        .catch((e) => {
-          console.log(e.response.status);
-          if (e.response.status == 401) {
-            console.log("test 401 string");
-            localStorage.clear();
-            this.$router.push({ name: "Login" });
-          }
-        });
-    } else if (typeof user == "string") {
-      this.role = JSON.parse(user).profile.role;
-      this.user_id = JSON.parse(user).profile.user.id;
-      this.balai = JSON.parse(user).profile.balai.id;
-      this.token = JSON.parse(user).token;
-
-      await axios
-        .get(`${this.$baseURL}/balai/6`, {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        })
-        .then((r) => {
-          this.detBalai = r.data;
-        })
-        .catch((e) => {
-          console.log(e.response.status);
-          if (e.response.status == 401) {
-            console.log("test 401 string");
-            localStorage.clear();
-            this.$router.push({ name: "Login" });
-          }
-        });
-    }
-  },
   mounted() {
     this.isMobileView = window.innerWidth <= 768;
     window.addEventListener("resize", this.handleResize);
@@ -244,6 +242,9 @@ export default {
       this.isMobileView = window.innerWidth <= 768;
     },
   },
+  created() {
+    this.extractUserInfo();
+  },
   beforeDestroy() {
     window.removeEventListener("resize", this.handleResize);
   },
@@ -256,6 +257,7 @@ li {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .sidebar {
@@ -265,7 +267,7 @@ li {
   z-index: 1;
   top: 0;
   left: 0;
-  background: #092581;
+  background: #68C0FF;
   transition: 0.5s;
   overflow-x: hidden;
   padding-top: 60px;
@@ -278,23 +280,24 @@ li {
 .sidebar a {
   display: block;
   padding: 6px 10px;
-  color: #fff;
+  color: #092341;
   position: relative;
   -webkit-transition: 0.3s padding-left ease;
   -o-transition: 0.3s padding-left ease;
   transition: 0.3s padding-left ease;
-  opacity: 0.5;
+  opacity: 0.8;
+  font-weight: 400;
 }
 
 .sidebar a:hover {
-  background: rgba(255, 255, 255, 0.11);
+  background: rgba(9, 37, 129, 0.11);
   color: #fff;
   opacity: 1;
   border-radius: 5px;
 }
 
 #nav a.router-link-exact-active {
-  background: rgba(255, 255, 255, 0.11);
+  background: rgba(9, 37, 129, 0.11);
   color: #fff;
   opacity: 1;
   border-radius: 5px;
@@ -359,7 +362,7 @@ main .sidebar {
 }
 
 .bar-white {
-  background-color: #092581;
+  background-color: #68C0FF;
 }
 
 .sidebar-open .toggle-button .bar:first-child {

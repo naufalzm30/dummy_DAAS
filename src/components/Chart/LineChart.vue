@@ -30,7 +30,10 @@ export default {
     this.gradient = this.$refs.canvas
       .getContext("2d")
       .createLinearGradient(0, 0, 0, 450);
-    this.gradient.addColorStop(1, "rgba(59,130,246, 0.08)");
+    this.gradient.addColorStop(0, "rgba(104, 192, 255, 1)"); // Start color (solid)
+    this.gradient.addColorStop(0.5, "rgba(104, 192, 255, 0)"); // Transparent around the middle
+    this.gradient.addColorStop(0.6, "rgba(59, 130, 246, 0.08)"); // Light blue with low opacity
+    this.gradient.addColorStop(1, "rgba(59, 130, 246, 0.08)"); // End color with low opacity
 
     this.renderChart(
       {
@@ -38,8 +41,8 @@ export default {
         datasets: [
           {
             label: this.title,
-            borderColor: "rgba(35,137,218, 0.9)",
-            pointBackgroundColor: "rgba(35,137,218, 0.9)",
+            borderColor: "rgba(99, 102, 241, 0.9)",
+            pointBackgroundColor: "rgba(99, 102, 241, 0.9)",
             borderWidth: 2,
             // pointBorderColor: "white",
             backgroundColor: this.gradient,
@@ -96,70 +99,70 @@ export default {
     );
   },
   watch: {
-    chartData: function() {
+    chartData: function () {
       this.$data._chart.destroy();
       this.renderChart(
-      {
-        labels: this.label,
-        datasets: [
         {
-            label: this.title,
-            borderColor: "rgba(35,137,218, 0.9)",
-            pointBackgroundColor: "rgba(35,137,218, 0.9)",
-            borderWidth: 2,
-            // pointBorderColor: "white",
-            backgroundColor: this.gradient,
-            data: this.chartData,
-            pointRadius: 1,
-            // lineTension: 0,
-            tension: 0.1,
-            z: 2,
+          labels: this.label,
+          datasets: [
+            {
+              label: this.title,
+              borderColor: "rgba(99, 102, 241, 0.9)",
+              pointBackgroundColor: "rgba(99, 102, 241, 0.9)",
+              borderWidth: 2,
+              // pointBorderColor: "white",
+              backgroundColor: this.gradient,
+              data: this.chartData,
+              pointRadius: 1,
+              // lineTension: 0,
+              tension: 0.1,
+              z: 2,
+            },
+          ],
+        },
+        {
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+            display: false,
           },
-        ],
-      },
-      {
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-          display: false,
-        },
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-              gridLines: {
-                color: "rgba(151,151,151,0.2)",
-              },
-            },
-          ],
-          xAxes: [
-            {
-              ticks: {
-                display: true,
-                callback: (value, index, values) => {
-                  if (index === 0 || index === values.length - 1) {
-                    return value;
-                  } else {
-                    return "";
-                  }
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
                 },
-                autoSkip: false,
-                maxRotation: 0,
-                minRotation: 0,
-                fontColor: "#6c757d",
+                gridLines: {
+                  color: "rgba(151,151,151,0.2)",
+                },
               },
-              gridLines: {
-                borderDash: [8, 4],
-                color: false,
-                z: 1,
+            ],
+            xAxes: [
+              {
+                ticks: {
+                  display: true,
+                  callback: (value, index, values) => {
+                    if (index === 0 || index === values.length - 1) {
+                      return value;
+                    } else {
+                      return "";
+                    }
+                  },
+                  autoSkip: false,
+                  maxRotation: 0,
+                  minRotation: 0,
+                  fontColor: "#6c757d",
+                },
+                gridLines: {
+                  borderDash: [8, 4],
+                  color: false,
+                  z: 1,
+                },
               },
-            },
-          ],
-        },
-      }
-    );
+            ],
+          },
+        }
+      );
     },
   },
 };

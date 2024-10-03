@@ -8,15 +8,11 @@
         </div>
         <div class="row my-2">
           <div class="col-md subTitle">
-            Edit Data Pos {{ item.station_name }}
+            Edit Data Stasiun {{ item.station_name }}
           </div>
           <div class="col-md d-flex justify-content-end">
-            <router-link
-              :to="{ name: 'Station' }"
-              type="button"
-              class="btn btn-light border mx-4 bg-white"
-              >Cancel</router-link
-            >
+            <router-link :to="{ name: 'Station' }" type="button"
+              class="btn btn-light border mx-4 bg-white">Cancel</router-link>
             <button class="btn btn-primary" type="submit">Update</button>
           </div>
         </div>
@@ -25,242 +21,201 @@
             <div class="card">
               <div class="card-header">Data Stasiun</div>
               <div class="card-body">
-                <div class="col-md pb-3">
+                <div class="col-md pb-1">
                   <div class="form-group">
-                    <label for="inputNaPo">Nama Pos*</label>
-                    <input
-                      v-model="item.station_name"
-                      type="text"
-                      class="form-control"
-                      id="inputNaPo"
-                      placeholder="Nama Pos"
-                      required
-                    />
+                    <label for="inputLo">Nama Stasiun*</label>
+                    <input v-model="item.station_name" type="text" class="form-control" id="inputLo"
+                      placeholder="Nama Stasiun" required />
                   </div>
                 </div>
-                <div class="col-md pb-3">
+                <div class="col-md py-1">
                   <div class="form-group">
-                    <label for="inputLo">Lokasi*</label>
-                    <input
-                      v-model="item.location"
-                      type="text"
-                      class="form-control"
-                      id="inputLo"
-                      placeholder="Lokasi"
-                      required
-                    />
+                    <label for="inputLo">Lokasi</label>
+                    <input v-model="item.location" type="text" class="form-control" id="inputLo" placeholder="Lokasi" />
                   </div>
                 </div>
-            
-                <div class="col-md pb-3">
+
+                <div class="col-md py-1">
                   <div class="form-group">
                     <label for="inputLo">Latitude*</label>
-                    <input
-                      v-model="item.latitude"
-                      type="number"
-                      class="form-control"
-                      id="inputLo"
-                      placeholder="Latitude"
-                      step="0.000000001"
-                      required
-                    />
+                    <input v-model="item.latitude" type="number" class="form-control" id="inputLo"
+                      placeholder="Latitude" step="0.000000001" required />
                   </div>
                 </div>
-                <div class="col-md pb-3">
+                <div class="col-md py-1">
                   <div class="form-group">
                     <label for="inputLo">Longitude*</label>
-                    <input
-                      v-model="item.longitude"
-                      type="number"
-                      class="form-control"
-                      id="inputLo"
-                      placeholder="Longitude"
-                      step="0.000000001"
-                      required
-                    />
+                    <input v-model="item.longitude" type="number" class="form-control" id="inputLo"
+                      placeholder="Longitude" step="0.000000001" required />
                   </div>
                 </div>
-             
-                
+
+
               </div>
             </div>
             <div class="card">
-              <!-- --- -->
               <div class="card-header">Foto Stasiun</div>
               <div class="card-body">
                 <div v-if="!file">
-                  <div
-                    :class="['dropZone', dragging ? 'dropZone-over' : '']"
-                    @dragenter="dragging = true"
-                    @dragleave="dragging = false"
-                  >
+                  <div :class="['dropZone', dragging ? 'dropZone-over' : '']" @dragenter="dragging = true"
+                    @dragleave="dragging = false">
                     <div class="dropZone-info" @drag="onChange">
-                      <img
-                        v-if="item.image"
-                        :src="item.image"
-                        style="max-width: 120px; max-height: 60px"
-                      />
+                      <img v-if="item.image" :src="item.image" style="max-width: 120px; max-height: 60px" />
                       <div class="dropZone-title">
                         <span style="color: #3056d3">Click to upload</span> or
                         drag and drop
                       </div>
                       <div class="dropZone-upload-limit-info">
                         <div>PNG, JPG or JPEG</div>
-                        <div>(max 5 MB)</div>
                       </div>
                     </div>
-                    <input type="file" @change="onChange" />
+                    <input type="file" @change="updateImage" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card pt-1">
+              <div class="card-header">Data Logger</div>
+              <div class="card-body">
+                <div class="col-md">
+                  <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Serial Number Logger</label><input v-model="item.sn_logger" type="text"
+                        class="form-control" placeholder="Serial Number Logger" />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md">
+                  <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Serial Number Modem</label>
+                      <input v-model="item.sn_modem" type="text" class="form-control"
+                        placeholder="Serial Number Modem" />
+                    </div>
                   </div>
                 </div>
 
-                <div v-else class="dropZone-uploaded">
-                  <div class="dropZone-uploaded-info">
-                    <img
-                      v-if="item.image"
-                      :src="item.image"
-                      style="max-width: 120px; max-height: 60px"
-                    />
-                    <span class="dropZone-filename p-1">{{ file.name }}</span>
-                    <button
-                      type="button"
-                      class="btn btn-primary removeFile p-1"
-                      @click="removeFile"
-                    >
-                      Remove File
-                    </button>
+                <div class="col-md">
+                  <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Topic MQTT*</label>
+                      <input v-model="item.topic" type="text" class="form-control" placeholder="Topic MQTT" required />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md">
+                  <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Maintenance Status</label>
+                      <select class="form-select" v-model="item.maintenance_status">
+                        <option v-for="status in maintStatus" :key="status.value" :value="status.value">
+                          {{ status.text }}
+                        </option>
+                      </select>
+
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-md-6">
-           
-            <div class="card pt-1" v-if="role == 'is_superuser'">
-              <div class="card-header">Data Logger</div>
+            <div class="card">
+              <div class="card-header">Data Produksi</div>
               <div class="card-body">
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Serial Number Logger</label
-                      ><input
-                        v-model="item.sn_logger"
-                        type="text"
-                        class="form-control"
-                        placeholder="Serial Number Logger"
-                      />
-                    </div>
+
+                <div class="col-md py-1">
+                  <label for="floatingInput">Produksi</label>
+                  <select class="form-select" v-model="item.balai.id">
+                    <option v-for="item in produksis" :key="item.id" :value="item.id">
+                      {{ item.balai_name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="UkuranSensor">Ukuran Sensor</label>
+                    <input v-model="item.sensor_size" type="text" class="form-control" id="UkuranSensor"
+                      placeholder="Ukuran Sensor" />
                   </div>
                 </div>
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Serial Number Modem</label>
-                      <input
-                        v-model="item.sn_modem"
-                        type="text"
-                        class="form-control"
-                        placeholder="Serial Number Modem"
-                      />
-                    </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="HargaSatuan">Harga Satuan</label>
+                    <input v-model="item.unit_price" type="text" class="form-control" id="HargaSatuan"
+                      placeholder="Harga Satuan" />
+                  </div>
+                </div>
+                <div v-if="item.balai.id == 4" class="col-md py-1">
+                  <div class="form-group">
+                    <label for="In/OutInterzone">In/Out Interzone</label>
+                    <input v-model="item.interzone" type="text" class="form-control" id="In/OutInterzone"
+                      placeholder="Interzone" />
+                  </div>
+                </div>
+                <div v-else class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Nameplate">Nameplate Head</label>
+                    <input v-model="item.nameplate_head" type="text" class="form-control" id="Nameplate"
+                      placeholder="Nameplate Head" />
+                  </div>
+                </div>
+                <div v-if="item.balai.id == 4" class="col-md ">
+                  <div class="form-group py-1">
+                    <label for="Max">Max Flow</label>
+                    <input v-model="item.max_flow" type="text" class="form-control" id="Max" placeholder="Max Flow" />
+                  </div>
+                  <div class="form-group py-1">
+                    <label for="Diameter">Diameter Pipa</label>
+                    <input v-model="item.pipe_diameter" type="number" class="form-control" id="Diameter"
+                      placeholder="Diameter Pipa" step="0.01" />
                   </div>
                 </div>
 
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Topic MQTT</label>
-                      <input
-                        v-model="item.topic_MQTT"
-                        type="text"
-                        class="form-control"
-                        placeholder="Topic MQTT"
-                      />
-                    </div>
+                <div v-else class="col-md ">
+                  <div class="form-group py-1">
+                    <label for="Kapasitas">Kapasitas</label>
+                    <input v-model="item.capacity" type="number" class="form-control" id="Kapasitas"
+                      placeholder="Kapasitas" step="0.01" />
+                  </div>
+                  <div class="form-group py-1">
+                    <label for="Jumlah">Jumlah Operasi</label>
+                    <input v-model="item.sum_operation" type="number" class="form-control" id="Jumlah"
+                      placeholder="Jumlah Operasi" step="0.01" />
                   </div>
                 </div>
 
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Maintenance Status</label>
-                      <select
-                        class="form-select"
-                        v-model="item.maintenance"
-                      >
-                        <option
-                          v-for="item in maintStatus"
-                          :key="item.id"
-                          :value="item"
-                        >
-                          {{ item }}
-                        </option>
-                      </select>
-                    </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Percent">Percent Cal</label>
+                    <input v-model="item.percent_cal" type="number" class="form-control" id="Percent"
+                      placeholder="Percent Cal" step="0.01" />
+                  </div>
+                </div>
+                <div class="col-md py-1">
+                  <div class="form-group">
+                    <label for="Factor">Factor Cal</label>
+                    <input v-model="item.factor_cal" type="number" class="form-control" id="Factor"
+                      placeholder="Factor Cal" step="0.01" />
                   </div>
                 </div>
 
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Maintenance Date</label
-                      ><input
-                        v-model="item.created_at"
-                        type="datetime-local"
-                        class="form-control"
-                        placeholder="Maintenance Date"
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Hide Status</label>
-                      <select
-                        class="form-select"
-                        v-model="item.hide"
-                      >
-                        <option
-                          v-for="item in hideStatus"
-                          :key="item.id"
-                          :value="item"
-                        >
-                          {{ item }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md">
-                  <div class="col-md pb-3">
-                    <div class="form-group">
-                      <label for="floatingInput">Catatan</label>
-                      <textarea
-                        v-model="item.note"
-                        class="form-control"
-                        id="exampleFormControlTextarea1"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- --- -->
-      
       </div>
     </form>
   </div>
 </template>
 
 <script>
+
 import Header from "@/components/Public/Header.vue";
 import axios from "axios";
-import moment from "moment";
 import login_i from "@/assets/icons/menu/upload.svg";
 
 export default {
@@ -270,56 +225,148 @@ export default {
   },
   data() {
     return {
-      totalSensor: 1,
       dragging: false,
       login_i,
-      channels: [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-      ],
-      balais: [],
-      provinsis: [],
-      sensorTypes: [],
-      stationTypes: [],
+      produksis: [],
       snLoggers: [],
       snModems: [],
-      maintStatus: [false, true],
-      hideStatus: [false, true],
-      file: "",
+      maintStatus: [
+        { value: false, text: 'OK' },
+        { value: true, text: 'MAINTENANCE' }
+      ],
+      file: null,
       reader: "",
-
-      debit: {
-        kons_a: null,
-        kons_b: null,
-        tma_0: null,
-      },
-
       item: {
-        station_name: null,
-        location: "",        
-        sn_logger: null,
-        sn_modem: null,
-        latitude: null,
-        longitude: null,
-        image: null,
-        topic_MQTT: "",
-        observator: "",
-        observator_phone: "",
-        map_icon: null,
+        station_name: "",
+        location: "",
+        topic: "",
+        percent_cal: null,
+        factor_cal: true,
+        maintenance_status: false,
+        elevation: null,
+        sn_modem: "",
+        sn_logger: "",
+        image: "",
+        latitude: "",
+        longitude: "",
+        nameplate_head: "",
+        sum_operation: "",
+        capacity: "",
+        interzone: "",
+        max_flow: "",
+        pipe_diameter: "",
+        unit_price: null,
+        sensor_size: "",
+        logger_type: null,
         created_by: null,
-        maintenance: false,
-        hide: false,
-        note: null,
-        // DATA -------------------
-        created_at: "",
-   
+        balai: null,
+
       },
     };
   },
 
   methods: {
-    // Drag n drop
+    async updateStation() {
+      try {
+        const formData = new FormData();
+
+        // Handle image
+        if (this.item.image && !(this.item.image.startsWith('http'))) {
+          if (this.item.image instanceof File) {
+            // If it's a File object, use it directly
+            formData.append('image', this.item.image);
+          } else if (this.item.image.startsWith('data:image')) {
+            // If it's a data URL (from FileReader)
+            const response = await fetch(this.item.image);
+            const blob = await response.blob();
+            formData.append('image', new File([blob], 'image.jpg', { type: 'image/jpeg' }));
+          } else {
+            throw new Error('Invalid image format');
+          }
+        }
+
+        const loggerTypeId = this.item.logger_type ? this.item.logger_type.id : null;
+        const balaiId = this.item.balai ? this.item.balai.id : null;
+
+        const updatedItem = {
+          ...this.item,
+          logger_type: loggerTypeId,
+          balai: balaiId,
+        };
+
+        for (const key in updatedItem) {
+          if (key !== 'image') {
+            formData.append(key, updatedItem[key]);
+          }
+        }
+
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${this.token}`,
+          },
+        };
+
+        await axios.put(`${this.$baseURL}/pdam/station/${this.$route.params.id}/`, formData, config);
+
+        this.$router.push({ name: "Station" });
+      } catch (error) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
+        }
+      }
+    },
+    updateImage(event) {
+      let file;
+      if (event.target.files) {
+        file = event.target.files[0];
+      } else if (event.dataTransfer) {
+        file = event.dataTransfer.files[0];
+      }
+      const allowedExtensions = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowedExtensions.includes(file.type)) {
+        alert('Invalid file format. Please upload a PNG, JPEG or JPG image.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.item.image = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    },
+    // async convertToSupportedFormat(file) {
+    //   return new Promise((resolve, reject) => {
+    //     const allowedExtensions = ['image/png', 'image/jpeg', 'image/jpg'];
+
+    //     if (allowedExtensions.includes(file.type)) {
+    //       resolve(file);
+    //     } else {
+    //       const reader = new FileReader();
+    //       reader.onload = (event) => {
+    //         const img = new Image();
+    //         img.onload = () => {
+    //           const canvas = document.createElement('canvas');
+    //           canvas.width = img.width;
+    //           canvas.height = img.height;
+    //           const ctx = canvas.getContext('2d');
+    //           ctx.drawImage(img, 0, 0);
+    //           canvas.toBlob((blob) => {
+    //             const convertedFile = new File([blob], 'converted_image.png', { type: 'image/png' });
+    //             resolve(convertedFile);
+    //           }, 'image/png');
+    //         };
+    //         img.onerror = reject;
+    //         img.src = event.target.result;
+    //       };
+    //       reader.onerror = reject;
+    //       reader.readAsDataURL(file);
+    //     }
+    //   });
+    // },
+
     onChange(e) {
-      // var files = e.target.files || e.dataTransfer.files;
       this.file = e.target.files.item(0);
       this.reader = new FileReader();
       this.reader.addEventListener("load", this.imageLoaded);
@@ -357,101 +404,11 @@ export default {
       console.log(this.file);
       this.dragging = false;
     },
-    removeFile() {
-      this.file = "";
-    },
-    // Drag n drop end
-    fileSelected(event) {
-      this.file = event.target.files.item(0);
-      this.reader = new FileReader();
-      this.reader.addEventListener("load", this.imageLoaded);
-      this.reader.readAsDataURL(this.file);
-    },
     imageLoaded(event) {
       this.item.image = event.target.result;
     },
-    localDate(date) {
-      var x = new Date(date);
-      var d = x.getDate();
-      var m = x.getMonth() + 1; //Month from 0 to 11
-      var y = x.getFullYear();
-      var h = x.getHours();
-      var min = x.getMinutes();
 
-      return (
-        y +
-        "-" +
-        (m <= 9 ? "0" + m : m) +
-        "-" +
-        (d <= 9 ? "0" + d : d) +
-        "T" +
-        (h <= 9 ? "0" + h : h) +
-        ":" +
-        (min <= 9 ? "0" + min : min)
-      );
-    },
 
-    async updateStation() {
-      const form = new FormData();
-      form.append(this.file, this.file.name);
-
-      for (let i = 2; i <= 20; i++) {
-        this.item[`sensor${i}_act`] = this.totalSensor >= i;
-      }
-
-      if (
-        this.debit.kons_a == null ||
-        this.debit.kons_b == null ||
-        this.debit.tma_0 == null ||
-        this.debit.kons_a == "" ||
-        this.debit.kons_b == "" ||
-        this.debit.tma_0 == ""
-      ) {
-        await axios
-          .put(
-            `${this.$baseURL}/station/${this.$route.params.id}`,
-            this.item,
-            {
-              headers: {
-                Authorization: `Token ${this.token}`,
-              },
-            }
-          )
-          .then((r) => {
-            if (r.status == 200) {
-              this.$router.push({ name: "Station" });
-            }
-          })
-          .catch(function (e) {
-            console.log(e);
-          });
-      } else {
-        await axios
-          .all([
-            axios.put(
-              `${this.$baseURL}/station/${this.$route.params.id}`,
-              this.item,
-              {
-                headers: {
-                  Authorization: `Token ${this.token}`,
-                },
-              }
-            ),
-           
-          ])
-          .then(
-            axios.spread((r1, r2) => {
-              if (r1.status || r2.status == 200) {
-                this.$router.push({ name: "Station" });
-              }
-            })
-          )
-          .catch(function (e) {
-            console.log(e);
-          });
-      }
-      console.log(this.item);
-    },
     update() {
       this.$swal({
         position: "top-end",
@@ -462,108 +419,44 @@ export default {
         timer: 1500,
       });
       this.updateStation();
+
+
     },
-    async delete(id) {
-      await axios
-        .delete(`${this.$baseURL}/debit-setup-detail/${id}`, {
-          headers: {
-            Authorization: `Token ${this.token}`,
-          },
-        })
-        .then((r) => {
-          if (r.status == 204) {
-            this.$router.push({ name: "Station" });
-          }
-        });
-    },
-    deleteData(id) {
-      this.$swal({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.debit.kons_a = null;
-          this.debit.kons_b = null;
-          this.debit.tma_0 = null;
-          this.delete(id);
+  },
+
+  async created() {
+    this.extractUserInfo()
+    await axios
+      .get(`${this.$baseURL}/balai/`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
+      })
+      .then((r) => {
+        this.produksis = r.data.data
+      }).catch((error) => {
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          this.logoutUser();
+        } else {
+          console.error('Error msg: ', error);
         }
       });
-    },
-  },
-
-  created() {
-    this.gAuthStation();
-  },
-  async mounted() {
-    //
-    await axios
-      .all([
-        axios.get(
-          `${this.$baseURL}/station/${this.$route.params.id}`,
-          {
-            headers: {
-              Authorization: `Token ${this.token}`,
-            },
-          }
-        ),
-        // axios.get(`${this.$baseURL}/debit-setup/${this.$route.params.id}`, {
-        //   headers: {
-        //     Authorization: `Token ${this.token}`,
-        //   },
-        // }),
-      ])
-      .then(
-        axios.spread((r1) => {
-          this.item = r1.data;
-       
-          // console.log(this.debit);
-        })
-      );
-
-    this.item.image = `${this.item.image}`;
-
-    // this.gBalai();
-    // this.gProvinsi();
-    // this.gStType();
-    // this.gSensor();
-
-    var date = new Date();
-
-    this.item.created_at = moment(date).format("YYYY-MM-DDThh:mm");
-
-    const getBase64FromUrl = async (url) => {
-      const data = await fetch(url);
-      const blob = await data.blob();
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const base64data = reader.result;
-          resolve(base64data);
-        };
+    try {
+      const response = await axios.get(`${this.$baseURL}/pdam/station/${this.$route.params.id}/`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+        },
       });
-    };
-
-    if (typeof this.item.image == "string") {
-      this.item.image = await getBase64FromUrl(
-        this.item.image
-      );
-    }
-
-    let le = 0;
-
-    for (let i = 1; i <= 20; i++) {
-      if (this.item[`sensor${i}_act`]) {
-        le++;
+      this.item = response.data.data;
+    } catch (error) {
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        this.logoutUser();
+      } else {
+        console.error('Error msg: ', error);
       }
     }
 
-    this.totalSensor = le;
+    this.item.image = `${this.item.image}`;
   },
 };
 </script>
@@ -629,16 +522,16 @@ hr::before {
   margin-top: -1px;
 }
 
-.math .frac > *:first-child {
+.math .frac>*:first-child {
   border-bottom: 2px solid currentColor;
   padding-bottom: 5px;
 }
 
-.math .frac > *:last-child {
+.math .frac>*:last-child {
   padding-top: 5px;
 }
 
-.math .frac > * {
+.math .frac>* {
   padding: 0 0.5em;
 }
 
@@ -658,17 +551,15 @@ hr::before {
   bottom: 0px;
   width: 10px;
   background: currentColor;
-  clip-path: polygon(
-    0 50%,
-    2px 50%,
-    50% calc(100% - 2px),
-    calc(100% - 2px) 0,
-    100% 0,
-    100% 2px,
-    calc(50% + 2px) 100%,
-    calc(50% - 2px) 100%,
-    0 calc(50% + 2px)
-  );
+  clip-path: polygon(0 50%,
+      2px 50%,
+      50% calc(100% - 2px),
+      calc(100% - 2px) 0,
+      100% 0,
+      100% 2px,
+      calc(50% + 2px) 100%,
+      calc(50% - 2px) 100%,
+      0 calc(50% + 2px));
 }
 
 .surround {
@@ -747,7 +638,7 @@ hr::before {
   display: inline-block;
 }
 
-.cs > sup {
+.cs>sup {
   position: absolute;
   bottom: calc(100% - 10px);
   left: 50%;
@@ -755,7 +646,7 @@ hr::before {
   width: max-content;
 }
 
-.cs > sub {
+.cs>sub {
   position: absolute;
   top: calc(100% - 5px);
   left: 50%;
@@ -816,8 +707,7 @@ hr::before {
   top: calc(50% - 0.5em);
 }
 </style>
-<style scoped src="@/assets/css/figma.css">
-</style>
+<style scoped src="@/assets/css/figma.css"></style>
 <style scoped>
 .dropZone {
   width: 50%;

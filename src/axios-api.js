@@ -1,12 +1,12 @@
 import axios from 'axios'
 
 const getAPI = axios.create({
-    // baseURL: 'http://127.0.0.1:8000',
-    // baseURL: 'https://weatherapi.blitztechnology.tech',
-    baseURL: 'https://pdamsby.blitztechnology.tech/api/',
-    imageURL: 'https://pdamsby.blitztechnology.tech/',
+    // baseURL: 'https://pdamsby.blitztechnology.tech/api/',
+    // imageURL: 'https://pdamsby.blitztechnology.tech/',
 
-    // timeout: 7000,
+    baseURL: process.env.VUE_APP_API_URL,
+    imageURL: process.env.VUE_APP_IMAGE_API_URL,
+
 })
 
 export { getAPI }
