@@ -94,19 +94,15 @@ git remote set-url origin [new-repo-url]
 ```sh
 `https://github.com/FurqonAndika/braja_pdamsby_fe.git`
 ```
-Check the current GitHub repository URL
+3. Check the current GitHub repository URL
 ```sh
 git remote show origin
-```
-
-3. To build the app, run the following command:
-```sh
-npm run build
 ```
 
 4. After making changes, follow these steps to push to GitHub:
 
 ```sh
+npm run build
 git add .
 git status
 git commit -m 'major update'
