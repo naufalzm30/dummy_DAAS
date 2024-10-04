@@ -9,8 +9,10 @@
               <img :src="logoPDAM" alt="" class="logo-img" />
             </router-link>
             <div>
-              <p class="bws">{{ $app_title }}</p>
-              <p class="bws">SURABAYA</p>
+              <!-- <p class="bws">{{ $app_title }}</p>
+              <p class="bws">SURABAYA</p> -->
+              <p class="bws">DATA AS SERVICE</p>
+              <p class="bws">MONITORING FLOW</p>
             </div>
           </div>
         </div>

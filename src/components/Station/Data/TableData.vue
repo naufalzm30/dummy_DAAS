@@ -2,10 +2,10 @@
   <div>
 
     <div class="left-container">
-      <TableMap v-if="role !== 'QA'" :loading_i="loading_i" class="mx-auto comShadow border"
-        style="border-radius: 15px" :profile="profile"/>
+      <TableMap v-if="role !== 'QA'" :loading_i="loading_i" class="mx-auto comShadow border mt-2" style="border-radius: 15px"
+        :profile="profile" />
 
-      <div v-else class="card box-sm comShadow" style="box-shadow: 10px; border-radius: 10px;">
+      <div v-else class="card box-sm comShadow m-0" style="box-shadow: 10px; border-radius: 10px;">
         <div class="row" v-if="profile">
           <div class="col-md-4 p-0 imgSZ">
             <img :src="`${profile.image}`" class="img-fluid" alt="station-img" style="
@@ -27,29 +27,32 @@
               {{ formatDate(summaryQA.data[summaryQA.data.length - 1].date) }} s/d {{ formatDate(summaryQA.data[0].date)
               }}
             </div>
+            
+            
             <div class="row mt-1 mx-0">
 
-              <table style="width: 60%; ">
+              <table style="width: 100%; ">
                 <tr>
-                  <td style="font-size: 1rem">Rata-Rata Data Masuk</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.average_all_data }} </td>
+                  <td style="font-size: 1rem" class="col-6">Rata-Rata Data Masuk</td>
+                  <td style="font-size: 1rem" class="col-6">: {{ summaryQA.average_all_data }} </td>
                 </tr>
                 <tr>
                   <td style="font-size: 1rem">Target Data Seluruhnya</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
+                  <td style="font-size: 1rem">: 100% <small> ({{ daysBetween }}) </small></td>
                 </tr>
-                <tr>
-                  <td style="font-size: 1rem">Jumlah Data Seluruhnya</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
-                </tr>
+                
                 <tr>
                   <td style="font-size: 1rem">Data Tidak Terkirim</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.sum_maintenance }} </td>
+                  <td style="font-size: 1rem">: {{ (daysBetween - summaryQA.sum_all_data)/100 }} % <small>({{ (daysBetween - summaryQA.sum_all_data) }})</small> </td>
+                </tr>
+                <!-- <tr>
+                  <td style="font-size: 1rem">Total Data</td>
+                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
                 </tr>
                 <tr>
-                  <td style="font-size: 1rem">Jumlah Gangguan</td>
+                  <td style="font-size: 1rem">Total Maintenance</td>
                   <td style="font-size: 1rem">: {{ summaryQA.sum_maintenance }} </td>
-                </tr>
+                </tr> -->
               </table>
             </div>
           </div>
@@ -396,7 +399,7 @@ export default {
 
       hourStart: Array.from({ length: 1 }).map((_, i) => i + 0),
       hourEnd: Array.from({ length: 1 }).map((_, i) => i + 23),
-      
+
       minuteStart: Array.from({ length: 1 }).map((_, i) => i + 0),
       minuteEnd: Array.from({ length: 1 }).map((_, i) => i + 59),
     };
@@ -410,446 +413,480 @@ export default {
         return acc;
       }, []);
     },
-  },
-  watch: {
-    dataStation(newVal) {
-      this.$emit('update-filtered-data', newVal);
-    },
-    dataStationQA(newVal) {
-      this.$emit('update-filtered-dataQA', newVal);
-    },
-  },
-
-  methods: {
-    async loadData(from = null, until = null) {
-      this.loading_data = true;
-      let result = await axios
-        .get(`${this.$baseURL}/pdam/station_data/${this.$route.params.id}/`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-          params: {
-            from: from,
-            until: until,
-          },
-        })
-        .catch(function (e) {
-          console.log(e);
-        });
-
-      this.dataStation = result.data.data[0].chart
-      let sensor_label = this.dataStation[0].sensor_data;
-      this.nama = result.data.data[0].station_name
-
-      this.summary = result.data.data[0]
-
-      this.cols = [
-        { name: "Tanggal" },
-        { name: "Waktu" },
-      ];
-
-      for (let i = 0; i < sensor_label.length; i++) {
-        this.cols.push({
-          name: sensor_label[i].sensor_name,
-        });
-      }
-
-      this.cols.push({
-        name: "Status"
-      })
-
-      if (result.status == 200) {
-        this.loading_data = false;
+      daysBetween() {
+        const startDate = new Date(this.summaryQA.data[this.summaryQA.data.length - 1].date);
+        const endDate = new Date(this.summaryQA.data[0].date);
+        const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+        const diffDays = Math.round(Math.abs((startDate - endDate) / oneDay)) + 1;
+        return diffDays*288;
       }
     },
-    async loadDataQA(from = null, until = null) {
-      this.loading_data = true;
-      let result = await axios
-        .get(`${this.$baseURL}/pdam/QA/${this.$route.params.id}/`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-          params: {
-            from: from,
-            until: until,
-          },
-        })
-        .catch(function (e) {
-          console.log(e);
-        });
-
-      // console.log('TableData.vue: ', result.data[0].data);
-      this.dataStationQA = result.data[0].data
-      this.summaryQA = result.data[0]
-
-      this.nama = result.data.station_name
-
-      this.colsQA = [
-        { name: "Tanggal" },
-        { name: "Jumlah Data" },
-        { name: "Persen Data" },
-        { name: "Jumlah Gangguan" },
-      ];
-
-      if (result.status == 200) {
-        this.loading_data = false;
-      }
-    },
-    search() {
-      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
-      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
-      // this.loadData(from, until);
-      // this.loadDataQA(from, until);
-      if (this.role !== 'QA') {
-        this.loadData(from, until);
-      } else {
-        this.loadDataQA(from, until);
-      }
+    watch: {
+      dataStation(newVal) {
+        this.$emit('update-filtered-data', newVal);
+      },
+      dataStationQA(newVal) {
+        this.$emit('update-filtered-dataQA', newVal);
+      },
     },
 
-    formatDatePicker(date) {
-      if (!date) return null;
-      // Format date to YYYY-MM-DDTHH:mm
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `${year}-${month}-${day}T${hours}:${minutes}`;
-    },
-    click(event, i) {
-      let toset;
-      const sortEl = this.cols[i];
-      if (!event.shiftKey) {
-        this.cols.forEach((o) => {
-          if (o.field !== sortEl.field) {
-            o.sort = "";
-          }
-        });
-      }
-      if (!sortEl.sort) {
-        toset = "asc";
-      }
-      if (sortEl.sort === "desc") {
-        toset = event.shiftKey ? "" : "asc";
-      }
-      if (sortEl.sort === "asc") {
-        toset = "desc";
-      }
-      sortEl.sort = toset;
-    },
+    methods: {
+      formatNumber(num) {
+        // Convert to number and back to string to remove any existing decimal part
+        num = Number(num).toString();
 
+        // Add thousand separator
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
 
-    localStart(date) {
-      if (!date) return null;
-      return new Date(date);
-    },
-    localEnd(date) {
-      if (!date) return null;
-      return new Date(date);
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
-      return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
-    },
-    formatTime(dateString) {
-      const date = new Date(dateString);
-      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
-      return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
-    },
-    async downloadAll() {
-      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
-      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
-      this.loading_dw = true;
-      try {
-        const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-          params: {
-            from: from,
-            until: until,
-          },
-          responseType: 'blob' // Ensure the response is treated as a blob
-        });
-
-        if (response.status === 200) {
-          const contentDisposition = response.headers['content-disposition'];
-          let filename = 'download'; // Default filename if not present in header
-
-          if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (filenameMatch && filenameMatch[1]) {
-              filename = filenameMatch[1];
-            }
-          }
-
-          // Modify filename based on filter
-          if (from != null && until != null) {
-            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
-          } else {
-            filename = `Laporan Pembacaan Sensor ${this.nama}`;
-          }
-
-          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
-          const a = document.createElement('a');
-          a.href = url;
-          a.setAttribute('download', filename);
-          document.body.appendChild(a);
-          a.click();
-          a.parentNode.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading_dw = false;
-      }
-    },
-    hourlyData() {
-      this.loading_dw = true;
-      if (this.role == "Admin" || this.role == "SuperAdmin") {
-        axios
-          .post(
-            `${this.$baseURL}/excel-summary/`,
-            {
-              station_id: this.$route.params.id,
-              user_id: this.user_id,
-              first_date: this.formatDatePicker(this.startDate),
-              last_date: this.formatDatePicker(this.endDate)
+      async loadData(from = null, until = null) {
+        this.loading_data = true;
+        let result = await axios
+          .get(`${this.$baseURL}/pdam/station_data/${this.$route.params.id}/`, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
             },
+            params: {
+              from: from,
+              until: until,
+            },
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+
+        this.dataStation = result.data.data[0].chart
+        this.dataStation.forEach(chartItem => {
+          // Iterate through sensor_data array
+          chartItem.sensor_data.forEach(sensorData => {
+            // Limit decimal places for value
+            if (sensorData.value !== null) {
+              sensorData.value = parseFloat(sensorData.value).toFixed(2);
+            } else {
+              sensorData.value
+            }
+
+          });
+        });
+        // console.log(this.dataStation);
+
+
+
+        let sensor_label = this.dataStation[0].sensor_data;
+        this.nama = result.data.data[0].station_name
+
+        this.summary = result.data.data[0]
+        this.summary.average_flow = this.formatNumber((this.summary.average_flow).toFixed(2));
+        this.summary.data_precentage = this.formatNumber((this.summary.data_precentage).toFixed(2));
+        this.summary.sum_volume = this.formatNumber((this.summary.sum_volume).toFixed(2));
+
+        this.cols = [
+          { name: "Tanggal" },
+          { name: "Waktu" },
+        ];
+
+        for (let i = 0; i < sensor_label.length; i++) {
+          this.cols.push({
+            name: sensor_label[i].sensor_name,
+          });
+        }
+
+        this.cols.push({
+          name: "Status"
+        })
+
+        if (result.status == 200) {
+          this.loading_data = false;
+        }
+      },
+      async loadDataQA(from = null, until = null) {
+        this.loading_data = true;
+        let result = await axios
+          .get(`${this.$baseURL}/pdam/QA/${this.$route.params.id}/`, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            params: {
+              from: from,
+              until: until,
+            },
+          })
+          .catch(function (e) {
+            console.log(e);
+          });
+
+        // console.log('TableData.vue: ', result.data[0].data);
+        this.dataStationQA = result.data[0].data
+        this.summaryQA = result.data[0]
+
+        this.nama = result.data.station_name
+
+        this.colsQA = [
+          { name: "Tanggal" },
+          { name: "Jumlah Data" },
+          { name: "Persen Data" },
+          { name: "Jumlah Gangguan" },
+        ];
+
+        if (result.status == 200) {
+          this.loading_data = false;
+        }
+      },
+      search() {
+        const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+        const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+        // this.loadData(from, until);
+        // this.loadDataQA(from, until);
+        if (this.role !== 'QA') {
+          this.loadData(from, until);
+        } else {
+          this.loadDataQA(from, until);
+        }
+      },
+
+      formatDatePicker(date) {
+        if (!date) return null;
+        // Format date to YYYY-MM-DDTHH:mm
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+      },
+      click(event, i) {
+        let toset;
+        const sortEl = this.cols[i];
+        if (!event.shiftKey) {
+          this.cols.forEach((o) => {
+            if (o.field !== sortEl.field) {
+              o.sort = "";
+            }
+          });
+        }
+        if (!sortEl.sort) {
+          toset = "asc";
+        }
+        if (sortEl.sort === "desc") {
+          toset = event.shiftKey ? "" : "asc";
+        }
+        if (sortEl.sort === "asc") {
+          toset = "desc";
+        }
+        sortEl.sort = toset;
+      },
+
+
+      localStart(date) {
+        if (!date) return null;
+        return new Date(date);
+      },
+      localEnd(date) {
+        if (!date) return null;
+        return new Date(date);
+      },
+      formatDate(dateString) {
+        const date = new Date(dateString);
+        const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+        return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
+      },
+      formatTime(dateString) {
+        const date = new Date(dateString);
+        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+        return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
+      },
+      async downloadAll() {
+        const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+        const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+        this.loading_dw = true;
+        try {
+          const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            params: {
+              from: from,
+              until: until,
+            },
+            responseType: 'blob' // Ensure the response is treated as a blob
+          });
+
+          if (response.status === 200) {
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = 'download'; // Default filename if not present in header
+
+            if (contentDisposition) {
+              const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+              if (filenameMatch && filenameMatch[1]) {
+                filename = filenameMatch[1];
+              }
+            }
+
+            // Modify filename based on filter
+            if (from != null && until != null) {
+              filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
+            } else {
+              filename = `Laporan Pembacaan Sensor ${this.nama}`;
+            }
+
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', filename);
+            document.body.appendChild(a);
+            a.click();
+            a.parentNode.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          this.loading_dw = false;
+        }
+      },
+      hourlyData() {
+        this.loading_dw = true;
+        if (this.role == "Admin" || this.role == "SuperAdmin") {
+          axios
+            .post(
+              `${this.$baseURL}/excel-summary/`,
+              {
+                station_id: this.$route.params.id,
+                user_id: this.user_id,
+                first_date: this.formatDatePicker(this.startDate),
+                last_date: this.formatDatePicker(this.endDate)
+              },
+              {
+                responseType: "arraybuffer",
+                headers: {
+                  Authorization: `Bearer ${this.token}`,
+                },
+              }
+            )
+            .then((response) => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement("a");
+              link.href = url;
+
+
+              if (this.startDate && this.endDate) {
+                link.setAttribute(
+                  "download",
+                  `Data per jam ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
+                );
+              } else {
+                link.setAttribute(
+                  "download",
+                  `Data per jam ${this.nama}.xlsx`
+                );
+              }
+
+              document.body.appendChild(link);
+              link.click();
+
+              if (response.status == 200) {
+                this.loading_dw = false;
+              }
+            })
+            .catch((error) => console.log(error));
+        }
+      },
+      async downloadDaily() {
+        const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+        const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+        this.loading_dw = true;
+        try {
+          const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            params: {
+              from: from,
+              until: until,
+              per_day: true
+            },
+            responseType: 'blob' // Ensure the response is treated as a blob
+          });
+
+
+          if (response.status === 200) {
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = 'download'; // Default filename if not present in header
+
+            if (contentDisposition) {
+              const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+              if (filenameMatch && filenameMatch[1]) {
+                filename = filenameMatch[1];
+              }
+            }
+
+            // Modify filename based on filter
+            if (from != null && until != null) {
+              filename = `Data per hari ${this.nama} ${from} sd ${until}`;
+            } else {
+              filename = `Data per hari ${this.nama}`;
+            }
+
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', filename);
+            document.body.appendChild(a);
+            a.click();
+            a.parentNode.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          this.loading_dw = false;
+        }
+      },
+      async formatData() {
+        try {
+          const response = await axios.get(
+            `${this.$baseURL}/input-data-format/`,
             {
-              responseType: "arraybuffer",
               headers: {
                 Authorization: `Bearer ${this.token}`,
               },
+              responseType: 'blob', // Ensure the response is treated as a blob
             }
-          )
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
+          );
 
+          // Create a blob from the response data
+          const blob = new Blob([response.data], { type: response.data.type });
 
-            if (this.startDate && this.endDate) {
-              link.setAttribute(
-                "download",
-                `Data per jam ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
-              );
-            } else {
-              link.setAttribute(
-                "download",
-                `Data per jam ${this.nama}.xlsx`
-              );
+          // Create a link element
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', 'Format Input Data Sensor.xlsx'); // Set the file name
+
+          // Append the link to the body
+          document.body.appendChild(link);
+
+          // Trigger the download by simulating click
+          link.click();
+
+          // Remove the link from the document
+          document.body.removeChild(link);
+        } catch (error) {
+          console.error('Error downloading the file', error);
+        }
+      },
+      async formatThreshold() {
+        try {
+          const response = await axios.get(
+            `${this.$baseURL}/pdam/download_format_treshold/`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.token}`,
+              },
+              responseType: 'blob', // Ensure the response is treated as a blob
             }
+          );
 
-            document.body.appendChild(link);
-            link.click();
+          // Create a blob from the response data
+          const blob = new Blob([response.data], { type: response.data.type });
 
-            if (response.status == 200) {
-              this.loading_dw = false;
+          // Create a link element
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute('download', 'Format Input Threshold.xlsx'); // Set the file name
+
+          // Append the link to the body
+          document.body.appendChild(link);
+
+          // Trigger the download by simulating click
+          link.click();
+
+          // Remove the link from the document
+          document.body.removeChild(link);
+        } catch (error) {
+          console.error('Error downloading the file', error);
+        }
+      },
+
+      onChangeFileUpload(event) {
+        this.csvFile = event.target.files[0];
+      },
+      sensorDataUpload() {
+        let formData = new FormData();
+        formData.append("station_id", this.$route.params.id);
+        formData.append("csvFile", this.csvFile);
+
+        axios
+          .post(`${this.$baseURL}/input-data-excel/`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${this.token}`,
+            },
+          })
+          .then((r) => {
+            // console.log("status: ", r.status);
+
+            if (r.status == 204) {
+              this.csv_code = "File uploaded successfully";
+              location.reload();
             }
           })
-          .catch((error) => console.log(error));
-      }
-    },
-    async downloadDaily() {
-      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
-      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
-      this.loading_dw = true;
-      try {
-        const response = await axios.get(`${this.$baseURL}/pdam/station_data/download/${this.$route.params.id}/`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-          params: {
-            from: from,
-            until: until,
-            per_day: true
-          },
-          responseType: 'blob' // Ensure the response is treated as a blob
-        });
+          .catch((error) => {
+            console.log(error);
+            this.csv_code = "Error uploading the file. Please try again.";
+          });
+      },
+      tresholdDataUpload() {
+        let formData = new FormData();
+        formData.append("station_serial_id", this.$route.params.id);
+        formData.append("file", this.csvFile);
 
+        axios
+          .post(`${this.$baseURL}/pdam/upload_treshold/${this.$route.params.id}/`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${this.token}`,
+            },
+          })
+          .then((r) => {
+            // console.log("status: ", r.status);
 
-        if (response.status === 200) {
-          const contentDisposition = response.headers['content-disposition'];
-          let filename = 'download'; // Default filename if not present in header
-
-          if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (filenameMatch && filenameMatch[1]) {
-              filename = filenameMatch[1];
+            if (r.status == 204) {
+              this.csv_code = "File uploaded successfully";
+              location.reload();
             }
-          }
+          })
+          .catch((error) => {
+            console.log(error);
+            this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
+            // this.csv_code = error;
+          });
+      },
+      // getBalaiValue() {
+      //   const note = this.station[0].note;
+      //   const match = note.match(/balai:\s*([^,\]]+)/);
+      //   return match ? match[1].trim() : null;
+      // },
+      // getUploadValue() {
+      //   const note = this.station[0].note;
+      //   const match = note.match(/upload:\s*([^,\]]+)/);
+      //   return match ? match[1].trim() : null;
+      // },
 
-          // Modify filename based on filter
-          if (from != null && until != null) {
-            filename = `Data per hari ${this.nama} ${from} sd ${until}`;
-          } else {
-            filename = `Data per hari ${this.nama}`;
-          }
-
-          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
-          const a = document.createElement('a');
-          a.href = url;
-          a.setAttribute('download', filename);
-          document.body.appendChild(a);
-          a.click();
-          a.parentNode.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading_dw = false;
+    },
+    created() {
+      this.extractUserInfo()
+      // console.log('created: role: ', this.role);
+      if (this.role !== 'QA') {
+        this.loadData();
+      } else {
+        this.loadDataQA()
       }
-    },
-    async formatData() {
-      try {
-        const response = await axios.get(
-          `${this.$baseURL}/input-data-format/`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-            responseType: 'blob', // Ensure the response is treated as a blob
-          }
-        );
+      this.ava_width = screen.availWidth;
 
-        // Create a blob from the response data
-        const blob = new Blob([response.data], { type: response.data.type });
-
-        // Create a link element
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', 'Format Input Data Sensor.xlsx'); // Set the file name
-
-        // Append the link to the body
-        document.body.appendChild(link);
-
-        // Trigger the download by simulating click
-        link.click();
-
-        // Remove the link from the document
-        document.body.removeChild(link);
-      } catch (error) {
-        console.error('Error downloading the file', error);
-      }
-    },
-    async formatThreshold() {
-      try {
-        const response = await axios.get(
-          `${this.$baseURL}/pdam/download_format_treshold/`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-            responseType: 'blob', // Ensure the response is treated as a blob
-          }
-        );
-
-        // Create a blob from the response data
-        const blob = new Blob([response.data], { type: response.data.type });
-
-        // Create a link element
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', 'Format Input Threshold.xlsx'); // Set the file name
-
-        // Append the link to the body
-        document.body.appendChild(link);
-
-        // Trigger the download by simulating click
-        link.click();
-
-        // Remove the link from the document
-        document.body.removeChild(link);
-      } catch (error) {
-        console.error('Error downloading the file', error);
-      }
     },
 
-    onChangeFileUpload(event) {
-      this.csvFile = event.target.files[0];
-    },
-    sensorDataUpload() {
-      let formData = new FormData();
-      formData.append("station_id", this.$route.params.id);
-      formData.append("csvFile", this.csvFile);
-
-      axios
-        .post(`${this.$baseURL}/input-data-excel/`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${this.token}`,
-          },
-        })
-        .then((r) => {
-          // console.log("status: ", r.status);
-
-          if (r.status == 204) {
-            this.csv_code = "File uploaded successfully";
-            location.reload();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.csv_code = "Error uploading the file. Please try again.";
-        });
-    },
-    tresholdDataUpload() {
-      let formData = new FormData();
-      formData.append("station_serial_id", this.$route.params.id);
-      formData.append("file", this.csvFile);
-
-      axios
-        .post(`${this.$baseURL}/pdam/upload_treshold/${this.$route.params.id}/`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${this.token}`,
-          },
-        })
-        .then((r) => {
-          // console.log("status: ", r.status);
-
-          if (r.status == 204) {
-            this.csv_code = "File uploaded successfully";
-            location.reload();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
-          // this.csv_code = error;
-        });
-    },
-    getBalaiValue() {
-      const note = this.station[0].note;
-      const match = note.match(/balai:\s*([^,\]]+)/);
-      return match ? match[1].trim() : null;
-    },
-    getUploadValue() {
-      const note = this.station[0].note;
-      const match = note.match(/upload:\s*([^,\]]+)/);
-      return match ? match[1].trim() : null;
-    },
-   
-  },
-  created() {
-    this.extractUserInfo()
-    // console.log('created: role: ', this.role);
-    if (this.role !== 'QA') {
-      this.loadData();
-    } else {
-      this.loadDataQA()
-    }
-    this.ava_width = screen.availWidth;
-
-  },
- 
-};
+  };
 </script>
 <style scoped src="@/assets/css/figma.css"></style>
 <style scoped>
@@ -935,7 +972,7 @@ td {
 
 .imgSZ img {
   resize: both;
-  height: 180px;
+  height: 150px;
   width: 190px;
 }
 

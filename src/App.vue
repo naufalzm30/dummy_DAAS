@@ -67,7 +67,7 @@ u {
 .bwsTitle {
   text-transform: uppercase;
   color: #00B2FF;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 

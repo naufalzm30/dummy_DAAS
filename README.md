@@ -1,29 +1,54 @@
-# WEATHER VUE
+# DATA AS SERVICE MONITORING
 
-## Table of Contents
+## Overview
 
-- [Description](#description)
-- [Key Features](#key-features)
-- [Project Setup](#project-setup)
-- [Configuration](#configuration)
-  - [Changing baseURL](#changing-baseurl)
-  - [Pushing to GitHub](#pushing-to-github)
+DATA AS SERVICE MONITORING is a web application developed for PDAM Surya Sembada, the local water supply utility located in Surabaya, Indonesia. This application is designed to monitor and manage debit data from multiple water stations across the city.
 
-## Description
+The system integrates with Data Loggers that automatically record flow data using Flowmeter sensors installed at various stations. Currently, the application manages data from tens of stations, with the capability to scale as more stations are added.
 
-The **WEATHER VUE** is an application designed to monitor water level changes in rivers, rainfall, and weather data across all areas under WEATHER VUE. The app provides real-time data and records measurements every 5 minutes for each monitoring station. It also includes a wind rose diagram to visualize weather patterns and a dashboard that offers insights into the last 24 hours of data.
+## Features
 
-## Key Features
+### Dashboard Page
+- Running text for important announcements
+- Interactive map showing all station locations
+- Table displaying the latest data from each station
+- Charts visualizing debit and totalizer data
 
-- **Real-time Monitoring**: Monitor water level, rainfall, and weather data in real-time from various stations.
-- **Data Logging**: The application logs data every 5 minutes, ensuring precise analysis and trend detection.
-- **Wind Rose Diagram**: Visualize wind direction and speed from weather stations using the wind rose diagram.
-- **Interactive Map**: View the locations of each monitoring station on an interactive map.
-- **Dashboard**: Monitor real-time data and trends for the past 24 hours through an intuitive dashboard.
-- **User Management**: Control access and permissions using a comprehensive user management system.
-- **Station Management**: Administrators can easily add, update, or remove monitoring stations.
-- **Custom Sensor Configuration**: Configure specific sensors for each station, allowing for customization.
-- **Data Reporting**: Generate reports for each station based on custom time intervals.
+### Stations Page
+- Add, edit, and view detailed information for all stations
+- Filter data by date range
+- View data summaries
+- Download capabilities:
+  - All data
+  - Daily data
+- Upload functionality:
+  - Threshold files
+  - Sensor data files
+- Forecasting (Taksasi) features:
+  - Define forecasting data
+  - Approve forecasting data based on app-generated models
+- Multiple data visualization charts:
+  - Flowmeter
+  - Taksasi (Forecasting)
+  - Totalizer
+  - Total Data
+  - Percentage Data
+  - Total Maintenance
+- Data verification tools
+
+### User Management Page
+- Add, edit, and delete user accounts
+- Manage user roles and permissions
+
+### Notification Page
+- Record and display all anomaly data, including:
+  - Data outside defined thresholds
+  - Maintenance alerts
+  - Low Data Logger power warnings
+
+## Technical Details
+
+The DATA AS SERVICE MONITORING web application is built using Python (Django) for the backend and Vue.js for the frontend.
 
 ## Project Setup
 
@@ -45,17 +70,17 @@ npm run build
 
 ### Changing baseURL
 
-If you need to change the baseURL for API requests, modify the following files:
+If you need to change the baseURL for API requests, modify the .env file:
 
-1. In `~/client/src/axios-api.js`, Update the `baseURL` in this file for Axios requests.
-2. In `weather_project/client/src/main.js`, Change the `baseURL` in the Vue prototype.
-3. in `index.html`, update the <title> to reflect your project's title.
-4. In `login.vue`, change the `import bg_img` to use your preferred background image.
-5. In `main.js`, modify `Vue.prototype.$fixedBalai` as needed.
+VUE_APP_API_URL=http://213.210.21.73:8001/api
 
 ### Pushing to GitHub
 
 1. Check the current GitHub repository URL, run:
+
+```sh
+git init
+```
 
 ```sh
 git remote show origin
@@ -67,32 +92,27 @@ git remote show origin
 git remote set-url origin [new-repo-url]
 ```
 ```sh
-a. `https://github.com/AgusRaharja69/weather_client_bbws8` for bbws viiii
-b. `https://github.com/AgusRaharja69/weather_client_bali_penida` for bws bali
-c. `https://github.com/AgusRaharja69/weather_client.git` for weather-vue
+`https://github.com/FurqonAndika/braja_pdamsby_fe.git`
 ```
 Check the current GitHub repository URL
 ```sh
 git remote show origin
 ```
 
-3. Update Files
-   `index.html`, update the <title> and icon to reflect your project's title and icon.
-
-4. To build the app, run the following command:
+3. To build the app, run the following command:
 ```sh
 npm run build
 ```
 
-5. After making changes, follow these steps to push to GitHub:
+4. After making changes, follow these steps to push to GitHub:
 
 ```sh
 git add .
 git status
 git commit -m 'major update'
-git push -u origin main
+git push -u origin master
 ```
 If the push fails, you can try:
 ```sh
-git push -f origin main
+git push -f origin master
 ```

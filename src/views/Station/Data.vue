@@ -26,14 +26,14 @@
       </div>
       <div class="row">
         <div class="col-md-6 px-1">
-          <TableData :station="station" :loading_i="loading_i" class="mx-auto mt-2" style="border-radius: 15px"
+          <TableData :station="station" :loading_i="loading_i"
             @update-filtered-data="updateFilteredData" @update-filtered-dataQA="updateFilteredDataQA"
-            :profile="profile" />
+            :profile="profile"  class="mx-auto " style="border-radius: 15px"/>
         </div>
-        <div class="col-md-6 px-1">
+        <div v-if="debitData && debitData.length > 0 || percentDataQA && percentDataQA.length > 0"  class="col-md-6 px-1">
           <ChartData :station="station" :ava_width="ava_width" :debitData="debitData" :totalData="totalData"
             :label="label" :stationQA="stationQA" :percentDataQA="percentDataQA" :sumDataQA="sumDataQA"
-            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :taksasiData="taksasiData" :profile="profile" />
+            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :taksasiData="taksasiData" :profile="profile" :loading_i="loading_i"/>
         </div>
       </div>
       <Footer />
@@ -107,6 +107,13 @@ export default {
     updateFilteredDataQA(dataQA) {
       this.filteredDataQA = dataQA;
     },
+    formatNumber(num) {
+      // Convert to number and back to string to remove any existing decimal part
+      num = Number(num).toString();
+
+      // Add thousand separator
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
     async loadData() {
       await axios
         .get(`${this.$baseURL}/pdam/station_data/${this.$route.params.id}/`, {
@@ -116,7 +123,15 @@ export default {
         })
         .then((r) => {
           this.station = r.data.data[0];
-          // console.log('station', this.station);
+          // Iterate through chart array
+          // this.station.chart.forEach(chartItem => {
+          //   // Iterate through sensor_data array
+          //   chartItem.sensor_data.forEach(sensorData => {
+          //     // Limit decimal places for value
+          //     sensorData.value = parseFloat(sensorData.value).toFixed(2);
+          //   });
+          // });
+          // console.log(this.station);
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -166,9 +181,9 @@ export default {
           },
         })
         .then((r) => {
-          this.profile = r.data.data;
           if (r.status == 200) {
             this.loading_i = false;
+            this.profile = r.data.data;
           }
         })
         .catch(function (e) {
@@ -180,11 +195,12 @@ export default {
   },
   mounted() {
     this.ava_width = screen.availWidth;
+    this.loadProfile()
 
   },
   created() {
     this.extractUserInfo()
-    this.loadProfile()
+
     if (this.role !== 'QA') {
       this.loadData();
     } else {

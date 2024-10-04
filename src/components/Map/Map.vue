@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+
     <div class="d-flex flex-row" v-if="ava_width > 768 && role !== 'QA'">
       <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
         class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
@@ -72,8 +72,8 @@ export default {
       balai: null,
       stations: [],
       stationsQA: [],
-      normalIcon: [18, 18],
-      largeIcon: [25, 25],
+      // normalIcon: [18, 18],
+      // largeIcon: [25, 25],
       marker: null,
       loading_i: true,
       status: [],
@@ -108,21 +108,6 @@ export default {
     handleStationSelectedQA(stationQA) {
       this.selectedStationQA = stationQA;
     },
-    // async loadData() {
-    //   await axios
-    //     .get(`${this.$baseURL}/pdam/dashboard/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     })
-    //     .then((r) => {
-    //       this.stations = r.data.data
-
-    //       if (r.status == 200) {
-    //         this.loading_i = false;
-    //       }
-    //     });
-    // },
     async loadData() {
       var st_name = [];
       var sensor = [];
@@ -156,7 +141,25 @@ export default {
           });
           st_name_length = st_name.reduce((a, b) => a + b, 0);
           sensor_length = sensor.reduce((a, b) => a + b, 0);
-          this.stations = r.data.data;
+          // this.stations = r.data.data;
+          this.stations = r.data.data.map(station => ({
+            ...station,
+            last_data: station.last_data.map(data => ({
+              ...data,
+              value: function formatValue(val) {
+                val = parseFloat(val).toFixed(2);
+                // Remove trailing .00 if the number is an integer
+                if (val.endsWith('.00')) {
+                  val = val.replace('.00', '');
+                }
+                // Add thousands separators
+                val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return val;
+              }(data.value)
+            }))
+          }));
+          // console.log(this.stations);
+
           this.custom_duration = (st_name_length + sensor_length) / 2;
           this.stations.slice(-1).pop().duration + 200;
           if (r.status == 200) {
@@ -189,7 +192,7 @@ export default {
 
       playSlide();
     },
-    
+
     async loadDataQA() {
       await axios
         .get(`${this.$baseURL}/pdam/QA/`, {
