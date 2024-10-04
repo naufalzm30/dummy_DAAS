@@ -80,9 +80,6 @@ VUE_APP_API_URL=http://213.210.21.73:8001/api
 
 ```sh
 git init
-```
-
-```sh
 git remote show origin
 ```
 
@@ -90,10 +87,9 @@ git remote show origin
 
 ```sh
 git remote set-url origin [new-repo-url]
-```
-```sh
 `https://github.com/FurqonAndika/braja_pdamsby_fe.git`
 ```
+
 3. Check the current GitHub repository URL
 ```sh
 git remote show origin
