@@ -11,12 +11,14 @@
         <div class="subTitle">Notification</div>
       </div>
 
-      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']">
+      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']" > 
         <div :data-page-count="ds.dsPagecount">
-          <dataset-search ds-search-placeholder="Search..." />
+          <dataset-show :ds-show-entries="20" class="d-none"/>
+          <dataset-search ds-search-placeholder=" Search..." />
         </div>
+        
 
-        <div class="row mt-2">
+        <div class="row">
           <div class="col-md-12">
             <div class="table-responsive">
               <table class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white">
@@ -70,6 +72,7 @@ import {
   DatasetInfo,
   DatasetPager,
   DatasetSearch,
+  DatasetShow,
 } from "vue-dataset";
 
 export default {
@@ -81,6 +84,7 @@ export default {
     DatasetInfo,
     DatasetPager,
     DatasetSearch,
+    DatasetShow,
   },
   data: function () {
     return {
@@ -182,3 +186,11 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/figma.css"></style>
+
+<style scoped>
+table td {
+  padding: 1px 0;
+}
+
+
+</style>

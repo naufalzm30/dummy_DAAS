@@ -1,19 +1,8 @@
 <template>
   <div class="mobile-width">
     <Header />
-    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center pb-3"
-      style="height: 100vh">
-      <div class="content-container">
-        <div v-if="e_code == null" class="icon-container">
-          <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
-        </div>
-        <div v-else class="icon-container">
-          <i class="zmdi zmdi-alert-triangle" style="font-size: 2rem"></i>
-        </div>
-        <p class="mt-3">{{ msg }}</p>
-      </div>
-    </div>
-    <div v-else>
+ 
+    <div>
       <div class="d-flex justify-content-between align-items-center">
         <div class="bwsTitle mobile-top">
           {{ $app_title }}
@@ -26,14 +15,16 @@
       </div>
       <div class="row">
         <div class="col-md-6 px-1">
-          <TableData :station="station" :loading_i="loading_i"
-            @update-filtered-data="updateFilteredData" @update-filtered-dataQA="updateFilteredDataQA"
-            :profile="profile"  class="mx-auto " style="border-radius: 15px"/>
+          <TableData :station="station" :loading_i="loading_i" @update-filtered-data="updateFilteredData"
+            @update-filtered-dataQA="updateFilteredDataQA" :profile="profile" class="mx-auto "
+            style="border-radius: 15px" />
         </div>
-        <div v-if="debitData && debitData.length > 0 || percentDataQA && percentDataQA.length > 0"  class="col-md-6 px-1">
+        <div v-if="debitData && debitData.length > 0 || percentDataQA && percentDataQA.length > 0"
+          class="col-md-6 px-1">
           <ChartData :station="station" :ava_width="ava_width" :debitData="debitData" :totalData="totalData"
             :label="label" :stationQA="stationQA" :percentDataQA="percentDataQA" :sumDataQA="sumDataQA"
-            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :taksasiData="taksasiData" :profile="profile" :loading_i="loading_i"/>
+            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :taksasiData="taksasiData" :profile="profile"
+            :loading_i="loading_i" />
         </div>
       </div>
       <Footer />
@@ -182,11 +173,11 @@ export default {
         })
         .then((r) => {
           if (r.status == 200) {
-            this.loading_i = false;
+            // this.loading_i = false;
             this.profile = r.data.data;
           }
         })
-        .catch(function (e) {
+        .catch((e) => {
           this.e_code = e.response.status;
           this.msg = "An error occurred on the server. Please try again later.";
         });

@@ -1,44 +1,57 @@
 <template>
   <div>
+    <div v-if="loading_i" class="d-flex flex-column justify-content-center align-items-center pb-3"
+      style="height: 90vh; width: 93vw;">
+      <div class="content-container">
+        <div class="icon-container">
+          <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
+        </div>
+        <p class="mt-3">{{ msg }}</p>
+      </div>
+    </div>
+    <div v-else>
 
-    <div class="d-flex flex-row" v-if="ava_width > 768 && role !== 'QA'">
-      <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
-        class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
-        <span v-for="station in stations" :key="station.id" style="font-size: 1.1rem">
-          <span style="color: #00B2FF; font-weight: 500">
-            {{ station.station_name }} &bull;
-          </span>
-          <span>
-            <span v-for="(card, index) in [station]" :key="index" class="flex mt-2">
-              <span v-for="(label, labelIndex) in card.last_data" :key="labelIndex" style="color: #00B2FF">
-                {{ label.sensor_name }} : {{ label.value }} {{ label.notation }}
-                <span v-if="labelIndex < card.last_data.length - 1"> | </span>
+      <div class="d-flex flex-row" v-if="ava_width > 768 && role !== 'QA'">
+        <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
+          class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
+          <span v-for="station in stations" :key="station.id" style="font-size: 1.1rem">
+            <span style="color: #00B2FF; font-weight: 500">
+              {{ station.station_name }} &bull;
+            </span>
+            <span>
+              <span v-for="(card, index) in [station]" :key="index" class="flex mt-2">
+                <span v-for="(label, labelIndex) in card.last_data" :key="labelIndex" style="color: #00B2FF">
+                  {{ label.sensor_name }} : {{ label.value }} {{ label.notation }}
+                  <span v-if="labelIndex < card.last_data.length - 1"> | </span>
+                </span>
               </span>
             </span>
+            <img :src="logoPDAM" style="width: 20px" class="mx-2 my-1" />
           </span>
-          <img :src="logoPDAM" style="width: 20px" class="mx-2 my-1" />
-        </span>
-      </marquee-text>
-    </div>
-    <div class="row">
-      <div class="col px-0" :class="{ 'col-6 pr-0': ava_width > 768 }">
-        <div class="row">
-          <div class="col-12" v-if="role !== 'QA'">
-            <StationMap :stations="stations" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
-              style="border-radius: 15px" />
-          </div>
-          <div class="col-12">
-            <Stations :stations="stations" :stationsQA="stationsQA" :loading_i="loading_i"
-              class="shadow-sm border mt-2 bg-white" style="border-radius: 15px"
-              @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA" />
+        </marquee-text>
+      </div>
+      <div class="row">
+        <div class="col px-0" :class="{ 'col-6 pr-0': ava_width > 768 }">
+          <div class="row">
+            <div class="col-12" v-if="role !== 'QA'">
+              <StationMap :stations="stations" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
+                style="border-radius: 15px" />
+            </div>
+            <div class="col-12">
+              <Stations :stations="stations" :stationsQA="stationsQA" :loading_i="loading_i"
+                class="shadow-sm border mt-2 bg-white" style="border-radius: 15px"
+                @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA" />
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col px-0" :class="{ 'col-6 px-0': ava_width > 768 }">
-        <StationData :station="selectedStation" :stationQA="selectedStationQA" />
+        <div class="col px-0" :class="{ 'col-6 px-0': ava_width > 768 }">
+          <StationData :station="selectedStation" :stationQA="selectedStationQA" />
+        </div>
       </div>
     </div>
   </div>
+
+
 </template>
 
 <script>
@@ -67,6 +80,7 @@ export default {
       custom_duration: null,
       showCarousel: true,
       logoPDAM,
+      msg: "Fetching data, please wait...",
 
       role: null,
       balai: null,
