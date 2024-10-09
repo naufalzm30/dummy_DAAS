@@ -12,7 +12,7 @@
               <!-- <p class="bws">{{ $app_title }}</p>
               <p class="bws">SURABAYA</p> -->
               <p class="bws">DATA AS SERVICE</p>
-              <p class="bws">MONITORING FLOW</p>
+              <p class="bws">PDAM SURYA SEMBADA</p>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@ export default {
 
 <style scoped>
 .bws {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: bold;
   margin: 0;
   margin-left: 25px;

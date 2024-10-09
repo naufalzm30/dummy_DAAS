@@ -15,7 +15,7 @@ import "vue2-datepicker/index.css";
 Vue.component("DatePicker", DatePicker);
 
 Vue.config.productionTip = false;
-Vue.prototype.$imageURL = process.env.VUE_APP_IMAGE_API_URL;
+// Vue.prototype.$imageURL = process.env.VUE_APP_IMAGE_API_URL;
 Vue.prototype.$baseURL = process.env.VUE_APP_API_URL;
 Vue.prototype.$app_title = document.title;
 
@@ -23,7 +23,7 @@ Vue.prototype.$app_title = document.title;
 Vue.mixin({
   methods: {
     extractUserInfo() {
-      let user = localStorage.getItem("user-info") || "{}";
+      let user = localStorage.getItem("user-daas") || "{}";
       this.user = JSON.parse(user);
         this.balai =  this.user.balai.id
         this.produksi =  this.user.balai.balai_name
@@ -35,7 +35,7 @@ Vue.mixin({
     logoutUser() {
       localStorage.clear();
       localStorage.removeItem("access");
-      localStorage.removeItem("user-info");
+      localStorage.removeItem("user-daas");
       this.$router.push({ name: "Home" });
       window.location.reload();
       window.location.reload();

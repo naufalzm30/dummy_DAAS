@@ -101,7 +101,7 @@ git remote show origin
 npm run build
 git add .
 git status
-git commit -m 'general update'
+git commit -m 'update'
 git push -u origin master
 ```
 If the push fails, you can try:

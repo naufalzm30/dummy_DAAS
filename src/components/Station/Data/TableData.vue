@@ -86,7 +86,7 @@
             aria-labelledby="sDataZeroLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="sensorDataUpload">
+                <form @submit.prevent="sensorDataUpload" >
                   <div class="modal-header">
                     <h5 class="modal-title" id="sDataZeroLabel">
                       Upload Data Sensor
@@ -96,7 +96,7 @@
                   <div class="modal-body">
                     <div>
                       <label>
-                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" required/>
                       </label>
                     </div>
                   </div>
@@ -876,7 +876,7 @@ export default {
     async formatSensorData() {
       try {
         const response = await axios.get(
-          `${this.$baseURL}/pdam/download_format_treshold/`,
+          `${this.$baseURL}/pdam/download_format_sensor_data/`,
           {
             headers: {
               Authorization: `Bearer ${this.token}`,
@@ -887,7 +887,7 @@ export default {
         const blob = new Blob([response.data], { type: response.data.type });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', 'Format Input Data Sensor.xlsx');
+        link.setAttribute('download', 'Format Input Sensor Data.xlsx');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
