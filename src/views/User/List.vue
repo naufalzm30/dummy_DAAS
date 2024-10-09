@@ -326,4 +326,8 @@ main {
   flex-grow: 2;
   padding: 10px;
 }
+
+table td {
+  padding: 7px 0;
+}
 </style>

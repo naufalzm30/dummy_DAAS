@@ -86,7 +86,7 @@ export default {
       userData: "",
       password: "",
       roleUser: "",
-      produksi: null,
+      produksi: 1,
       email: "q9@test.test",
       first_name: "x",
       last_name: "x",

@@ -13,7 +13,7 @@
       <div class="bwsTitle mobile-top">
         {{ balai_name }}
       </div>
-      
+
       <Map />
       <Footer />
     </div>
@@ -23,14 +23,11 @@
 <script>
 import Header from "@/components/Public/Header";
 import logoPDAM from "@/assets/icons/logo-pdam.png";
-// import MarqueeText from "@/components/MarqueeText.vue";
 import Map from "@/components/Map/Map.vue";
-// import axios from "axios";
 
 export default {
   components: {
     Header,
-    // MarqueeText,
     Map,
   },
   data() {
@@ -85,84 +82,11 @@ export default {
         };
       });
     },
-    // async homeData() {
-    //   var st_name = [];
-    //   var sensor = [];
-    //   var st_name_length = null;
-    //   var sensor_length = null;
-
-    //   await axios
-    //     .get(`${this.$baseURL}/pdam/dashboard/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     })
-
-    //     .then((r) => {
-    //       r.data.data.forEach((e) => {
-    //         st_name.push(e.station_name.length);
-    //         sensor.push(
-    //           e.last_data
-    //             .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
-    //             .reduce((acc, cur) => acc + cur.sensor_name, '')
-    //             .length
-    //         );
-    //         var x =
-    //           e.station_name.length + 1
-    //         e.last_data
-    //           .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
-    //           .reduce((acc, cur) => acc + cur.sensor_name, '')
-    //           .length
-
-    //         e.duration = x * 510;
-    //       });
-    //       st_name_length = st_name.reduce((a, b) => a + b, 0);
-    //       sensor_length = sensor.reduce((a, b) => a + b, 0);
-    //       this.stations = r.data.data;
-    //       this.custom_duration = (st_name_length + sensor_length) / 2;
-    //       this.stations.slice(-1).pop().duration + 200;
-    //       if (r.status == 200) {
-    //         this.loading_i = false;
-    //       }
-    //       // console.log(this.stations);
-
-    //     })
-    //     .catch((error) => {
-    //       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-    //         this.logoutUser();
-    //       } else {
-    //         console.error('Error msg: ', error);
-    //       }
-    //     });
-
-
-    //   let currentIndex = 0;
-
-    //   const playSlide = () => {
-    //     setTimeout(() => {
-    //       currentIndex = (currentIndex + 1) % this.stations.length;
-
-    //       if (this.$refs.carousel) {
-    //         this.$refs.carousel.goToPage(currentIndex);
-    //       }
-    //       playSlide();
-    //     }, this.stations[currentIndex].duration);
-    //   };
-
-    //   playSlide();
-    // },
   },
   async created() {
     this.extractUserInfo()
     this.balai_name = document.title;
-    // console.log(this.role);
-    // if (this.role !== 'QA') {
-    //   await this.homeData();
-    // } else {
-    //   this.loading_i = false;
-    // }
     this.loading_i = false;
-
   },
   async mounted() {
     this.checkScreen();
@@ -184,8 +108,11 @@ export default {
 
 <style>
 .mobile-width {
-  max-width: 91%;
-  margin-left: 90px;
+  /* max-width: 91%;
+  margin-left: 90px; */
+  max-width: 92%;
+  margin-left: 80px;
+
 }
 
 .mobile-top {

@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-width">
     <Header />
- 
+
     <div>
       <div class="d-flex justify-content-between align-items-center">
         <div class="bwsTitle mobile-top">
@@ -132,8 +132,7 @@ export default {
             this.logoutUser();
           } else if (error.response.data.message == 'No sensor data found.') {
             this.station = []
-            // console.log('station', this.station);
-
+            this.loading_i = false;
           } else {
             console.error('Error msg: ', error.response.data.message);
           }

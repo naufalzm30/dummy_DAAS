@@ -95,7 +95,7 @@ export default {
 
 <style scoped>
 .map {
-  height: 38vh;
+  height: 24vh;
 
 }
 

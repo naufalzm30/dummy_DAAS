@@ -12,8 +12,8 @@
     <div v-else>
 
       <div class="d-flex flex-row" v-if="ava_width > 768 && role !== 'QA'">
-        <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused"
-          class="card mt-0 pb-1 box custom-col-md" @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
+        <marquee-text :repeat="text_repeat" :duration="custom_duration" :paused="isPaused" class=""
+          @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
           <span v-for="station in stations" :key="station.id" style="font-size: 1.1rem">
             <span style="color: #00B2FF; font-weight: 500">
               {{ station.station_name }} &bull;
@@ -26,21 +26,20 @@
                 </span>
               </span>
             </span>
-            <img :src="logoPDAM" style="width: 20px" class="mx-2 my-1" />
+            <img :src="logoPDAM" style="width: 20px" class="mx-1 mb-1" />
           </span>
         </marquee-text>
       </div>
       <div class="row">
-        <div class="col px-0" :class="{ 'col-6 pr-0': ava_width > 768 }">
+        <div class="col" :class="{ 'col-6 pr-0': ava_width > 768 }">
           <div class="row">
             <div class="col-12" v-if="role !== 'QA'">
-              <StationMap :stations="stations" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
-                style="border-radius: 15px" />
+              <StationMap :stations="stations" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border" style="border-radius: 10px" />
             </div>
             <div class="col-12">
-              <Stations :stations="stations" :stationsQA="stationsQA" :loading_i="loading_i"
-                class="shadow-sm border mt-2 bg-white" style="border-radius: 15px"
-                @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA" />
+              <Stations :stations.sync="stations" :stationsQA="stationsQA" :loading_i="loading_i"
+                class="shadow-sm border mt-2 bg-white" style="border-radius: 10px"
+                @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA" @update:stations="handleStationsUpdate"/>
             </div>
           </div>
         </div>
@@ -116,6 +115,9 @@ export default {
     }
   },
   methods: {
+    handleStationsUpdate(newStations) {
+      this.stations = newStations;
+    },
     handleStationSelected(station) {
       this.selectedStation = station;
     },
@@ -155,31 +157,26 @@ export default {
           });
           st_name_length = st_name.reduce((a, b) => a + b, 0);
           sensor_length = sensor.reduce((a, b) => a + b, 0);
-          // this.stations = r.data.data;
           this.stations = r.data.data.map(station => ({
             ...station,
             last_data: station.last_data.map(data => ({
               ...data,
               value: function formatValue(val) {
                 val = parseFloat(val).toFixed(2);
-                // Remove trailing .00 if the number is an integer
                 if (val.endsWith('.00')) {
                   val = val.replace('.00', '');
                 }
-                // Add thousands separators
                 val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return val;
               }(data.value)
             }))
           }));
-          // console.log(this.stations);
 
           this.custom_duration = (st_name_length + sensor_length) / 2;
           this.stations.slice(-1).pop().duration + 200;
           if (r.status == 200) {
             this.loading_i = false;
           }
-          // console.log(this.stations);
 
         })
         .catch((error) => {

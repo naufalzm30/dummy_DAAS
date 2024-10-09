@@ -1,8 +1,8 @@
-# DATA AS SERVICE MONITORING
+# DATA AS SERVICE MONITORING FLOW
 
 ## Overview
 
-DATA AS SERVICE MONITORING is a web application developed for PDAM Surya Sembada, the local water supply utility located in Surabaya, Indonesia. This application is designed to monitor and manage debit data from multiple water stations across the city.
+DATA AS SERVICE MONITORING FLOW is a web application developed for PDAM Surya Sembada, the local water supply utility located in Surabaya, Indonesia. This application is designed to monitor and manage debit data from multiple water stations across the city.
 
 The system integrates with Data Loggers that automatically record flow data using Flowmeter sensors installed at various stations. Currently, the application manages data from tens of stations, with the capability to scale as more stations are added.
 
@@ -48,7 +48,7 @@ The system integrates with Data Loggers that automatically record flow data usin
 
 ## Technical Details
 
-The DATA AS SERVICE MONITORING web application is built using Python (Django) for the backend and Vue.js for the frontend.
+The DATA AS SERVICE MONITORING FLOW web application is built using Python (Django) for the backend and Vue.js for the frontend.
 
 ## Project Setup
 
@@ -101,7 +101,7 @@ git remote show origin
 npm run build
 git add .
 git status
-git commit -m 'update'
+git commit -m 'general update'
 git push -u origin master
 ```
 If the push fails, you can try:

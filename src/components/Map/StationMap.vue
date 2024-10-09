@@ -6,7 +6,7 @@
 
     <v-map :zoom="zoom" :center="center" :options="{ attributionControl: false, zoomControl: false }"
       @update:zoom="zoomUpdated" @update:center="centerUpdated"
-      style="border-radius: 15px; z-index: 2; position: relative" class="box" v-if="!loading_i">
+      style="border-radius: 5px; z-index: 2; position: relative" class="box" v-if="!loading_i">
       <v-icondefault></v-icondefault>
       <v-tilelayer :url="url" :attribution="attribution"></v-tilelayer>
 

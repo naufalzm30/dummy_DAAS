@@ -12,7 +12,11 @@
       <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
         <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
           id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+          <small v-if="role == 'SuperAdmin' && localStations.length > 34">
+            {{ localStations[34].station_name }}: {{ formatDate(localStations[34].last_time) }} {{
+              formatTime(localStations[34].last_time) }}
 
+          </small>
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
@@ -24,8 +28,8 @@
             </thead>
 
             <tbody>
-              <tr v-for="(station, index) in localStations" :key="station.station_serial_id" @click="selectStation(station)"
-                style="cursor: pointer">
+              <tr v-for="(station, index) in localStations" :key="station.station_serial_id"
+                @click="selectStation(station)" style="cursor: pointer">
                 <td>{{ index + 1 }}</td>
                 <!-- <td v-if="station.maintenance"
                   style="display: flex; flex-direction: column; align-items: center; font-size: 0.7rem;">
@@ -146,18 +150,30 @@ export default {
       // loading_i: true,
       ava_width: null,
       ava_height: null,
+      // localStations: []
+      localStationsData: []
     };
   },
   computed: {
-    localStations: {
-      get() {
-        return this.stations;
-      },
-      set(newValue) {
-        this.$emit('update:stations', newValue);
-      }
+    // localStations: {
+    //   get() {
+    //     return this.stations;
+    //   },
+    //   set(newValue) {
+    //     console.log('Emitting updated stations:', newValue); // Check if event is emitted with the new value
+    //     this.$emit('update:stations', newValue);
+    //   }
+    // }
+    localStations() {
+      // Combine prop and local data, prioritizing local data
+      return this.localStationsData.length > 0 ? this.localStationsData : this.stations;
     }
   },
+  // watch: {
+  //   stations(newVal) {
+  //     console.log('Stations prop changed!', newVal);
+  //   }
+  // },
   methods: {
     selectStation(station) {
       this.$emit('station-selected', station);
@@ -202,18 +218,66 @@ export default {
     },
 
     async loadStations() {
-      
+      // await this.fetchStations();
       this.processStations();
-
       setInterval(async () => {
         await this.fetchStations();
         this.processStations();
       }, 300000);
+      // }, 10000);
     },
     async loadStationsQA() {
       this.processStationsQA();
     },
 
+    // async fetchStations() {
+    //   try {
+    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     });
+    //     this.localStations = response.data.data;
+    //     console.log();
+
+    //     this.loading_i = response.status === 200 ? false : true;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+
+    // },
+    // async fetchStations() {
+    //   try {
+    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     });
+
+    //     this.localStations = response.data.data;
+    //     console.log('Fetched stations:', this.localStations);
+
+    //     this.loading_i = response.status === 200 ? false : true;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
+    // async fetchStations() {
+    //   try {
+    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     });
+
+    //     this.$set(this, 'localStations', response.data.data);
+    //     console.log('Fetched stations:', this.localStations);
+
+    //     this.loading_i = response.status === 200 ? false : true;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // },
     async fetchStations() {
       try {
         const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
@@ -221,7 +285,27 @@ export default {
             Authorization: `Bearer ${this.token}`,
           },
         });
-        this.localStations = response.data.data;
+
+        // Update local data
+        this.localStationsData = response.data.data;
+        // console.log('Fetched stations:', this.localStationsData);
+        this.localStationsData = response.data.data.map(station => ({
+            ...station,
+            last_data: station.last_data.map(data => ({
+              ...data,
+              value: function formatValue(val) {
+                val = parseFloat(val).toFixed(2);
+                if (val.endsWith('.00')) {
+                  val = val.replace('.00', '');
+                }
+                val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                return val;
+              }(data.value)
+            }))
+          }));
+        // Emit the update to the parent
+        this.$emit('update:stations', this.localStationsData);
+
         this.loading_i = response.status === 200 ? false : true;
       } catch (error) {
         console.error(error);
@@ -229,7 +313,7 @@ export default {
     },
     processStations() {
       // console.log('tset');
-      
+
       this.st_stations = [...this.localStations];
       this.total_stat = this.localStations.length;
       this.table_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu", "Flowmeter", "Totalizer"];

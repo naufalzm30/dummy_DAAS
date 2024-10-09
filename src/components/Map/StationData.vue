@@ -11,12 +11,12 @@
     </div>
     <div v-if="station && role !== 'QA'">
       <div style="max-width: 100% !important; min-width: 100% !important">
-        <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 10px">
+        <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 5x">
           <div class="row">
             <div class="col-md-4 p-0 imgSZ">
               <img :src="`${station.image}`" class="img-fluid" alt="station-img" style="
               object-fit: cover;
-              border-radius: 10px 0px 0px 10px;
+              border-radius: 5px 0px 0px 5px;
               margin-left: 12px;
               width: 92%;
             " />
@@ -101,8 +101,8 @@
         </div>
       </div>
       <div>
-        <div style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Data Flowmeter
@@ -116,8 +116,8 @@
             </Chart>
           </div>
         </div>
-        <div style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Data Totalizer
@@ -131,8 +131,8 @@
             </Chart>
           </div>
         </div>
-        <div v-if="role === 'QA'" style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div v-if="role === 'QA'" style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Data Gangguan
@@ -150,8 +150,8 @@
     </div>
     <div v-if="stationQA && role === 'QA'">
       <div class="mt-2">
-        <div style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div style="font-weight: 500; font-size: 1rem;margin-left: 7px;"
                 class="mt-1 d-flex justify-content-center">
@@ -166,8 +166,8 @@
             </Chart>
           </div>
         </div>
-        <div style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Persentase Data (%)
@@ -179,8 +179,8 @@
             </Chart>
           </div>
         </div>
-        <div style="border-radius: 15px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 15px">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Jumlah Gangguan

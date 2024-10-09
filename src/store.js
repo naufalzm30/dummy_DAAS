@@ -46,6 +46,7 @@ export default new Vuex.Store({
           .then((response) => {
             localStorage.setItem("access", response.data.tokens.access);
             localStorage.setItem("userRole", response.data.role.role_name);
+            localStorage.setItem("produksi", response.data.balai.balai_name);
             localStorage.setItem("user-info", JSON.stringify(response.data));
             context.commit("updateStorage", { access: response.data.tokens });
             context.state.loginTime = new Date().getTime();
@@ -64,6 +65,8 @@ export default new Vuex.Store({
         localStorage.removeItem('access');
         localStorage.removeItem('user-info');
         localStorage.removeItem('userRole');
+        localStorage.removeItem('produksi');
+
         router.push({ name: 'Home' })
         location.reload();
     },

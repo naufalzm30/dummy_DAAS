@@ -10,13 +10,13 @@
       <div class="d-flex justify-content-between align-items-center mb-2">
         <div class="subTitle">Notification</div>
       </div>
-
-      <dataset v-slot="{ ds }" :ds-data="stations" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']" > 
+      {{notifs}}
+      <dataset v-slot="{ ds }" :ds-data="notifs" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']">
         <div :data-page-count="ds.dsPagecount">
-          <dataset-show :ds-show-entries="20" class="d-none"/>
+          <dataset-show :ds-show-entries="15" class="d-none" />
           <dataset-search ds-search-placeholder=" Search..." />
         </div>
-        
+
 
         <div class="row">
           <div class="col-md-12">
@@ -40,11 +40,9 @@
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.station_name }}</td>
-                      <td>{{ row.location }}</td>
-                      <td v-if="role == 'SuperAdmin'">{{ row.balai.balai_name }}</td>
-                      <td>{{ row.latitude }}</td>
-                      <td>{{ row.longitude }}</td>
-                    
+                      <td><small>{{ row.message }}</small></td>
+    
+
                     </tr>
                   </template>
                 </dataset-item>
@@ -88,31 +86,21 @@ export default {
   },
   data: function () {
     return {
-      stations: [],
+      notifs: [],
       loading_i: true,
       balais: [],
       role: null,
       station: 0,
       balai: null,
       nama_pos: "",
-     
+
       colSuper: [
         {
           name: "Nama Stasiun",
         },
         {
-          name: "Lokasi",
+          name: "Message",
         },
-        {
-          name: "Produksi",
-        },
-        {
-          name: "Latitude",
-        },
-        {
-          name: "Longitude",
-        },
-
       ],
       userStationList: []
     };
@@ -159,13 +147,13 @@ export default {
       }
 
       await axios
-        .get(`${this.$baseURL}/pdam/station/`, {
+        .get(`${this.$baseURL}/pdam/telegram_notification/`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         })
         .then((r) => {
-          this.stations = r.data.data;
+          this.notifs = r.data.data;
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -189,8 +177,6 @@ export default {
 
 <style scoped>
 table td {
-  padding: 1px 0;
+  padding: 1.7px 0;
 }
-
-
 </style>

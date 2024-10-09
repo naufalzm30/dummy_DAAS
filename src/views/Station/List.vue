@@ -250,3 +250,10 @@ export default {
 </script>
 
 <style scoped src="@/assets/css/figma.css"></style>
+<style scoped>
+table td {
+  padding: 4px 0;
+}
+
+
+</style>

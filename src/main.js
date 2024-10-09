@@ -26,7 +26,7 @@ Vue.mixin({
       let user = localStorage.getItem("user-info") || "{}";
       this.user = JSON.parse(user);
         this.balai =  this.user.balai.id
-        this.detBalai =  this.user.balai.balai_name
+        this.produksi =  this.user.balai.balai_name
         this.username = this.user.username
         this.role = this.user.role.role_name
         this.token = this.user.tokens.access

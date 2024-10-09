@@ -159,13 +159,13 @@
             </div>
           </div>
           
-          <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, taksasiData]"
+          <Chart v-if="role == 'SuperAdmin'" style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, taksasiData]"
             :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
             :title2="`${station.chart[0].sensor_data[2].sensor_name} (${station.chart[0].sensor_data[2].notation})`"
             is="LineChartFiltered">
           </Chart>
 
-          <Chart v-else style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, null]"
+          <Chart v-else style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, null]"
             :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
             :title2="null"
             is="LineChartFiltered">
@@ -183,7 +183,7 @@
                 Data {{ station.chart[0].sensor_data[1].sensor_name }} ({{ station.chart[0].sensor_data[1].notation }})
               </h6>
             </div>
-            <Chart style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
+            <Chart style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
               :chart-data="totalData"
               :title="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
               is="TotalChartFiltered">
