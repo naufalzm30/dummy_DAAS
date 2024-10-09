@@ -75,19 +75,23 @@ If you need to change the baseURL for API requests, modify the .env file:
 VUE_APP_API_URL=http://213.210.21.73:8001/api
 
 ### Pushing to GitHub
+0. First time configuration
+
+```sh
+git init
+git remote add origin https://github.com/FurqonAndika/braja_pdamsby_fe.git
+```
 
 1. Check the current GitHub repository URL, run:
 
 ```sh
-git init
 git remote show origin
 ```
 
 2. Change the repository URL to the desired one:
 
 ```sh
-git remote set-url origin [new-repo-url]
-`https://github.com/FurqonAndika/braja_pdamsby_fe.git`
+git remote set-url origin https://github.com/FurqonAndika/braja_pdamsby_fe.git
 ```
 
 3. Check the current GitHub repository URL
