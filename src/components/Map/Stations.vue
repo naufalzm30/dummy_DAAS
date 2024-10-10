@@ -151,29 +151,16 @@ export default {
       ava_width: null,
       ava_height: null,
       // localStations: []
-      localStationsData: []
+      localStationsData: [],
+      intervalId: null
     };
   },
   computed: {
-    // localStations: {
-    //   get() {
-    //     return this.stations;
-    //   },
-    //   set(newValue) {
-    //     console.log('Emitting updated stations:', newValue); // Check if event is emitted with the new value
-    //     this.$emit('update:stations', newValue);
-    //   }
-    // }
     localStations() {
       // Combine prop and local data, prioritizing local data
       return this.localStationsData.length > 0 ? this.localStationsData : this.stations;
     }
   },
-  // watch: {
-  //   stations(newVal) {
-  //     console.log('Stations prop changed!', newVal);
-  //   }
-  // },
   methods: {
     selectStation(station) {
       this.$emit('station-selected', station);
@@ -218,66 +205,19 @@ export default {
     },
 
     async loadStations() {
-      // await this.fetchStations();
       this.processStations();
-      setInterval(async () => {
-        await this.fetchStations();
-        this.processStations();
-      }, 300000);
-      // }, 10000);
+      if (this.$options.name === 'Stations') {
+        this.intervalId = setInterval(async () => {
+          await this.fetchStations();
+          this.processStations();
+        }, 300000);
+      }
+
+
     },
     async loadStationsQA() {
       this.processStationsQA();
     },
-
-    // async fetchStations() {
-    //   try {
-    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     });
-    //     this.localStations = response.data.data;
-    //     console.log();
-
-    //     this.loading_i = response.status === 200 ? false : true;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-
-    // },
-    // async fetchStations() {
-    //   try {
-    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     });
-
-    //     this.localStations = response.data.data;
-    //     console.log('Fetched stations:', this.localStations);
-
-    //     this.loading_i = response.status === 200 ? false : true;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // },
-    // async fetchStations() {
-    //   try {
-    //     const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     });
-
-    //     this.$set(this, 'localStations', response.data.data);
-    //     console.log('Fetched stations:', this.localStations);
-
-    //     this.loading_i = response.status === 200 ? false : true;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // },
     async fetchStations() {
       try {
         const response = await axios.get(`${this.$baseURL}/pdam/dashboard/`, {
@@ -286,23 +226,21 @@ export default {
           },
         });
 
-        // Update local data
         this.localStationsData = response.data.data;
-        // console.log('Fetched stations:', this.localStationsData);
         this.localStationsData = response.data.data.map(station => ({
-            ...station,
-            last_data: station.last_data.map(data => ({
-              ...data,
-              value: function formatValue(val) {
-                val = parseFloat(val).toFixed(2);
-                if (val.endsWith('.00')) {
-                  val = val.replace('.00', '');
-                }
-                val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                return val;
-              }(data.value)
-            }))
-          }));
+          ...station,
+          last_data: station.last_data.map(data => ({
+            ...data,
+            value: function formatValue(val) {
+              val = parseFloat(val).toFixed(2);
+              if (val.endsWith('.00')) {
+                val = val.replace('.00', '');
+              }
+              val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+              return val;
+            }(data.value)
+          }))
+        }));
         // Emit the update to the parent
         this.$emit('update:stations', this.localStationsData);
 
@@ -316,7 +254,7 @@ export default {
 
       this.st_stations = [...this.localStations];
       this.total_stat = this.localStations.length;
-      this.table_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu", "Flowmeter", "Totalizer"];
+      this.table_head = ["No", "Status", "Nama Stasiun", "Data", "Tanggal", "Waktu", "Debit", "Totalizer"];
       // this.localStations.forEach(station => {
       //   station.last_data.forEach(data => {
       //     if (data.sensor_name && !this.table_head.includes(data.sensor_name)) { 
@@ -366,6 +304,11 @@ export default {
     }
     // this.updateUserStationList(this.userStationList);
   },
+  beforeDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
 };
 </script>
 

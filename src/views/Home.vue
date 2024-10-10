@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      stations: [],
+      // stations: [],
       isPaused: false,
       text_duration: null,
       text_repeat: null,
@@ -48,40 +48,21 @@ export default {
 
     };
   },
-  watch: {
-    stations(newVal) {
-      if (newVal.length) {
-        // console.log('Stations updated:', newVal);
-      }
-    }
-  },
+  // watch: {
+  //   stations(newVal) {
+  //     if (newVal.length) {
+  //       // console.log('Stations updated:', newVal);
+  //     }
+  //   }
+  // },
   methods: {
     async checkScreen() {
       this.ava_width = screen.availWidth;
       this.ava_height = screen.availHeight;
 
     },
-    marquee_f(a, b, c, d) {
-      return a.map((card, i) => {
-        return {
-          sensor: card,
-          data: b[i],
-          symbol: c[i],
-          siaga: d[i],
-          role: "is_guess",
-        };
-      });
-    },
-    marquee_g(a, b, c) {
-      return a.map((card, i) => {
-        return {
-          sensor: card,
-          data: b[i],
-          symbol: c[i],
-          role: "is_guess",
-        };
-      });
-    },
+
+
   },
   async created() {
     this.extractUserInfo()
@@ -91,16 +72,6 @@ export default {
   async mounted() {
     this.checkScreen();
   },
-  beforeMount() {
-    if (!localStorage.getItem('pageReloaded')) {
-      localStorage.setItem('pageReloaded', 'true');
-      window.location.reload();
-    }
-  },
-
-  destroyed() {
-    localStorage.removeItem('pageReloaded');
-  }
 };
 </script>
 

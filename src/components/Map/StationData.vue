@@ -105,13 +105,13 @@
           <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
             <div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
-                Data Flowmeter
+                Data Debit
                 <!-- {{ station.chart.sensor_data[0].sensor_name }} ({{ station.chart.sensor_data[0].notation }}) -->
               </div>
             </div>
             <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
               :chart-data="station.chart.sensor_data[0].value"
-              :title="`Flowmeter (${station.chart.sensor_data[0].notation})`"
+              :title="`Debit (${station.chart.sensor_data[0].notation})`"
               is="LineChart">
             </Chart>
           </div>

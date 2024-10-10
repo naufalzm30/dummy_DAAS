@@ -4,7 +4,7 @@
 
 DATA AS SERVICE MONITORING FLOW is a web application developed for PDAM Surya Sembada, the local water supply utility located in Surabaya, Indonesia. This application is designed to monitor and manage debit data from multiple water stations across the city.
 
-The system integrates with Data Loggers that automatically record flow data using Flowmeter sensors installed at various stations. Currently, the application manages data from tens of stations, with the capability to scale as more stations are added.
+The system integrates with Data Loggers that automatically record flow data using Flowmeter sensors installed at various locations. Currently, the application manages data from tens of locations, with the capability to scale as more stations are added.
 
 ## Features
 
@@ -28,7 +28,7 @@ The system integrates with Data Loggers that automatically record flow data usin
   - Define forecasting data
   - Approve forecasting data based on app-generated models
 - Multiple data visualization charts:
-  - Flowmeter
+  - Debit
   - Taksasi (Forecasting)
   - Totalizer
   - Total Data

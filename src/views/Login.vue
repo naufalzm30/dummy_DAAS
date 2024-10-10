@@ -2,31 +2,20 @@
   <section>
     <div class="container">
       <div class="row d-flex align-items-center justify-content-center">
-        <div  class="img-fluid login100-more"
-          v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
+        <div class="img-fluid login100-more" v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
           <div class="logo-container m-3">
             <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
               <img :src="logoPDAM" alt="" class="logo-img" />
             </router-link>
             <div>
-              <!-- <p class="bws">{{ $app_title }}</p>
-              <p class="bws">SURABAYA</p> -->
-              <p class="bws">DATA AS SERVICE</p>
               <p class="bws">PDAM SURYA SEMBADA</p>
+              <p class="bws">DATA AS SERVICE</p>
             </div>
           </div>
         </div>
 
         <div class="col-md-6">
-          <div v-if="stats.length == 0" class="d-flex flex-column justify-content-center align-items-center pb-3">
-            <div class="content-container">
-              <div class="icon-container">
-                <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
-              </div>
-              <p class="mt-3">Verifying Server Connection...</p>
-            </div>
-          </div>
-          <form v-else class="login100-form validate-form" @submit.prevent="login">
+          <form class="login100-form validate-form" @submit.prevent="login">
             <div class="form-group py-2">
               <span class="form-title"> Sign In </span>
               <label for="username" class="mb-2">Username</label>
@@ -74,7 +63,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import bg_surabaya_img from "@/assets/img/surabaya-bg2.png";
 import bg_weather_img from "@/assets/img/bweather-bg.jpg";
 import logoPDAM from "@/assets/icons/logo-pdam2.png";
@@ -125,22 +113,11 @@ export default {
           }
           this.spin_i = false;
         });
-      // }
-    },
-    async loadBalai() {
-      try {
-        await axios.get(`${this.$baseURL}/schema/swagger-ui/`);
-        this.stats = true;
-      } catch (error) {
-        console.error('Error fetching API:', error);
-        this.stats = false;
-      }
     },
   },
   created() {
     const d = new Date();
     this.year = d.getFullYear();
-    this.loadBalai();
   },
 };
 </script>

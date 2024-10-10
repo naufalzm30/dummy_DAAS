@@ -952,7 +952,7 @@ export default {
     sensorDataUpload() {
       let formData = new FormData();
       formData.append("station_serial_id", this.$route.params.id);
-      formData.append("file", this.csvFile);
+      formData.append("files", this.csvFile);
 
       axios
         .post(`${this.$baseURL}/pdam/sensor_data/upload/${this.$route.params.id}/`, formData, {

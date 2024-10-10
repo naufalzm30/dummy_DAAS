@@ -60,16 +60,15 @@ export default new Vuex.Store({
       });
     },
     userLogout(context) {
-        context.state.isLoggedIn = false;
-        context.commit('destroyToken');
-        localStorage.removeItem('access');
-        localStorage.removeItem('user-daas');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('produksi');
+      context.state.isLoggedIn = false;
+      context.commit("destroyToken");
+      localStorage.removeItem("access");
+      localStorage.removeItem("user-daas");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("produksi");
 
-        router.push({ name: 'Home' })
-        location.reload();
+      router.push({ name: "Home" });
+      location.reload();
     },
-
   },
 });
