@@ -74,7 +74,7 @@
         </div>
       </div>
       <div v-if="role !== 'QA'" style="border-radius: 15px" class="mt-2">
-        <div v-if="produksi === 'PTAB'" class="mx-3">
+        <div v-if="produksi === 'PTAB' || role === 'SuperAdmin'" class="mx-3">
           <p>{{ error_msg }}</p>
           <button v-if="error_msg !== null" class="btn btn-sm btn-primary" type="button" title="Upload Sensor Data" style="font-size: 0.8rem"
             data-bs-toggle="modal" data-bs-target="#sDataZero">
