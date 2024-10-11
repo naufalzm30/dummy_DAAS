@@ -55,7 +55,7 @@
             name: 'Station',
             params: { balai_id: this.balai, user_id: user_id },
           }" style="display: flex; flex-direction: row">
-            <img :src="stat_i" class="mr-4" /><span>Station</span>
+            <img :src="stat_i" class="mr-4" /><span>Stasiun</span>
           </router-link>
         </li>
         
@@ -80,7 +80,7 @@
           <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
             name: 'Notification',
           }" style="display: flex; flex-direction: row">
-            <img :src="notif_i" class="mr-4" /><span>Notification</span>
+            <img :src="notif_i" class="mr-4" /><span>Notifikasi</span>
           </router-link>
         </li>
         <li v-if="accessToken" class="my-1">
@@ -136,7 +136,7 @@
             name: 'Station',
             params: { balai_id: this.balai, user_id: user_id },
           }" style="display: flex; flex-direction: row">
-            <img :src="stat_i" class="mr-4" /><span>Station</span>
+            <img :src="stat_i" class="mr-4" /><span>Stasiun</span>
           </router-link>
         </li>
         
@@ -159,7 +159,7 @@
           <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
             name: 'Notification',
           }" style="display: flex; flex-direction: row">
-            <img :src="notif_i" class="mr-4" /><span>Notification</span>
+            <img :src="notif_i" class="mr-4" /><span>Notifikasi</span>
           </router-link>
         </li>
         <li v-if="accessToken" class="my-1">

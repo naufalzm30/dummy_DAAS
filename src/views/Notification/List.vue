@@ -8,10 +8,10 @@
     </div>
     <div class="mobile-width">
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <div class="subTitle">Notification</div>
+        <div class="subTitle">Notifikasi</div>
       </div>
-      {{notifs}}
-      <dataset v-slot="{ ds }" :ds-data="notifs" :ds-sortby="sortBy" :ds-search-in="['station_name', 'location']">
+      <!-- {{notifs}} -->
+      <dataset v-slot="{ ds }" :ds-data="notifs" :ds-sortby="sortBy" :ds-search-in="['station_name', 'message']">
         <div :data-page-count="ds.dsPagecount">
           <dataset-show :ds-show-entries="15" class="d-none" />
           <dataset-search ds-search-placeholder=" Search..." />
@@ -39,9 +39,14 @@
 
                     <tr>
                       <td scope="row">{{ rowIndex + 1 }}</td>
-                      <td>{{ row.station_name }}</td>
-                      <td><small>{{ row.message }}</small></td>
-    
+                      <td>{{ formatDate(row.time) }}</td>
+                      <td>{{ formatTime(row.time) }}</td>
+
+                      <td class="px-2">{{ row.station_name }}</td>
+                      <td class="px-2"><small>{{ row.message }}</small></td>
+                      <td>{{ row.debit_value }} l/s</td>
+                      <td>{{ row.power }}v</td>
+
 
                     </tr>
                   </template>
@@ -96,10 +101,22 @@ export default {
 
       colSuper: [
         {
+          name: "Tanggal",
+        },
+        {
+          name: "Waktu",
+        },
+        {
           name: "Nama Stasiun",
         },
         {
           name: "Message",
+        },
+        {
+          name: "Debit",
+        },
+        {
+          name: "Power",
         },
       ],
       userStationList: []
@@ -164,6 +181,16 @@ export default {
             console.error('Error msg: ', error);
           }
         });
+    },
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
+    },
+    formatTime(dateString) {
+      const date = new Date(dateString);
+      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+      return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
     },
   },
   created() {

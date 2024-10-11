@@ -11,7 +11,7 @@
         <div class="subTitle">Daftar Stasiun</div>
         <div>
           <router-link v-if="role === 'SuperAdmin'" :to="{ name: 'AddStation' }" type="button"
-            class="btn btn-primary float-right my-2" style="padding: 5px 10px">Tambah Data</router-link>
+            class="btn btn-primary float-right my-1" style="padding: 5px 10px">Tambah Data</router-link>
         </div>
       </div>
 
