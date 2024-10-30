@@ -2,19 +2,20 @@
 import { Line } from "vue-chartjs";
 
 export default {
-  name: "TotalChartFiltered",
+  name: "LineChartFiltered",
   extends: Line,
   props: {
     label: Array,
     chartData: Array,
     legend: Boolean,
     title1: String,
+    title2: String,
     type1: Array,
   },
   data() {
     return {
-      gradients: [null],
-      mixtypes: [""],
+      gradients: [null, null], // Add another gradient
+      mixtypes: ["", ""], // Add another mixtype
       gradient: null,
 
     };
@@ -23,8 +24,6 @@ export default {
     this.gradient = this.$refs.canvas
       .getContext("2d")
       .createLinearGradient(0, 0, 0, 450);
-    // this.gradient.addColorStop(1, "rgba(59,130,246, 0.08)");
-
     this.gradient.addColorStop(0, "rgba(253, 188, 92, 0.9)"); // Start with solid orange
     this.gradient.addColorStop(0.5, "rgba(253, 188, 92, 0)"); // Transition to transparent
     this.gradient.addColorStop(0.6, "rgba(255, 165, 0, 0.08)"); // Transition to light orange
@@ -34,23 +33,50 @@ export default {
     this.configureMixtypes();
 
     const datasets = [
+      // {
+      //   label: false,
+      //   type: this.mixtype1,
+      //   yAxisID: "A",
+      //           borderColor: "rgba(253, 188, 92,1)",
+
+      //   pointBackgroundColor: "rgba(253, 188, 92, 0.9)",
+      //   borderWidth: 2,
+      //   pointBorderColor: "white",
+      //   backgroundColor: this.gradient,
+
+      //   data: this.chartData,
+      //   pointRadius: 0,
+      //   lineTension: 0,
+      // }
       {
-        label: false,
+        label: this.title1,
         type: this.mixtype1,
         yAxisID: "A",
         borderColor: "rgba(253, 188, 92,1)",
 
-        pointBackgroundColor: "rgba(35,137,218, 0.9)",
-
+        pointBackgroundColor: "rgba(253, 188, 92, 0.9)",
         borderWidth: 2,
         pointBorderColor: "white",
-        // backgroundColor: this.gradients[0],
         backgroundColor: this.gradient,
 
-        data: this.chartData,
+        data: this.chartData[0], // Use the first dataset
         pointRadius: 0,
         lineTension: 0,
-      }
+      },
+      {
+        label: this.title2, // Add a label for the second line
+        type: this.mixtype1,
+        yAxisID: "A",
+        borderColor: "rgba(34, 123, 148,1)", // Use a different color
+        pointBackgroundColor: "rgba(34, 123, 148,1)",
+        borderWidth: 2,
+        pointBorderColor: "rgba(34, 123, 148,1)",
+        backgroundColor: this.gradients[1], // Use the second gradient
+
+        data: this.chartData[1], // Use the second dataset
+        pointRadius: 1,
+        lineTension: 0,
+      },
     ]
 
     this.renderChart(
@@ -106,7 +132,6 @@ export default {
   },
   methods: {
     updateChart() {
-      // Destroy the existing chart
       this.$data._chart.destroy();
       const datasets = [
         {
@@ -115,21 +140,34 @@ export default {
           yAxisID: "A",
           borderColor: "rgba(253, 188, 92,1)",
 
-          pointBackgroundColor: "rgba(35,137,218, 0.9)",
+
+          pointBackgroundColor: "rgba(253, 188, 92, 0.9)",
 
           borderWidth: 2,
           pointBorderColor: "white",
-          // backgroundColor: this.gradients[0],
           backgroundColor: this.gradient,
 
-          data: this.chartData,
+          data: this.chartData[0],
           pointRadius: 0,
           lineTension: 0,
-        }
+        },
+        {
+          label: this.title2, // Add a label for the second line
+          type: this.mixtype1,
+          yAxisID: "A",
+          borderColor: "rgba(34, 123, 148,1)", // Use a different color
+          pointBackgroundColor: "rgba(34, 123, 148,1)",
+          borderWidth: 2,
+          pointBorderColor: "rgba(34, 123, 148,1)",
+          backgroundColor: this.gradients[1], // Use the second gradient
+
+          data: this.chartData[1], // Use the second dataset
+          pointRadius: 1,
+          lineTension: 0,
+        },
       ]
 
 
-      // Recreate the chart
       this.renderChart(
         {
           labels: this.label,
@@ -203,10 +241,8 @@ export default {
     },
   },
   watch: {
-    // Watch for changes in props and call updateChart when needed
     label: "updateChart",
     chartData: "updateChart",
-    // ... other props ...
   },
 };
 </script>

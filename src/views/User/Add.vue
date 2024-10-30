@@ -54,7 +54,7 @@
                 
                 <div v-if="roleUser == 2" class="col-md pb-3" >
                   <label for="floatingInput">Produksi*</label>
-                  <select class="form-select" v-model="produksi" required>
+                  <select class="form-select" v-model="produksiUser" required>
                     <option disabled value="">Pilih Produksi</option>
                     <option v-for="item in produksis" :key="item.id" :value="item.id">
                       {{ item.balai_name }}
@@ -86,7 +86,7 @@ export default {
       userData: "",
       password: "",
       roleUser: "",
-      produksi: 1,
+      produksiUser: 1,
       email: "q9@test.test",
       first_name: "x",
       last_name: "x",
@@ -99,7 +99,7 @@ export default {
           `${this.$baseURL}/user/`,
           {
             username: this.userData, password: this.password,
-            balai: this.produksi,
+            balai: this.produksiUser,
             email: this.email,
             first_name: this.first_name,
             last_name: this.last_name,

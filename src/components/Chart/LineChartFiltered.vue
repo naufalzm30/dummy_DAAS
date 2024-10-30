@@ -6,18 +6,18 @@ export default {
   extends: Line,
   props: {
     label: Array,
-    chartData: Array,
+    chartData: Array, // Should now expect three datasets.
     legend: Boolean,
     title1: String,
     title2: String,
+    title3: String, // New prop for third title.
     type1: Array,
   },
   data() {
     return {
-      gradients: [null, null], // Add another gradient
-      mixtypes: ["", ""], // Add another mixtype
+      gradients: [null, null, null], // Added an additional gradient for the third dataset.
+      mixtypes: ["", "", ""], // Added an additional entry for the third dataset's chart type.
       gradient: null,
-
     };
   },
   mounted() {
@@ -33,49 +33,49 @@ export default {
     this.configureMixtypes();
 
     const datasets = [
-      // {
-      //   label: false,
-      //   type: this.mixtype1,
-      //   yAxisID: "A",
-      //   borderColor: "rgba(99, 102, 241,1)",
-      //   pointBackgroundColor: "rgba(35,137,218, 0.9)",
-      //   borderWidth: 2,
-      //   pointBorderColor: "white",
-      //   backgroundColor: this.gradient,
-
-      //   data: this.chartData,
-      //   pointRadius: 0,
-      //   lineTension: 0,
-      // }
       {
         label: this.title1,
-        type: this.mixtype1,
+        type: this.mixtypes[0],
         yAxisID: "A",
         borderColor: "rgba(99, 102, 241,1)",
         pointBackgroundColor: "rgba(35,137,218, 0.9)",
         borderWidth: 2,
         pointBorderColor: "white",
-        backgroundColor: this.gradient,
+        backgroundColor: this.gradients[0],
 
-        data: this.chartData[0], // Use the first dataset
+        data: this.chartData[0],
         pointRadius: 0,
         lineTension: 0,
       },
       {
-        label: this.title2, // Add a label for the second line
-        type: this.mixtype1,
+        label: this.title2,
+        type: this.mixtypes[1],
         yAxisID: "A",
-        borderColor: "rgba(255,0,0,1)", // Use a different color
-        pointBackgroundColor: "rgba(255,0,0,1)",
+        borderColor: "rgba(34,139,34,1)",
+        pointBackgroundColor: "rgba(34,139,34,1)",
         borderWidth: 2,
-        pointBorderColor: "rgba(255,0,0,1)",
-        backgroundColor: this.gradients[1], // Use the second gradient
+        pointBorderColor: "rgba(34,139,34,1)",
+        backgroundColor: this.gradients[1],
 
-        data: this.chartData[1], // Use the second dataset
-        pointRadius: 2,
+        data: this.chartData[1],
+        pointRadius: 0,
         lineTension: 0,
       },
-    ]
+      {
+        label: this.title3,
+        type: this.mixtypes[2],
+        yAxisID: "A",
+        borderColor: "rgba(241, 99, 102,1)", // New color for the third dataset.
+        pointBackgroundColor: "rgba(241, 99, 102,1)",
+        borderWidth: 2,
+        pointBorderColor: "rgba(241, 99, 102,1)",
+        backgroundColor: this.gradients[2],
+
+        data: this.chartData[2], // Third dataset.
+        pointRadius: 1,
+        lineTension: 0,
+      },
+    ];
 
     this.renderChart(
       {
@@ -101,7 +101,6 @@ export default {
                 color: "rgba(151,151,151,0.2)",
               },
             },
-
           ],
           xAxes: [
             {
@@ -134,36 +133,48 @@ export default {
       const datasets = [
         {
           label: this.title1,
-          type: this.mixtype1,
+          type: this.mixtypes[0],
           yAxisID: "A",
           borderColor: "rgba(99, 102, 241,1)",
 
           pointBackgroundColor: "rgba(35,137,218, 0.9)",
-
           borderWidth: 2,
           pointBorderColor: "white",
-          backgroundColor: this.gradient,
+          backgroundColor: this.gradients[0],
 
           data: this.chartData[0],
           pointRadius: 0,
           lineTension: 0,
         },
         {
-          label: this.title2, // Add a label for the second line
-          type: this.mixtype1,
+          label: this.title2,
+          type: this.mixtypes[1],
           yAxisID: "A",
-          borderColor: "rgba(255,0,0,1)", // Use a different color
-          pointBackgroundColor: "rgba(255,0,0,1)",
+          borderColor: "rgba(34,139,34,1)",
+          pointBackgroundColor: "rgba(34,139,34,1)",
           borderWidth: 2,
-          pointBorderColor: "rgba(255,0,0,1)",
-          backgroundColor: this.gradients[1], // Use the second gradient
+          pointBorderColor: "rgba(34,139,34,1)",
+          backgroundColor: this.gradients[1],
 
-          data: this.chartData[1], // Use the second dataset
-          pointRadius: 2,
+          data: this.chartData[1],
+          pointRadius: 0,
           lineTension: 0,
         },
-      ]
+        {
+          label: this.title3,
+          type: this.mixtypes[2],
+          yAxisID: "A",
+          borderColor: "rgba(241, 99, 102,1)",
+          pointBackgroundColor: "rgba(241, 99, 102,1)",
+          borderWidth: 2,
+          pointBorderColor: "rgba(241, 99, 102,1)",
+          backgroundColor: this.gradients[2],
 
+          data: this.chartData[2],
+          pointRadius: 1,
+          lineTension: 0,
+        },
+      ];
 
       this.renderChart(
         {
@@ -187,8 +198,7 @@ export default {
                 gridLines: {
                   color: "rgba(151,151,151,0.2)",
                 },
-              }
-
+              },
             ],
             xAxes: [
               {

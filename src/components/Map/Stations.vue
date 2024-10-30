@@ -12,11 +12,10 @@
       <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
         <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
           id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
-          <small v-if="role == 'SuperAdmin' && localStations.length > 34">
+          <!-- <small v-if="role == 'SuperAdmin' && localStations.length > 34">
             {{ localStations[34].station_name }}: {{ formatDate(localStations[34].last_time) }} {{
               formatTime(localStations[34].last_time) }}
-
-          </small>
+          </small> -->
           <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
             <thead class="table-light">
               <tr>
@@ -315,7 +314,7 @@ export default {
 <style scoped>
 .tableFixHead {
   overflow-y: scroll;
-  height: 40vh;
+  height: 42vh;
 }
 
 .tableQA {

@@ -110,18 +110,21 @@
                     </div>
                   </div>
                 </div>
+                
+                
                 <div class="col-md">
                   <div class="col-md py-1">
                     <div class="form-group">
                       <label for="floatingInput">Maintenance Status</label>
                       <select class="form-select" v-model="item.maintenance_status">
-                        <option v-for="item in maintStatus" :key="item.id" :value="item">
-                          {{ item }}
+                        <option v-for="status in maintStatus" :key="status.value" :value="status.value">
+                          {{ status.text }}
                         </option>
                       </select>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -196,7 +199,8 @@
                       placeholder="Percent Cal" />
                   </div>
                 </div>
-                <div class="col-md py-1">
+
+                <!-- <div class="col-md py-1">
                   <div class="form-group">
                     <label for="floatingInput">Factor Cal</label>
                     <select class="form-select" v-model="item.factor_cal">
@@ -205,7 +209,19 @@
                       </option>
                     </select>
                   </div>
-                </div>
+                </div> -->
+
+                <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Factor Cal</label>
+                      <select class="form-select" v-model="item.factor_cal">
+                        <option v-for="status in factor_cal_value" :key="status.value" :value="status.value">
+                          {{ status.text }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                
               </div>
             </div>
           </div>
@@ -235,7 +251,15 @@ export default {
       dragging: false,
       snLoggers: [],
       snModems: [],
-      maintStatus: [false, true],
+      // maintStatus: [false, true],
+      maintStatus: [
+        { value: false, text: 'OK' },
+        { value: true, text: 'MAINTENANCE' }
+      ],
+      factor_cal_value: [
+        { value: false, text: 'MIN' },
+        { value: true, text: 'SUM' }
+      ],
       file: "",
       reader: "",
       produksis: [],

@@ -409,7 +409,7 @@ b {
 
 <style>
 .hChart25 {
-  height: 28vh;
+  height: 30vh;
 }
 
 .hChartQA {

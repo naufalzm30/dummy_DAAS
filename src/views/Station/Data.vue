@@ -13,18 +13,34 @@
           </router-link>
         </div>
       </div>
+      <div v-if="loading_i" class="center-container">
+        <div class="content-container">
+          <div class="icon-container">
+            <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem"></i>
+          </div>
+          <p class="mt-3">Fetching data, please wait...</p>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-6 px-1">
-          <TableData :station="station" :loading_i="loading_i" @update-filtered-data="updateFilteredData"
-            @update-filtered-dataQA="updateFilteredDataQA" :profile="profile" class="mx-auto "
-            style="border-radius: 15px" />
+          <TableData v-if="!loading_i" :station="station" :loading_i="loading_i"
+            @update-filtered-data="updateFilteredData" @update-filtered-dataQA="updateFilteredDataQA" :profile="profile"
+            class="mx-auto " style="border-radius: 15px" />
         </div>
+        
+        <!-- debitData: {{ debitData }} <br> <hr>
+        totalData: {{ totalData }} <br> <hr>
+        label: {{ label }} <br> <hr>
+        gainData: {{ gainData }} <br> <hr>
+        gainTotal: {{ gainTotal }} <br> <hr> -->
+
+
         <div v-if="debitData && debitData.length > 0 || percentDataQA && percentDataQA.length > 0"
           class="col-md-6 px-1">
           <ChartData :station="station" :ava_width="ava_width" :debitData="debitData" :totalData="totalData"
             :label="label" :stationQA="stationQA" :percentDataQA="percentDataQA" :sumDataQA="sumDataQA"
-            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :taksasiData="taksasiData" :profile="profile"
-            :loading_i="loading_i" />
+            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :gainData="gainData" :gainTotal="gainTotal" 
+            :profile="profile" :loading_i="loading_i" />
         </div>
       </div>
       <Footer />
@@ -40,7 +56,7 @@ import ChartData from "@/components/Station/Data/ChartData.vue";
 import axios from "axios";
 
 export default {
-  name: "DataStation",
+  name: "DataDetail",
   components: {
     Header,
     Footer,
@@ -66,14 +82,19 @@ export default {
   },
   computed: {
     debitData() {
-      return this.filteredData.map(item => item.sensor_data[0].value).reverse();
+      return this.filteredData.map(item => item.sensor_data[0]?.value ?? null).reverse();
     },
     totalData() {
-      return this.filteredData.map(item => item.sensor_data[1].value).reverse();
+      return this.filteredData.map(item => item.sensor_data[1]?.value ?? null).reverse();
     },
-    taksasiData() {
-      return this.filteredData.map(item => item.sensor_data[2].value).reverse();
+    gainData() {
+      return this.filteredData.map(item => item.sensor_data[2]?.value ?? null).reverse();
     },
+    gainTotal() {
+      return this.filteredData.map(item => item.sensor_data[3]?.value ?? null).reverse();
+    },
+
+
     label() {
       return this.filteredData.map(item => item.time).reverse();
     },
@@ -114,15 +135,7 @@ export default {
         })
         .then((r) => {
           this.station = r.data.data[0];
-          // Iterate through chart array
-          // this.station.chart.forEach(chartItem => {
-          //   // Iterate through sensor_data array
-          //   chartItem.sensor_data.forEach(sensorData => {
-          //     // Limit decimal places for value
-          //     sensorData.value = parseFloat(sensorData.value).toFixed(2);
-          //   });
-          // });
-          // console.log(this.station);
+
           if (r.status == 200) {
             this.loading_i = false;
           }
@@ -181,14 +194,27 @@ export default {
           this.msg = "An error occurred on the server. Please try again later.";
         });
     },
+    reloaded() {
+      const hasReloaded = localStorage.getItem('hasReloaded');
+
+      if (!hasReloaded) {
+        localStorage.setItem('hasReloaded', 'true');
+        this.$router.go(0); // Reload the current route
+      } else {
+        localStorage.removeItem('hasReloaded');
+      }
+    }
 
   },
   mounted() {
+
     this.ava_width = screen.availWidth;
     this.loadProfile()
-
+    // this.reloaded()
   },
+
   created() {
+
     this.extractUserInfo()
 
     if (this.role !== 'QA') {
@@ -200,9 +226,16 @@ export default {
 
 };
 </script>
-<style>
+<style scoped>
 .comShadow {
   box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
     rgba(17, 17, 26, 0.05) 0px 8px 32px;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
 }
 </style>

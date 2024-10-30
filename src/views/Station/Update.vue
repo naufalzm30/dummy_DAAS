@@ -113,10 +113,10 @@
                           {{ status.text }}
                         </option>
                       </select>
-
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -194,13 +194,20 @@
                       placeholder="Percent Cal" step="0.01" />
                   </div>
                 </div>
-                <div class="col-md py-1">
-                  <div class="form-group">
-                    <label for="Factor">Factor Cal</label>
-                    <input v-model="item.factor_cal" type="number" class="form-control" id="Factor"
-                      placeholder="Factor Cal" step="0.01" />
+           
+                
+                
+                  <div class="col-md py-1">
+                    <div class="form-group">
+                      <label for="floatingInput">Factor Cal</label>
+                      <select class="form-select" v-model="item.factor_cal">
+                        <option v-for="status in factor_cal_value" :key="status.value" :value="status.value">
+                          {{ status.text }}
+                        </option>
+                      </select>
+                    </div>
                   </div>
-                </div>
+                
 
 
               </div>
@@ -233,6 +240,10 @@ export default {
       maintStatus: [
         { value: false, text: 'OK' },
         { value: true, text: 'MAINTENANCE' }
+      ],
+      factor_cal_value: [
+        { value: false, text: 'MIN' },
+        { value: true, text: 'SUM' }
       ],
       file: null,
       reader: "",

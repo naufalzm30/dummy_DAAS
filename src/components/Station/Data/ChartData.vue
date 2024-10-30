@@ -67,15 +67,17 @@
         <div class=" mx-auto bg-white mb-2" style="border-radius: 15px">
           <div class="d-flex pt-2 px-2 justify-content-between">
             <h6>
-              Data {{ station.chart[0].sensor_data[0].sensor_name }} <span v-if="role == 'SuperAdmin'"> & {{ station.chart[0].sensor_data[2].sensor_name }} ({{ station.chart[0].sensor_data[2].notation }})</span>
+              Data {{ station.chart[0].sensor_data[0].sensor_name }} <span v-if="role == 'SuperAdmin'"> & {{
+                station.chart[0].sensor_data[2].sensor_name }}</span> ({{ station.chart[0].sensor_data[0].notation }})
             </h6>
-            
+
             <div>
-              <button v-if="role == 'SuperAdmin'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
+              <!-- {{username}} -->
+              <button v-if="role == 'SuperAdmin' && username === 'UserApproval'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
                 class="btn btn-sm btn-success" type="button" style="font-size: 0.8rem">
-                <i class="zmdi zmdi-check"></i> Approve
+                <i class="zmdi zmdi-check"></i> Approve 
               </button>
-              <button v-if="role == 'SuperAdmin'" data-bs-toggle="modal" data-bs-target="#taksasiData"
+              <button v-if="role == 'SuperAdmin' && username !== 'UserApproval'" data-bs-toggle="modal" data-bs-target="#taksasiData"
                 class="btn btn-sm btn-primary mx-1" type="button" style="font-size: 0.8rem">
                 <i class="zmdi zmdi-edit"></i> Taksasi
               </button>
@@ -87,7 +89,7 @@
             aria-labelledby="taksasiDataLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="tresholdDataUpload">
+                <form @submit.prevent="taksasiRange">
                   <div class="modal-header">
                     <h5 class="modal-title text-primary" id="taksasiDataLabel">
                       Taksasi Data
@@ -129,7 +131,7 @@
             aria-labelledby="approveTaksasiLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="tresholdDataUpload">
+                <form @submit.prevent="approveRange">
                   <div class="modal-header">
                     <h5 class="modal-title text-success" id="approveTaksasiLabel">
                       Approve Taksasi
@@ -158,20 +160,22 @@
               </div>
             </div>
           </div>
-          
-          <Chart v-if="role == 'SuperAdmin'" style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, taksasiData]"
+
+          <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0"
+            :label="formatAllDates(label)" :chart-data="[debitData, gainData, null]"
             :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
             :title2="`${station.chart[0].sensor_data[2].sensor_name} (${station.chart[0].sensor_data[2].notation})`"
+            :title3="null"
             is="LineChartFiltered">
           </Chart>
 
-          <Chart v-else style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)" :chart-data="[debitData, null]"
+          <Chart v-else style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
+            :chart-data="[debitData, null, null]"
             :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
-            :title2="null"
-            is="LineChartFiltered">
+            :title2="null" is="LineChartFiltered">
           </Chart>
 
-          
+
 
         </div>
       </div>
@@ -180,13 +184,22 @@
           <div class="border mx-auto bg-white mb-2">
             <div>
               <h6 class="px-2 pt-2">
-                Data {{ station.chart[0].sensor_data[1].sensor_name }} ({{ station.chart[0].sensor_data[1].notation }})
+                Data {{ station.chart[0].sensor_data[1].sensor_name }}
+                <span v-if="role == 'SuperAdmin'"> & {{ station.chart[0].sensor_data[3].sensor_name }}</span> ({{
+                  station.chart[0].sensor_data[1].notation }})
               </h6>
             </div>
-            <Chart style="height: 27vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
-              :chart-data="totalData"
-              :title="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
+
+            <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0"
+              :label="formatAllDates(label)" :chart-data="[totalData, gainTotal]"
+              :title1="`${station.chart[0].sensor_data[1].sensor_name} (${station.chart[0].sensor_data[1].notation})`"
+              :title2="`${station.chart[0].sensor_data[3].sensor_name} (${station.chart[0].sensor_data[3].notation})`"
               is="TotalChartFiltered">
+            </Chart>
+            <Chart v-else style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
+              :chart-data="[totalData, null]"
+              :title1="`${station.chart[0].sensor_data[1].sensor_name} (${station.chart[0].sensor_data[1].notation})`"
+              :title2="null" is="TotalChartFiltered">
             </Chart>
           </div>
         </div>
@@ -245,10 +258,12 @@
 import LineChartFiltered from "@/components/Chart/LineChartFiltered";
 import TotalChartFiltered from "@/components/Chart/TotalChartFiltered";
 import TotalChartBarFiltered from "@/components/Chart/TotalChartBarFiltered";
+import axios from "axios";
+import moment from 'moment';
 
 export default {
   name: "ChartData",
-  props: ["debitData", "totalData", "taksasiData","label", "station", "ava_width", "stationQA", "percentDataQA", "sumDataQA", "labelQA", "mtcDataQA", "profile"],
+  props: ["debitData", "totalData", "gainData", "gainTotal", "label", "station", "ava_width", "stationQA", "percentDataQA", "sumDataQA", "labelQA", "mtcDataQA", "profile"],
 
   components: {
     TotalChartBarFiltered,
@@ -266,6 +281,61 @@ export default {
   },
 
   methods: {
+    async taksasiRange() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      // this.loading_data = true;
+      // let result =
+      await axios
+        .get(`${this.$baseURL}/pdam/taksasi/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+
+      // location.reload();
+      this.taksasiSuccess()
+    },
+    async approveRange() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      // this.loading_data = true;
+      // let result =
+      await axios
+        .get(`${this.$baseURL}/pdam/approve_taksasi/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+
+      // location.reload();
+    },
+    taksasiSuccess() {
+      this.$swal({
+        position: "top-end",
+        width: "300px",
+        icon: "success",
+        title: "Taksasi berhasil",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+
+      
+    },
     formatDate(dateString) {
       try {
         const date = new Date(dateString);

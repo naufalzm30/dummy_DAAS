@@ -10,11 +10,12 @@
         <p class="mt-3">{{ msg }}</p>
       </div>
     </div>
+
     <div v-else>
 
       <div class="left-container">
 
-        <TableMap v-if="role !== 'QA'" :loading_i="loading_i" class="mx-auto comShadow border mt-2"
+        <TableMap v-if="role !== 'QA' && !loading_i" :loading_i="loading_i" class="mx-auto comShadow border mt-2"
           style="border-radius: 15px" :profile="profile" />
 
         <div v-else class="card box-sm comShadow m-0" style="box-shadow: 10px; border-radius: 10px;">
@@ -46,27 +47,22 @@
 
                 <table style="width: 100%; ">
                   <tr>
-                    <td style="font-size: 1rem" class="col-6">Rata-Rata Data Masuk</td>
-                    <td style="font-size: 1rem" class="col-6">: {{ summaryQA.average_all_data }} </td>
+                    <td style="font-size: 1rem" class="col-6">Rata-rata Data Masuk</td>
+                    <td style="font-size: 1rem" class="col-6">: {{ (summaryQA.average_all_data * 100 / 288).toFixed(2)
+                      }}
+                      % </td>
                   </tr>
                   <tr>
                     <td style="font-size: 1rem">Target Data Seluruhnya</td>
-                    <td style="font-size: 1rem">: 100% <small> ({{ daysBetween }}) </small></td>
+                    <td style="font-size: 1rem">: 100 % </td>
+                    <!-- <small> ({{ daysBetween }}) </small> -->
                   </tr>
 
                   <tr>
                     <td style="font-size: 1rem">Data Tidak Terkirim</td>
-                    <td style="font-size: 1rem">: {{ (daysBetween - summaryQA.sum_all_data) / 100 }} % <small>({{
-                      (daysBetween - summaryQA.sum_all_data) }})</small> </td>
+                    <td style="font-size: 1rem">: {{ (daysBetween - summaryQA.sum_all_data) / 100 }} % </td>
+                    <!-- <small>({{(daysBetween - summaryQA.sum_all_data) }})</small>  -->
                   </tr>
-                  <!-- <tr>
-                  <td style="font-size: 1rem">Total Data</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.sum_all_data }} </td>
-                </tr>
-                <tr>
-                  <td style="font-size: 1rem">Total Maintenance</td>
-                  <td style="font-size: 1rem">: {{ summaryQA.sum_maintenance }} </td>
-                </tr> -->
                 </table>
               </div>
             </div>
@@ -76,8 +72,8 @@
       <div v-if="role !== 'QA'" style="border-radius: 15px" class="mt-2">
         <div v-if="produksi === 'PTAB' || role === 'SuperAdmin'" class="mx-3">
           <p>{{ error_msg }}</p>
-          <button v-if="error_msg !== null" class="btn btn-sm btn-primary" type="button" title="Upload Sensor Data" style="font-size: 0.8rem"
-            data-bs-toggle="modal" data-bs-target="#sDataZero">
+          <button v-if="error_msg !== null" class="btn btn-sm btn-primary" type="button" title="Upload Sensor Data"
+            style="font-size: 0.8rem" data-bs-toggle="modal" data-bs-target="#sDataZero">
             <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
               style="font-size: 1.2rem; margin-right: 3px"></i>
             <span><i class="zmdi zmdi-upload"></i></span> Upload Sensor Data
@@ -86,7 +82,7 @@
             aria-labelledby="sDataZeroLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="sensorDataUpload" >
+                <form @submit.prevent="sensorDataUpload">
                   <div class="modal-header">
                     <h5 class="modal-title" id="sDataZeroLabel">
                       Upload Data Sensor
@@ -96,7 +92,7 @@
                   <div class="modal-body">
                     <div>
                       <label>
-                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" required/>
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" required />
                       </label>
                     </div>
                   </div>
@@ -114,8 +110,53 @@
             </div>
           </div>
         </div>
+
+
         <dataset v-if="dataStation" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStation"
-          :ds-sortby="sortBy">
+          :ds-sortby="sortBy" :ds-search-in="['status_data']">
+          <!-- VERIFIKASI -->
+          <!-- -->
+          <div  v-if="username == 'UserVerifikasi'" class="mt-2">
+            <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
+              data-bs-toggle="modal" data-bs-target="#verifikasiData">
+              <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                style="font-size: 1.2rem; margin-right: 3px"></i>Upload Verifikasi
+            </button>
+            <div class="modal fade" id="verifikasiData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+              aria-labelledby="verifikasiDataLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <form @submit.prevent="tresholdDataUpload">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="verifikasiDataLabel">
+                        Verifikasi
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div>
+                        <!-- <p>Verifikasi 24 Jam</p> -->
+                        <label>
+                          <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
+                        </label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                        @click.prevent="formatVerifikasi">
+                        Download Format
+                      </button>
+                      <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
+                        Upload Verifikasi
+                      </button>
+
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="row " :data-page-count="ds.dsPagecount">
             <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
               <div class="dropdown col">
@@ -127,9 +168,7 @@
 
                 <ul class="dropdown-menu col" aria-labelledby="dropdownMenuButton1">
                   <li class="dropdown-item py-0" style="font-size: 0.9rem;">
-                    Jumlah Data:
-
-                    {{ summary.total_data }}
+                    Jumlah Data: {{ summary.total_data }}
                   </li>
                   <li class="dropdown-item py-0" style="font-size: 0.9rem;">
                     Rata Debit: {{ summary.average_flow }} L/s
@@ -145,7 +184,7 @@
             </div>
 
             <div class="col-md-1 d-flex justify-content-start" style="margin-top: 1rem">
-              <div v-if="role == 'Admin'" class="dropdown col">
+              <div v-if="produksi === 'PTAB'" class="dropdown col">
                 <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Upload File"
                   style="font-size: 0.8rem">
@@ -168,7 +207,8 @@
               </div>
 
               <div v-else>
-                <button class="btn btn-sm btn-primary" type="button" title="Upload Threshold" style="font-size: 0.8rem"
+                
+                <button v-if="role !== 'DIREKSI'" class="btn btn-sm btn-primary" type="button" title="Upload Threshold" style="font-size: 0.8rem"
                   data-bs-toggle="modal" data-bs-target="#thresholdData">
                   <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                     style="font-size: 1.2rem; margin-right: 3px"></i>
@@ -246,15 +286,18 @@
               style="margin-top: 1rem;">
               <div>
                 <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
-                <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm" :default-value="new Date().setHours(0, 0, 0, 0)"
-                  placeholder="Select first date" :minute-step="5"></DatePicker>
+                <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
+                  :default-value="new Date().setHours(0, 0, 0, 0)" placeholder="Select first date" :minute-step="5">
+                </DatePicker>
                 <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
-                <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm" :default-value="new Date().setHours(23, 59, 0, 0)"
-                  placeholder="Select last date" :minute-step="5"></DatePicker>
+                <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
+                  :default-value="new Date().setHours(23, 59, 0, 0)" placeholder="Select last date" :minute-step="5">
+                </DatePicker>
               </div>
+
             </div>
 
-            <div class="col-md-1 d-flex justify-content-end" style="margin-top: 1rem">
+            <div v-if="role == 'SuperAdmin'" class="col-md-1 d-flex justify-content-end" style="margin-top: 1.2rem">
               <div class="dropdown">
                 <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
                   data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
@@ -266,22 +309,28 @@
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                   <li>
-                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadAll" style="font-size: 0.9rem">Semua
-                      Data</a>
+                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadAll" style="font-size: 0.9rem">Semua Data</a>
                   </li>
-                  <!-- <li v-if="role == 'SuperAdmin'">
-                  <a class="dropdown-item py-0" href="#" @click.prevent="hourlyData" style="font-size: 0.9rem">Data per
-                    jam</a>
-                </li> -->
-                  <li v-if="role == 'SuperAdmin'">
-                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadDaily" style="font-size: 0.9rem">Data
-                      per
-                      hari</a>
+                  <li>
+                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadDaily" style="font-size: 0.9rem">Data per hari</a>
                   </li>
                 </ul>
               </div>
             </div>
 
+            <div v-else class="col-md-1 d-flex justify-content-end" style="margin-top: 1.2rem">
+              <button class="btn btn-sm btn-primary" type="button" title="Download sesuai filter tanggal"
+                style="font-size: 0.8rem" @click.prevent="downloadAll">
+                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"></i>
+                <span></span> <i class="zmdi zmdi-download"></i>
+              </button>
+            </div>
+
+            <div :data-page-count="ds.dsPagecount" v-if="role === 'SuperAdmin'"
+              class="p-0 col-md-1 d-flex justify-content-end" style="margin-top: 1.2rem;">
+              <dataset-search ds-search-placeholder="status" class="p-1 " style="font-size: 0.8rem;" />
+            </div>
           </div>
           <!-- <p v-if="csv_code">File stat us: {{ csv_code }}</p> -->
 
@@ -308,8 +357,9 @@
                         <td v-for="(sensor, index) in row.sensor_data" :key="index">
                           <span>{{ sensor.value }} </span>
                           <span v-if="sensor.value !== null">{{ sensor.notation }}</span>
+
                         </td>
-                        <td>
+                        <td v-if="role == 'SuperAdmin'">
                           <div v-if="row.status == 'OK'" style="font-size: 0.8rem;"><span style="color: #219653;">{{
                             row.status }}</span></div>
                           <div v-else-if="row.status == 'maintenance'" style="font-size: 0.8rem;"> <span
@@ -320,6 +370,7 @@
                               style="color: #D34053;">{{ row.status }}</span></div>
                           <div v-else>{{ row.status }}</div>
                         </td>
+                        <td v-if="role == 'SuperAdmin'">{{ row.status_data }}</td>
                       </tr>
                     </template>
                   </dataset-item>
@@ -329,7 +380,9 @@
           </div>
 
           <div class="d-flex flex-md-row flex-column justify-content-end align-items-center">
+
             <dataset-pager style="font-size: 0.9rem" />
+
           </div>
         </dataset>
       </div>
@@ -355,26 +408,64 @@
               </div>
             </div>
             <div class="d-flex justify-content-between px-0 py-2 " :class="{ 'px-5': ava_width > 768 }">
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
+              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQADaily"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Data/Hari
+                  style="font-size: 1.2rem; margin-right: 3px"></i>Data Per Hari
               </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
+              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQAHourly"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Gangguan
+                  style="font-size: 1.2rem; margin-right: 3px"></i>Data Per Jam
               </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
+              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQAHourly"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Verifikasi
+                  style="font-size: 1.2rem; margin-right: 3px"></i>Download Verifikasi
               </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
+              <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
+                data-bs-toggle="modal" data-bs-target="#verifikasiData">
+                <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
+                  style="font-size: 1.2rem; margin-right: 3px"></i>Upload Verifikasi
+              </button>
+              <!-- <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                   style="font-size: 1.2rem; margin-right: 3px"></i>Insidentil
-              </button>
+              </button> -->
+            </div>
+          </div>
+          <div class="modal fade" id="verifikasiData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="verifikasiDataLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <form @submit.prevent="tresholdDataUpload">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="verifikasiDataLabel">
+                      Verifikasi
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div>
+                      <!-- <p>Verifikasi 24 Jam</p> -->
+                      <label>
+                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
+                      </label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                      @click.prevent="formatVerifikasi">
+                      Download Format
+                    </button>
+                    <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
+                      Upload Verifikasi
+                    </button>
+
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
           <div class="row mt-1">
@@ -425,6 +516,7 @@ import {
   Dataset,
   DatasetItem,
   DatasetPager,
+  DatasetSearch
 } from "vue-dataset";
 
 
@@ -436,7 +528,7 @@ export default {
     DatasetItem,
     DatasetPager,
     TableMap,
-
+    DatasetSearch
   },
   props: ["station", "loading_i", "profile"],
 
@@ -495,10 +587,7 @@ export default {
 
   methods: {
     formatNumber(num) {
-      // Convert to number and back to string to remove any existing decimal part
       num = Number(num).toString();
-
-      // Add thousand separator
       return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
 
@@ -519,9 +608,6 @@ export default {
             if (e.response.data.message == 'No sensor data found.') {
               this.dataStation = []
               this.error_msg = e.response.data.message
-              // console.log(this.error_msg);
-
-              // console.log('TableData.vu: ', this.station);
               this.loading_i = false;
             } else {
               console.log(e);
@@ -549,6 +635,8 @@ export default {
         });
 
         let sensor_label = this.dataStation[0].sensor_data;
+        // console.log('sensor_label: ', sensor_label);
+
         this.nama = result.data.data[0].station_name
 
         this.summary = result.data.data[0]
@@ -566,10 +654,18 @@ export default {
             name: sensor_label[i].sensor_name,
           });
         }
+        // console.log(this.role);
+        if (this.role == 'SuperAdmin') {
+          this.cols.push(
+            {
+              name: "Status"
+            },
+            {
+              name: "Status Data"
+            },
+          )
+        }
 
-        this.cols.push({
-          name: "Status"
-        })
 
         this.loading_data = false;
       }
@@ -610,12 +706,21 @@ export default {
     search() {
       const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
       const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
-      // this.loadData(from, until);
-      // this.loadDataQA(from, until);
+      const diffDays = moment(this.endDate).diff(moment(this.startDate), 'days');
       if (this.role !== 'QA') {
-        this.loadData(from, until);
+        if (diffDays > 7) {
+          this.loadData(null, null);
+        } else {
+          this.loadData(from, until);
+        }
       } else {
-        this.loadDataQA(from, until);
+        if (diffDays > 2000) {
+          this.loadDataQA(null, null);
+        } else {
+          this.loadDataQA(from, until);
+        }
+        // this.loadDataQA(from, until);
+
       }
     },
 
@@ -651,16 +756,6 @@ export default {
       }
       sortEl.sort = toset;
     },
-
-
-    // localStart(date) {
-    //   if (!date) return null;
-    //   return new Date(date);
-    // },
-    // localEnd(date) {
-    //   if (!date) return null;
-    //   return new Date(date);
-    // },
     formatDate(dateString) {
       const date = new Date(dateString);
       const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -721,53 +816,106 @@ export default {
       }
 
     },
-    // hourlyData() {
-    //   this.loading_dw = true;
-    //   if (this.role == "Admin" || this.role == "SuperAdmin") {
-    //     axios
-    //       .post(
-    //         `${this.$baseURL}/excel-summary/`,
-    //         {
-    //           station_id: this.$route.params.id,
-    //           user_id: this.user_id,
-    //           first_date: this.formatDatePicker(this.startDate),
-    //           last_date: this.formatDatePicker(this.endDate)
-    //         },
-    //         {
-    //           responseType: "arraybuffer",
-    //           headers: {
-    //             Authorization: `Bearer ${this.token}`,
-    //           },
-    //         }
-    //       )
-    //       .then((response) => {
-    //         const url = window.URL.createObjectURL(new Blob([response.data]));
-    //         const link = document.createElement("a");
-    //         link.href = url;
+    async downloadQADaily() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      this.loading_dw = true;
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/QA/Download/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+          responseType: 'blob' // Ensure the response is treated as a blob
+        });
 
+        if (response.status === 200) {
+          const contentDisposition = response.headers['content-disposition'];
+          let filename = 'download'; // Default filename if not present in header
 
-    //         if (this.startDate && this.endDate) {
-    //           link.setAttribute(
-    //             "download",
-    //             `Data per jam ${this.nama} ${this.formatDatePicker(this.startDate)} sd ${this.formatDatePicker(this.endDate)}.xlsx`
-    //           );
-    //         } else {
-    //           link.setAttribute(
-    //             "download",
-    //             `Data per jam ${this.nama}.xlsx`
-    //           );
-    //         }
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (filenameMatch && filenameMatch[1]) {
+              filename = filenameMatch[1];
+            }
+          }
 
-    //         document.body.appendChild(link);
-    //         link.click();
+          // Modify filename based on filter
+          if (from != null && until != null) {
+            filename = `Data QA Station ${this.profile.station_name} ${from} sd ${until}`;
+          } else {
+            filename = `Data QA Station ${this.profile.station_name}`;
+          }
 
-    //         if (response.status == 200) {
-    //           this.loading_dw = false;
-    //         }
-    //       })
-    //       .catch((error) => console.log(error));
-    //   }
-    // },
+          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', filename);
+          document.body.appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading_dw = false;
+      }
+
+    },
+    async downloadQAHourly() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      this.loading_dw = true;
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/QA/Download/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+          responseType: 'blob' // Ensure the response is treated as a blob
+        });
+
+        if (response.status === 200) {
+          const contentDisposition = response.headers['content-disposition'];
+          let filename = 'download'; // Default filename if not present in header
+
+          if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (filenameMatch && filenameMatch[1]) {
+              filename = filenameMatch[1];
+            }
+          }
+
+          // Modify filename based on filter
+          if (from != null && until != null) {
+            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
+          } else {
+            filename = `Laporan Pembacaan Sensor ${this.nama}`;
+          }
+
+          const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.setAttribute('download', filename);
+          document.body.appendChild(a);
+          a.click();
+          a.parentNode.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading_dw = false;
+      }
+
+    },
     async downloadDaily() {
       const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
       const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
@@ -819,38 +967,6 @@ export default {
         this.loading_dw = false;
       }
     },
-    // async formatData() {
-    //   try {
-    //     const response = await axios.get(
-    //       `${this.$baseURL}/input-data-format/`,
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${this.token}`,
-    //         },
-    //         responseType: 'blob', // Ensure the response is treated as a blob
-    //       }
-    //     );
-
-    //     // Create a blob from the response data
-    //     const blob = new Blob([response.data], { type: response.data.type });
-
-    //     // Create a link element
-    //     const link = document.createElement('a');
-    //     link.href = URL.createObjectURL(blob);
-    //     link.setAttribute('download', 'Format Input Data Sensor.xlsx'); // Set the file name
-
-    //     // Append the link to the body
-    //     document.body.appendChild(link);
-
-    //     // Trigger the download by simulating click
-    //     link.click();
-
-    //     // Remove the link from the document
-    //     document.body.removeChild(link);
-    //   } catch (error) {
-    //     console.error('Error downloading the file', error);
-    //   }
-    // },
     async formatThreshold() {
       try {
         const response = await axios.get(
@@ -895,34 +1011,32 @@ export default {
         console.error('Error downloading the file', error);
       }
     },
+    async formatVerifikasi() {
+      try {
+        const response = await axios.get(
+
+          `${this.$baseURL}/pdam/rekap_verifikasi/Download/Format/`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            responseType: 'blob',
+          }
+        );
+        const blob = new Blob([response.data], { type: response.data.type });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', 'Format Input Verifikasi.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading the file', error);
+      }
+    },
     onChangeFileUpload(event) {
       this.csvFile = event.target.files[0];
     },
-    // sensorDataUpload() {
-    //   let formData = new FormData();
-    //   formData.append("station_id", this.$route.params.id);
-    //   formData.append("csvFile", this.csvFile);
-
-    //   axios
-    //     .post(`${this.$baseURL}/input-data-excel/`, formData, {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     })
-    //     .then((r) => {
-    //       // console.log("status: ", r.status);
-
-    //       if (r.status == 204) {
-    //         this.csv_code = "File uploaded successfully";
-    //         location.reload();
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       this.csv_code = "Error uploading the file. Please try again.";
-    //     });
-    // },
     tresholdDataUpload() {
       let formData = new FormData();
       formData.append("station_serial_id", this.$route.params.id);
@@ -936,8 +1050,6 @@ export default {
           },
         })
         .then((r) => {
-          // console.log("status: ", r.status);
-
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
             location.reload();
@@ -945,8 +1057,7 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
-          // this.csv_code = error;
+          this.csv_code = "Error uploading the file. Please try again.";
         });
     },
     sensorDataUpload() {
@@ -962,8 +1073,6 @@ export default {
           },
         })
         .then((r) => {
-          // console.log("status: ", r.status);
-
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
             location.reload();
@@ -971,25 +1080,13 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          this.csv_code = "Error uploading the file. Please try again."; // Display your custom error message
-          // this.csv_code = error;
+          this.csv_code = "Error uploading the file. Please try again.";
         });
     },
-    // getBalaiValue() {
-    //   const note = this.station[0].note;
-    //   const match = note.match(/balai:\s*([^,\]]+)/);
-    //   return match ? match[1].trim() : null;
-    // },
-    // getUploadValue() {
-    //   const note = this.station[0].note;
-    //   const match = note.match(/upload:\s*([^,\]]+)/);
-    //   return match ? match[1].trim() : null;
-    // },
 
   },
   created() {
     this.extractUserInfo()
-    // console.log('created: role: ', this.role);
     if (this.role !== 'QA') {
       this.loadData();
     } else {
