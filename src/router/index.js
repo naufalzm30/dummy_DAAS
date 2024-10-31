@@ -33,7 +33,7 @@ const ifAuthenticated = (to, from, next) => {
     next();
     return;
   }
-  next("/login");
+  next("/app/login");
 };
 
 // New role-based guard
@@ -48,7 +48,6 @@ const ifAuthorized = (role) => (to, from, next) => {
 
 let routes = [];
 
-
   routes.push({
     path: "/",
     component: Home,
@@ -59,79 +58,61 @@ let routes = [];
 
 routes.push(
   {
-    path: "/login",
+    path: "/app/login",
     component: Login,
     name: "Login",
     beforeEnter: ifNotAuthenticated,
   },
   {
-    path: "/logout",
+    path: "/app/logout",
     component: Logout,
     name: "Logout",
     beforeEnter: ifAuthenticated,
   },
   {
-    path: "/station",
+    path: "/app/station",
     component: Station,
     name: "Station",
     beforeEnter: ifAuthenticated,
   },
   {
-    path: "/station/add",
+    path: "/app/station/add",
     component: AddStation,
     name: "AddStation",
     beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/station/update/:id",
+    path: "/app/station/update/:id",
     name: "UpdateStation",
     component: UpdateStation,
     beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/station/data/:id",
+    path: "/app/station/data/:id",
     name: "DataStation",
     component: DataStation,
     beforeEnter: ifAuthenticated,
   },
   {
-    path: "/user",
+    path: "/app/user",
     component: User,
     name: "User",
     beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/user/add",
+    path: "/app/user/add",
     component: AddUser,
     name: "AddUser",
     beforeEnter: ifAuthorized("SuperAdmin"),
   },
   {
-    path: "/notification",
+    path: "/app/notification",
     component: Notification,
     name: "Notification",
     beforeEnter: ifAuthorized("SuperAdmin"),
   },
-  // {
-  //   path: "/produksi",
-  //   component: Produksi,
-  //   name: "Produksi",
-  //   beforeEnter: ifAuthorized("SuperAdmin"),
-  // },
-  // {
-  //   path: "/produksi/add",
-  //   component: AddProduksi,
-  //   name: "AddProduksi",
-  //   beforeEnter: ifAuthorized("SuperAdmin"),
-  // },
-  // {
-  //   path: "/user/update/:id",
-  //   name: "UpdateUser",
-  //   component: UpdateUser,
-  //   beforeEnter: ifAuthenticated,
-  // },
   {
-    path: "/:pathMatch(.*)*",
+    path: "/app/:pathMatch(.*)*",
     component: E_404,
   }
 );

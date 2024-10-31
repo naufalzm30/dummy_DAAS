@@ -115,7 +115,7 @@
         <dataset v-if="dataStation" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStation"
           :ds-sortby="sortBy" :ds-search-in="['status_data']">
           <!-- VERIFIKASI -->
-          <!-- -->
+      
           <div  v-if="username == 'UserVerifikasi'" class="mt-2">
             <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
               data-bs-toggle="modal" data-bs-target="#verifikasiData">
@@ -291,7 +291,7 @@
                 </DatePicker>
                 <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
                 <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
-                  :default-value="new Date().setHours(23, 59, 0, 0)" placeholder="Select last date" :minute-step="5">
+                  :default-value="new Date().setHours(23, 55, 0, 0)" placeholder="Select last date" :minute-step="5">
                 </DatePicker>
               </div>
 
@@ -402,7 +402,7 @@
                 </DatePicker>
                 <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
                 <DatePicker name="to" v-model="endDate" @change="search" format="YYYY-MM-DD HH:mm" type="datetime"
-                  :default-value="new Date().setHours(23, 59, 0, 0)" :hour-options="hourEnd" :minute-options="minuteEnd"
+                  :default-value="new Date().setHours(23, 55, 0, 0)" :hour-options="hourEnd" :minute-options="minuteEnd"
                   placeholder="Select last date">
                 </DatePicker>
               </div>
@@ -423,11 +423,11 @@
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                   style="font-size: 1.2rem; margin-right: 3px"></i>Download Verifikasi
               </button>
-              <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
+              <!-- <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
                 data-bs-toggle="modal" data-bs-target="#verifikasiData">
                 <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                   style="font-size: 1.2rem; margin-right: 3px"></i>Upload Verifikasi
-              </button>
+              </button> -->
               <!-- <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
@@ -555,7 +555,7 @@ export default {
       hourEnd: Array.from({ length: 1 }).map((_, i) => i + 23),
 
       minuteStart: Array.from({ length: 1 }).map((_, i) => i + 0),
-      minuteEnd: Array.from({ length: 1 }).map((_, i) => i + 59),
+      minuteEnd: Array.from({ length: 1 }).map((_, i) => i + 55),
       error_msg: null
     };
   },

@@ -72,7 +72,6 @@
             </h6>
 
             <div>
-              <!-- {{username}} -->
               <button v-if="role == 'SuperAdmin' && username === 'UserApproval'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
                 class="btn btn-sm btn-success" type="button" style="font-size: 0.8rem">
                 <i class="zmdi zmdi-check"></i> Approve 
@@ -81,7 +80,6 @@
                 class="btn btn-sm btn-primary mx-1" type="button" style="font-size: 0.8rem">
                 <i class="zmdi zmdi-edit"></i> Taksasi
               </button>
-
             </div>
 
           </div>
@@ -295,6 +293,9 @@ export default {
             from: from,
             until: until,
           },
+        }) .then((r) => {
+          console.log(r);
+          
         })
         .catch(function (e) {
           console.log(e);
@@ -318,6 +319,10 @@ export default {
             until: until,
           },
         })
+        .then((r) => {
+          console.log(r);
+          
+        })
         .catch(function (e) {
           console.log(e);
         });
@@ -334,7 +339,6 @@ export default {
         timer: 1500,
       });
 
-      
     },
     formatDate(dateString) {
       try {
