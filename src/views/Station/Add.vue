@@ -188,7 +188,7 @@
                   </div>
                   <div class="form-group">
                     <label for="Jumlah">Jumlah Operasi</label>
-                    <input v-model="item.sum_operation" type="number" class="form-control" id="Jumlah"
+                    <input v-model="item.sum_operation" type="text" class="form-control" id="Jumlah"
                       placeholder="Jumlah Operasi" />
                   </div>
                 </div>

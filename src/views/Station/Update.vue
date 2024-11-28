@@ -177,13 +177,13 @@
                 <div v-else class="col-md ">
                   <div class="form-group py-1">
                     <label for="Kapasitas">Kapasitas</label>
-                    <input v-model="item.capacity" type="number" class="form-control" id="Kapasitas"
-                      placeholder="Kapasitas" step="0.01" />
+                    <input v-model="item.capacity" type="text" class="form-control" id="Kapasitas"
+                      placeholder="Kapasitas" />
                   </div>
                   <div class="form-group py-1">
                     <label for="Jumlah">Jumlah Operasi</label>
-                    <input v-model="item.sum_operation" type="number" class="form-control" id="Jumlah"
-                      placeholder="Jumlah Operasi" step="0.01" />
+                    <input v-model="item.sum_operation" type="text" class="form-control" id="Jumlah"
+                      placeholder="Jumlah Operasi" />
                   </div>
                 </div>
 

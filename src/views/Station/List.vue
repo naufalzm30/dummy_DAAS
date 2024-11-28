@@ -53,11 +53,12 @@
                           <router-link type="button" class="btn btn-success btn-sm mx-1"
                             :to="`/station/update/${row.station_serial_id}/`">Edit</router-link>
                         </span>
-                        <!-- <span>
+      
+                        <span v-if="username === 'admin'">
                           <button type="button" class="btn btn-danger btn-sm mx-1" v-on:click="deleteData(row.station_serial_id)">
-                            Delete {{ row.station_name }}
+                            Delete
                           </button>
-                        </span> -->
+                        </span>
                       </td>
                     </tr>
                   </template>
@@ -161,35 +162,35 @@ export default {
   },
 
   methods: {
-    // async delete(id) {
-    //   try {
-    //     const response = await axios.delete(`${this.$baseURL}/pdam/station/${id}`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //     });
-    //     if (response.status == 204) {
-    //       await this.loadData(this.currentPage);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error deleting data:", error);
-    //   }
-    // },
-    // deleteData(id) {
-    //   this.$swal({
-    //     title: `Are you sure?`,
-    //     text: "You won't be able to revert this!",
-    //     icon: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     confirmButtonText: "Yes, delete it!",
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       this.delete(id);
-    //     }
-    //   });
-    // },
+    async delete(id) {
+      try {
+        const response = await axios.delete(`${this.$baseURL}/pdam/station/${id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        if (response.status == 204) {
+          await this.loadData(this.currentPage);
+        }
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
+    },
+    deleteData(id) {
+      this.$swal({
+        title: `Are you sure?`,
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.delete(id);
+        }
+      });
+    },
     ...mapActions(['updateUserStationList']),
     click(event, i) {
       let toset;
