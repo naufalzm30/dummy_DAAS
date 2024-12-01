@@ -67,8 +67,9 @@
         <div class=" mx-auto bg-white mb-2" style="border-radius: 15px">
           <div class="d-flex pt-2 px-2 justify-content-between">
             <h6>
-              Data {{ station.chart[0].sensor_data[0].sensor_name }} <span v-if="role == 'SuperAdmin'"> & {{
-                station.chart[0].sensor_data[2].sensor_name }}</span> ({{ station.chart[0].sensor_data[0].notation }})
+              Data {{ station.chart[0].sensor_data[0].sensor_name }} 
+              <!-- <span v-if="role == 'SuperAdmin'"> & {{station.chart[0].sensor_data[2].sensor_name }}</span>  -->
+              ({{ station.chart[0].sensor_data[0].notation }})
             </h6>
 
             <div>
@@ -160,9 +161,9 @@
           </div>
 
           <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0"
-            :label="formatAllDates(label)" :chart-data="[debitData, gainData, null]"
+            :label="formatAllDates(label)" :chart-data="[debitData, null, null]"
             :title1="`${station.chart[0].sensor_data[0].sensor_name} (${station.chart[0].sensor_data[0].notation})`"
-            :title2="`${station.chart[0].sensor_data[2].sensor_name} (${station.chart[0].sensor_data[2].notation})`"
+            :title2="null"
             :title3="null"
             is="LineChartFiltered">
           </Chart>
@@ -183,15 +184,15 @@
             <div>
               <h6 class="px-2 pt-2">
                 Data {{ station.chart[0].sensor_data[1].sensor_name }}
-                <span v-if="role == 'SuperAdmin'"> & {{ station.chart[0].sensor_data[3].sensor_name }}</span> ({{
-                  station.chart[0].sensor_data[1].notation }})
+                <!-- <span v-if="role == 'SuperAdmin'"> & {{ station.chart[0].sensor_data[3].sensor_name }}</span>  -->
+                ({{station.chart[0].sensor_data[1].notation }})
               </h6>
             </div>
 
             <Chart v-if="role == 'SuperAdmin'" style="height: 29vh" class="p-0 pr-0 pt-1 pb-0"
-              :label="formatAllDates(label)" :chart-data="[totalData, gainTotal]"
+              :label="formatAllDates(label)" :chart-data="[totalData, null]"
               :title1="`${station.chart[0].sensor_data[1].sensor_name} (${station.chart[0].sensor_data[1].notation})`"
-              :title2="`${station.chart[0].sensor_data[3].sensor_name} (${station.chart[0].sensor_data[3].notation})`"
+              :title2="null"
               is="TotalChartFiltered">
             </Chart>
             <Chart v-else style="height: 29vh" class="p-0 pr-0 pt-1 pb-0" :label="formatAllDates(label)"
