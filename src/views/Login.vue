@@ -118,6 +118,8 @@ export default {
   created() {
     const d = new Date();
     this.year = d.getFullYear();
+    console.log('u1.12.24');
+    
   },
 };
 </script>

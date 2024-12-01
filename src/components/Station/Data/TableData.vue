@@ -126,7 +126,7 @@
               aria-labelledby="verifikasiDataLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                  <form @submit.prevent="tresholdDataUpload">
+                  <form @submit.prevent="verifikasiDataUpload">
                     <div class="modal-header">
                       <h5 class="modal-title" id="verifikasiDataLabel">
                         Verifikasi
@@ -439,7 +439,7 @@
             aria-labelledby="verifikasiDataLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
-                <form @submit.prevent="tresholdDataUpload">
+                <form @submit.prevent="verifikasiDataUpload">
                   <div class="modal-header">
                     <h5 class="modal-title" id="verifikasiDataLabel">
                       Verifikasi
@@ -1083,7 +1083,29 @@ export default {
           this.csv_code = "Error uploading the file. Please try again.";
         });
     },
+    verifikasiDataUpload() {
+      let formData = new FormData();
+      formData.append("station_serial_id", this.$route.params.id);
+      formData.append("file", this.csvFile);
 
+      axios
+        .post(`${this.$baseURL}/pdam/rekap_verifikasi/Upload/${this.$route.params.id}/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${this.token}`,
+          },
+        })
+        .then((r) => {
+          if (r.status == 204) {
+            this.csv_code = "File uploaded successfully";
+            location.reload();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.csv_code = "Error uploading the file. Please try again.";
+        });
+    },
   },
   created() {
     this.extractUserInfo()
