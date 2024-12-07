@@ -115,8 +115,8 @@
         <dataset v-if="dataStation" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStation"
           :ds-sortby="sortBy" :ds-search-in="['status_data']">
           <!-- VERIFIKASI -->
-      
-          <div  v-if="username == 'UserVerifikasi'" class="mt-2">
+
+          <div v-if="username == 'UserVerifikasi'" class="mt-2">
             <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
               data-bs-toggle="modal" data-bs-target="#verifikasiData">
               <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
@@ -207,9 +207,9 @@
               </div>
 
               <div v-else>
-                
-                <button v-if="role !== 'DIREKSI'" class="btn btn-sm btn-primary" type="button" title="Upload Threshold" style="font-size: 0.8rem"
-                  data-bs-toggle="modal" data-bs-target="#thresholdData">
+
+                <button v-if="role !== 'DIREKSI'" class="btn btn-sm btn-primary" type="button" title="Upload Threshold"
+                  style="font-size: 0.8rem" data-bs-toggle="modal" data-bs-target="#thresholdData">
                   <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                     style="font-size: 1.2rem; margin-right: 3px"></i>
                   <span><i class="zmdi zmdi-upload"></i></span>
@@ -289,7 +289,7 @@
                 <DatePicker name="from" v-model="startDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
                   :default-value="new Date().setHours(0, 0, 0, 0)" placeholder="Select first date" :minute-step="5">
                 </DatePicker>
-                <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+                <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">-</label>
                 <DatePicker name="to" v-model="endDate" @change="search" type="datetime" format="YYYY-MM-DD HH:mm"
                   :default-value="new Date().setHours(23, 55, 0, 0)" placeholder="Select last date" :minute-step="5">
                 </DatePicker>
@@ -309,10 +309,12 @@
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                   <li>
-                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadAll" style="font-size: 0.9rem">Semua Data</a>
+                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadAll" style="font-size: 0.9rem">Semua
+                      Data</a>
                   </li>
                   <li>
-                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadDaily" style="font-size: 0.9rem">Data per hari</a>
+                    <a class="dropdown-item py-0" href="#" @click.prevent="downloadDaily" style="font-size: 0.9rem">Data
+                      per hari</a>
                   </li>
                 </ul>
               </div>
@@ -329,7 +331,7 @@
 
             <div :data-page-count="ds.dsPagecount" v-if="role === 'SuperAdmin'"
               class="p-0 col-md-1 d-flex justify-content-end" style="margin-top: 1.2rem;">
-              <dataset-search ds-search-placeholder="status" class="p-1 " style="font-size: 0.8rem;" />
+              <dataset-search ds-search-placeholder="status" class="p-0 " style="font-size: 0.8rem;" />
             </div>
           </div>
           <!-- <p v-if="csv_code">File stat us: {{ csv_code }}</p> -->
@@ -620,15 +622,26 @@ export default {
         });
 
 
+
       if (result.status == 200) {
+        this.nama = result.data.data[0].station_name
+
+        this.summary = result.data.data[0]
+        this.summary.average_flow = this.formatNumber((this.summary.average_flow).toFixed(2));
+        this.summary.data_precentage = this.formatNumber((this.summary.data_precentage).toFixed(2));
+        this.summary.sum_volume = this.formatNumber((this.summary.sum_volume).toFixed(2));
+
         this.dataStation = result.data.data[0].chart
+        // console.log(this.dataStation);
+
         this.dataStation.forEach(chartItem => {
           chartItem.sensor_data.forEach(data => {
-            if (data.value !== null) {
-              if (Number.isInteger(data.value)) {
-                data.value = data.value.toString();
+            if (data.value !== null && !isNaN(data.value)) {
+              // Check if value is a valid number
+              if (Number.isInteger(Number(data.value))) {
+                data.value = Number(data.value).toString(); // Convert to string if it's an integer
               } else {
-                data.value = parseFloat(data.value.toFixed(2));
+                data.value = parseFloat(Number(data.value).toFixed(2)); // Format as float with 2 decimals
               }
             }
           });
@@ -637,12 +650,7 @@ export default {
         let sensor_label = this.dataStation[0].sensor_data;
         // console.log('sensor_label: ', sensor_label);
 
-        this.nama = result.data.data[0].station_name
 
-        this.summary = result.data.data[0]
-        this.summary.average_flow = this.formatNumber((this.summary.average_flow).toFixed(2));
-        this.summary.data_precentage = this.formatNumber((this.summary.data_precentage).toFixed(2));
-        this.summary.sum_volume = this.formatNumber((this.summary.sum_volume).toFixed(2));
 
         this.cols = [
           { name: "Tanggal" },
