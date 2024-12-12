@@ -356,6 +356,7 @@
                         <td scope="row">{{ index + 1 }}</td>
                         <td>{{ formatDate(row.time) }}</td>
                         <td>{{ formatTime(row.time) }}</td>
+              
                         <td v-for="(sensor, index) in row.sensor_data" :key="index">
                           <span>{{ sensor.value }} </span>
                           <span v-if="sensor.value !== null">{{ sensor.notation }}</span>
@@ -765,15 +766,25 @@ export default {
       sortEl.sort = toset;
     },
     formatDate(dateString) {
-      const date = new Date(dateString);
-      const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
-      return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
-    },
+  const date = new Date(dateString);
+  const optionsDate = {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Asia/Jakarta', // Explicitly specify the time zone
+  };
+  return new Intl.DateTimeFormat('en-GB', optionsDate).format(date);
+},
     formatTime(dateString) {
-      const date = new Date(dateString);
-      const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
-      return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
-    },
+  const date = new Date(dateString);
+  const optionsTime = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Jakarta', // Explicitly specify the time zone
+  };
+  return new Intl.DateTimeFormat('en-GB', optionsTime).format(date);
+},
     async downloadAll() {
       const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
       const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
