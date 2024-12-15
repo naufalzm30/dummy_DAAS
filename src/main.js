@@ -30,6 +30,8 @@ Vue.mixin({
         this.username = this.user.username
         this.role = this.user.role.role_name
         this.token = this.user.tokens.access
+        this.is_staff = this.user.is_staff
+
     },
    
     logoutUser() {

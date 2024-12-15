@@ -54,7 +54,7 @@
                             :to="`/station/update/${row.station_serial_id}/`">Edit</router-link>
                         </span>
       
-                        <span v-if="username === 'admin'">
+                        <span v-if="is_staff === true">
                           <button type="button" class="btn btn-danger btn-sm mx-1" v-on:click="deleteData(row.station_serial_id)">
                             Delete
                           </button>

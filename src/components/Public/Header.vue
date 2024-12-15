@@ -24,6 +24,8 @@
           style="font-size: 0.7rem; color: #092581;">ADM</li>
         <li v-else-if="this.user.role.role_name == 'Guest'" class="centered-image pt-2"
           style="font-size: 0.7rem; color: #092581;">TAMU</li>
+          <li v-else-if="this.user.role.role_name == 'APPROVAL'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">APPROVAL</li>
         <li v-else-if="this.user.role.role_name == 'QA'" class="centered-image pt-2"
           style="font-size: 0.7rem; color: #092581;">QA</li>
         <li v-else-if="this.user.role.role_name == 'Direksi'" class="centered-image pt-2"
@@ -109,6 +111,8 @@
           style="font-size: 0.7rem; color: #092581;">ADM</li>
         <li v-else-if="this.user.role.role_name == 'Guest'" class="centered-image pt-2"
           style="font-size: 0.7rem; color: #092581;">TAMU</li>
+          <li v-else-if="this.user.role.role_name == 'APPROVAL'" class="centered-image pt-2"
+          style="font-size: 0.7rem; color: #092581;">APPROVAL</li>
         <li v-else-if="this.user.role.role_name == 'QA'" class="centered-image pt-2"
           style="font-size: 0.7rem; color: #092581;">QA</li>
         <!-- <li class="centered-image" style="font-size: 0.7rem; color: #092581;">{{ this.user.username }}</li> -->

@@ -416,10 +416,10 @@
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
                   style="font-size: 1.2rem; margin-right: 3px"></i>Data Per Hari
               </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQAHourly"
+              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
                 style="font-size: 0.8rem">
                 <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Data Per Jam
+                  style="font-size: 1.2rem; margin-right: 3px"></i>Download Data
               </button>
               <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQAHourly"
                 style="font-size: 0.8rem">
@@ -699,7 +699,8 @@ export default {
       this.dataStationQA = result.data[0].data
       this.summaryQA = result.data[0]
 
-      this.nama = result.data.station_name
+      this.nama = result.data[0].station_name
+
 
       this.colsQA = [
         { name: "Tanggal" },

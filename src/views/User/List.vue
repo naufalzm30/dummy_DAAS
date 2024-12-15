@@ -41,6 +41,9 @@
                       <td scope="row">{{ rowIndex + 1 }}</td>
                       <td>{{ row.username }}</td>
                       <td>{{ row.role_name }}</td>
+                      <td v-if="row.role_name == 'SuperAdmin'">{{ row.is_staff }}</td>
+                      <td v-else></td>
+
                       <td v-if="row.balai !== null && row.role_name == 'Admin'">{{ row.balai.balai_name }}</td>
                       <td v-else></td>
                       <td>{{ row.created_by }}</td>
@@ -119,6 +122,10 @@ export default {
 
         {
           name: "Role",
+        },
+        {
+          name: "CRUD",
+
         },
         {
           name: "Produksi",
@@ -221,7 +228,7 @@ export default {
     // },
     async delete(id) {
       try {
-        const response = await axios.delete(`${this.$baseURL}/user/${id}`, {
+        const response = await axios.delete(`${this.$baseURL}/user/${id}/`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },

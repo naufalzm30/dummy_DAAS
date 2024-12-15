@@ -159,12 +159,11 @@ export default {
           },
         })
         .then((r) => {
-          // console.log(r.data[0].data);
-
-          this.stationQA = r.data[0].data;
-
+          
+          
           if (r.status == 200) {
             this.loading_i = false;
+            this.stationQA = r.data[0].data;
           }
         })
         .catch((error) => {
@@ -174,7 +173,6 @@ export default {
             console.error('Error msg: ', error);
           }
         });
-
     },
     async loadProfile() {
       await axios
@@ -184,6 +182,8 @@ export default {
           },
         })
         .then((r) => {
+          
+          
           if (r.status == 200) {
             // this.loading_i = false;
             this.profile = r.data.data;

@@ -1,4 +1,4 @@
-<template >
+<template>
   <div>
     <Header />
     <div class="mobile-width">
@@ -42,7 +42,7 @@
             <div class="card">
               <div class="card-header">Data Produksi</div>
               <div class="card-body">
-                <div class="col-md pb-3" >
+                <div class="col-md pb-3">
                   <label for="floatingInput">Role*</label>
                   <select class="form-select" v-model="roleUser" required>
                     <option disabled value="">Pilih Role</option>
@@ -51,13 +51,22 @@
                     </option>
                   </select>
                 </div>
-                
-                <div v-if="roleUser == 2" class="col-md pb-3" >
+
+                <div v-if="roleUser == 2" class="col-md pb-3">
                   <label for="floatingInput">Produksi*</label>
                   <select class="form-select" v-model="produksiUser" required>
                     <option disabled value="">Pilih Produksi</option>
                     <option v-for="item in produksis" :key="item.id" :value="item.id">
                       {{ item.balai_name }}
+                    </option>
+                  </select>
+                </div>
+                <div v-else-if="roleUser == 1" class="col-md pb-3">
+                  <label for="floatingInput">CRUD*</label>
+                  <select class="form-select" v-model="crudStaff" required>
+                    <!-- <option disabled value="">Pilih Produksi</option> -->
+                    <option v-for="(item, index) in crudOp" :key="index" :value="item">
+                      {{ item }}
                     </option>
                   </select>
                 </div>
@@ -83,6 +92,8 @@ export default {
     return {
       produksis: [],
       roles: [],
+      crudOp: [false, true],
+      crudStaff: false,
       userData: "",
       password: "",
       roleUser: "",
@@ -104,7 +115,7 @@ export default {
             first_name: this.first_name,
             last_name: this.last_name,
             role: this.roleUser,
-
+            is_staff: this.crudStaff
           },
           {
             headers: {

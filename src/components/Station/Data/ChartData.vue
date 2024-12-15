@@ -73,11 +73,11 @@
             </h6>
 
             <div>
-              <button v-if="role == 'SuperAdmin' && username === 'UserApproval'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
+              <button v-if="role === 'APPROVAL'" data-bs-toggle="modal" data-bs-target="#approveTaksasi"
                 class="btn btn-sm btn-success" type="button" style="font-size: 0.8rem">
                 <i class="zmdi zmdi-check"></i> Approve 
               </button>
-              <button v-if="role == 'SuperAdmin' && username !== 'UserApproval'" data-bs-toggle="modal" data-bs-target="#taksasiData"
+              <button v-if="role == 'SuperAdmin'" data-bs-toggle="modal" data-bs-target="#taksasiData"
                 class="btn btn-sm btn-primary mx-1" type="button" style="font-size: 0.8rem">
                 <i class="zmdi zmdi-edit"></i> Taksasi
               </button>
