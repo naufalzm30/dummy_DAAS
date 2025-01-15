@@ -118,7 +118,9 @@ export default {
   },
   data() {
     return {
-      url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+      // url: "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+      url: "https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg",
+
       attribution: "",
       zoom: 11,
       center: [-7.277016214, 112.708518708],
