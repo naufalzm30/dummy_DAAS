@@ -718,13 +718,17 @@ export default {
       const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
       const diffDays = moment(this.endDate).diff(moment(this.startDate), 'days');
       if (this.role !== 'QA') {
-        if (diffDays > 7) {
+        // if (diffDays > 7) {
+        if (diffDays > 30) {
+
           this.loadData(null, null);
         } else {
           this.loadData(from, until);
         }
       } else {
-        if (diffDays > 2000) {
+        if (diffDays > 10000) {
+          // if (diffDays > 2000) {
+
           this.loadDataQA(null, null);
         } else {
           this.loadDataQA(from, until);
