@@ -1,6 +1,6 @@
 <template>
   <div class="container px-0">
-    <div v-if="role !== 'QA' && !station" class="d-flex flex-column justify-content-center align-items-center"
+    <div v-if="!['QA', 'APPROVAL'].includes(role) && !station" class="d-flex flex-column justify-content-center align-items-center"
       style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
@@ -9,7 +9,12 @@
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       <div class="py-2">Drawing Chart...</div>
     </div>
-    <div v-if="station && role !== 'QA'">
+    <div v-if="role === 'APPROVAL' && !stationApproval" class="d-flex flex-column justify-content-center align-items-center"
+      style="min-height: 90vh">
+      <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
+      <div class="py-2">Drawing Chart...</div>
+    </div>
+    <div v-if="station && !['QA', 'APPROVAL'].includes(role)">
       <div style="max-width: 100% !important; min-width: 100% !important">
         <div class="card box-sm mt-2 mx-1 comShadow" style="box-shadow: 10px; border-radius: 5x">
           <div class="row">
@@ -194,6 +199,52 @@
         </div>
       </div>
     </div>
+    <div v-if="stationApproval && role === 'APPROVAL'">
+      <div class="mt-2">
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
+            <div>
+              <div style="font-weight: 500; font-size: 1rem;margin-left: 7px;"
+                class="mt-1 d-flex justify-content-center">
+                {{ stationApproval.station_name }}
+              </div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Jumlah Data
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
+              :chart-data="stationApproval.data.map(item => item.sum).reverse()" :title="`Jumlah Data`" is="TotalChartBar">
+            </Chart>
+          </div>
+        </div>
+        <!-- <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Persentase Data (%)
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
+              :chart-data="stationApproval.data.map(item => item.percentage).reverse()" :title="`Persentase Data (%)`"
+              is="TotalChartBar">
+            </Chart>
+          </div>
+        </div>
+        <div style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
+            <div>
+              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
+                Jumlah Gangguan
+              </div>
+            </div>
+            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
+              :chart-data="stationApproval.data.map(item => item.maintenance).reverse()" :title="`Jumlah Gangguan`"
+              is="TotalChartBar">
+            </Chart>
+          </div>
+        </div> -->
+      </div>
+    </div>
   </div>
 </template>
 
@@ -205,7 +256,7 @@ import TotalChartBar from "@/components/Chart/TotalChartBar";
 
 export default {
   name: "StationData",
-  props: ['station', 'stationQA'],
+  props: ['station', 'stationQA', 'stationApproval'],
   data() {
     return {
       // stations: [],
@@ -249,6 +300,12 @@ export default {
         this.updateComponentData(newVal);
       },
       deep: true // This ensures the watcher also detects changes to nested properties
+    },
+    stationApproval: {
+      handler(newVal) {
+        this.updateComponentData(newVal);
+      },
+      deep: true
     }
   },
   methods: {

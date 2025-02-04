@@ -1,14 +1,105 @@
 <template>
   <div>
-    <div v-if="loading_i && role !== 'QA'" class="d-flex flex-column justify-content-center align-items-center"
-      style="min-height: 35vh">
+    <div v-if="loading_i && !['QA', 'APPROVAL'].includes(role)"
+      class="d-flex flex-column justify-content-center align-items-center" style="min-height: 35vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-    <div v-if="loading_i && role === 'QA'" class="d-flex flex-column justify-content-center align-items-center"
-      style="min-height: 90vh">
+    <div v-if="loading_i && ['QA', 'APPROVAL'].includes(role)"
+      class="d-flex flex-column justify-content-center align-items-center" style="min-height: 90vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
-    <div v-if="role !== 'QA'" class="box">
+    <div v-if="role === 'QA'" class="box">
+      <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
+        <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
+          id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
+
+          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
+            <thead class="table-light">
+              <tr>
+                <th v-for="(head, index) in table_headQA" :key="index"
+                  :class="{ thClass: index >= 0, sticky: index === 2 }">
+                  {{ head }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(station, index) in stationsQA" :key="station.station_serial_id"
+                @click="selectStationQA(station)" style="cursor: pointer">
+                <td>{{ index + 1 }}</td>
+
+                <td>
+                  {{ station.station_name }}
+                </td>
+                <td>
+
+                  <router-link type="button" class="btn btn-primary btn-sm m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Data</router-link>
+                </td>
+                <td>
+                  {{ formatDate(station.data[0].date) }}
+                </td>
+                <td>{{ station.data[0].sum }}</td>
+                <td>{{ station.data[0].percentage }} %</td>
+                <td>{{ station.data[0].maintenance }}</td>
+
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div v-else-if="role === 'APPROVAL'" class="box">
+
+      <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
+        <div class="tableFixHead tab-pane fade active show"
+          :class="{ h100: ava_width <= 850, tableApproval: role == 'APPROVAL' }" id="tabs-ARR" role="tabpanel"
+          aria-labelledby="tabs-ARR-tab">
+
+          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
+            <thead class="table-light">
+              <tr>
+                <th v-for="(head, index) in table_headApproval" :key="index"
+                  :class="{ thClass: index >= 0, sticky: index === 2 }">
+                  {{ head }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(station, index) in stationsApproval" :key="station.station_serial_id"
+                @click="selectStationApproval(station)" style="cursor: pointer">
+                <td>{{ index + 1 }}</td>
+
+                <td>
+                  {{ station.station_name }}
+                </td>
+
+                <td>
+                  {{ station.sum_approval_data }}
+
+                </td>
+                <td>
+                  <router-link type="button" class="btn btn-primary btn-sm m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Detail</router-link>
+                </td>
+                <td>
+                  <router-link type="button" class="btn btn-success btn-sm m-0 p-0"
+                    style="font-size: 0.8rem; padding: 0 5px!important;"
+                    :to="{ path: '/station/data/' + station.station_serial_id }">Approve All</router-link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div v-else class="box">
+
       <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
         <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
           id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
@@ -79,50 +170,6 @@
         </div>
       </div>
     </div>
-
-    <div v-else class="box">
-      <div v-if="!loading_i" class="tab-content station-list" id="tabs-tabContent">
-        <div class="tableFixHead tab-pane fade active show" :class="{ h100: ava_width <= 850, tableQA: role == 'QA' }"
-          id="tabs-ARR" role="tabpanel" aria-labelledby="tabs-ARR-tab">
-
-          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
-            <thead class="table-light">
-              <tr>
-                <th v-for="(head, index) in table_headQA" :key="index"
-                  :class="{ thClass: index >= 0, sticky: index === 2 }">
-                  {{ head }}
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-for="(station, index) in stationsQA" :key="station.station_serial_id"
-                @click="selectStationQA(station)" style="cursor: pointer">
-                <td>{{ index + 1 }}</td>
-
-                <td>
-                  {{ station.station_name }}
-                </td>
-                <td>
-
-                  <router-link type="button" class="btn btn-primary btn-sm m-0 p-0"
-                    style="font-size: 0.8rem; padding: 0 5px!important;"
-                    :to="{ path: '/station/data/' + station.station_serial_id }">Data</router-link>
-                </td>
-                <td>
-                  {{ formatDate(station.data[0].date) }}
-                </td>
-                <td>{{ station.data[0].sum }}</td>
-                <td>{{ station.data[0].percentage }} %</td>
-                <td>{{ station.data[0].maintenance }}</td>
-
-
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -131,17 +178,23 @@ import axios from "axios";
 
 export default {
   name: "Stations",
-  props: ['stationsQA', 'stations', 'loading_i'],
+  props: ['stationsQA', 'stationsApproval', 'stations', 'loading_i'],
   data() {
     return {
 
       users: [],
       st_stations: [],
       st_stationsQA: [],
+      st_stationsApproval: [],
+
       table_head: [],
       table_headQA: [],
+      table_headApproval: [],
+
       total_stat: null,
       total_statQA: null,
+      total_statApproval: null,
+
       table_head_pre: [],
       role: null,
       balai: null,
@@ -166,6 +219,9 @@ export default {
     },
     selectStationQA(stationQA) {
       this.$emit('stationqa-selected', stationQA);
+    },
+    selectStationApproval(stationApproval) {
+      this.$emit('stationapproval-selected', stationApproval);
     },
     formatDate(date) {
       var monthShortNames = [
@@ -216,6 +272,9 @@ export default {
     },
     async loadStationsQA() {
       this.processStationsQA();
+    },
+    async loadStationsApproval() {
+      this.processStationsApproval();
     },
     async fetchStations() {
       try {
@@ -268,6 +327,11 @@ export default {
       this.total_statQA = this.stationsQA.length;
       this.table_headQA = ["No", "Nama Stasiun", "Data", "Tanggal", "Jumlah Data", "Persentase Data", "Jumlah Gangguan"];
     },
+    processStationsApproval() {
+      this.st_stationsApproval = [...this.stationsApproval];
+      this.total_statApproval = this.stationsApproval.length;
+      this.table_headApproval = ["No", "Nama Stasiun", "Jumlah Data Taksasi", "Detail", "Approve All"];
+    },
     handleScroll() {
       const stickyCol = document.querySelector("th.sticky");
       const table = document.querySelector("table");
@@ -296,10 +360,16 @@ export default {
   mounted() {
 
 
-    if (this.role !== 'QA') {
-      this.loadStations();
-    } else {
+    if (this.role === 'QA') {
       this.loadStationsQA();
+    } else if (this.role === 'APPROVAL') {
+      this.loadStationsApproval();
+
+    }
+
+    else {
+
+      this.loadStations();
     }
     // this.updateUserStationList(this.userStationList);
   },
@@ -318,6 +388,11 @@ export default {
 }
 
 .tableQA {
+  overflow-y: scroll;
+  height: 92vh;
+}
+
+.tableApproval {
   overflow-y: scroll;
   height: 92vh;
 }
@@ -398,5 +473,15 @@ th.sticky {
 
 .statSZ {
   height: 1.5rem;
+}
+
+/* Remove bullets from unordered lists */
+ul {
+  list-style-type: none;
+  /* Removes bullets */
+  padding: 0;
+  /* Removes default padding */
+  margin: 0;
+  /* Removes default margin */
 }
 </style>
