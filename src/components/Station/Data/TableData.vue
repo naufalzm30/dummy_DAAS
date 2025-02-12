@@ -68,54 +68,21 @@
               </div>
             </div>
           </div>
-          <div class="row" v-if="profile && role === 'APPROVAL'">
-            <div class="col-md-4 p-0 imgSZ">
-              <img :src="`${profile.image}`" class="img-fluid" alt="station-img" style="
-              object-fit: cover;
-              border-radius: 10px 0px 0px 10px;
-              margin-left: 12px;
-              width: 95%;
-            " />
-            </div>
-            <div class="col-md-8 my-2">
-              <h1>TEST APPROVAL</h1>
+          <div class="text-center" v-if="profile && role === 'APPROVAL'">
+            <div>
               <div class="d-flex align-items-center">
-                <div class="col-md-10 col-10">
-                  <div style="font-weight: 500; font-size: 1.1rem">
+                <div class="col">
+                  <div style="font-weight: 500; font-size: 1.1rem" class="py-1">
                     {{ profile.station_name }}
                   </div>
                 </div>
               </div>
-              <!-- <div style="font-size: 0.8rem; color: gray;">
-                {{ formatDate(summaryQA.data[summaryQA.data.length - 1].date) }} s/d {{
-                  formatDate(summaryQA.data[0].date)
-                }}
-              </div> -->
-
-
-              <!-- <div class="row mt-1 mx-0">
-
-                <table style="width: 100%; ">
-                  <tr>
-                    <td style="font-size: 1rem" class="col-6">Rata-rata Data Masuk</td>
-                    <td style="font-size: 1rem" class="col-6">: {{ (summaryQA.average_all_data * 100 / 288).toFixed(2)
-                      }}
-                      % </td>
-                  </tr>
-                  <tr>
-                    <td style="font-size: 1rem">Target Data Seluruhnya</td>
-                    <td style="font-size: 1rem">: 100 % </td>
-                    
-                  </tr>
-
-                  <tr>
-                    <td style="font-size: 1rem">Data Tidak Terkirim</td>
-                    <td style="font-size: 1rem">: {{ (daysBetween - summaryQA.sum_all_data) / 100 }} % </td>
-                 
-                  </tr>
-                </table>
-              </div> -->
             </div>
+            <div class=" p-0 imgSZAppr">
+              <img :src="`${profile.image}`" class="img-fluid rounded" alt="station-img"
+                style="object-fit: cover;width: 40%;" />
+            </div>
+
           </div>
         </div>
       </div>
@@ -226,7 +193,7 @@
                   <li class="dropdown-item py-0" style="font-size: 0.9rem;">
                     Total Volume: {{ summary.sum_volume }} m³
                   </li>
-                 
+
                   <li v-if="role == 'SuperAdmin'" class="dropdown-item py-0" style="font-size: 0.9rem;">
                     Persentase Data: {{ summary.data_precentage }} %
                   </li>
@@ -462,6 +429,8 @@
                   :default-value="new Date().setHours(23, 55, 0, 0)" :hour-options="hourEnd" :minute-options="minuteEnd"
                   placeholder="Select last date">
                 </DatePicker>
+
+
               </div>
             </div>
             <div class="d-flex justify-content-between px-0 py-2 " :class="{ 'px-5': ava_width > 768 }">
@@ -560,139 +529,79 @@
           </div>
         </dataset>
 
-        <dataset v-if="dataStationApproval && role === 'APPROVAL'" class="box comShadow px-3" v-slot="{ ds }"
-          :ds-data="dataStationApproval" :ds-sortby="sortBy">
-          <div class="row " :data-page-count="ds.dsPagecount">
-            <div class="col-md d-flex justify-content-end" :class="{ 'justify-content-center': role == 'APPROVAL' }"
-              style="margin-top: 1rem;">
-              <div>
-                <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
-                <!-- <i v-if="loading_date_data" class="zmdi zmdi-rotate-right zmdi-hc-spin mx-2"style="font-size: 1.2rem"></i> -->
-                <DatePicker name="from" v-model="startDate" @change="search" format="YYYY-MM-DD HH:mm" type="datetime"
-                  :default-value="new Date().setHours(0, 0, 0, 0)" :hour-options="hourStart"
-                  :minute-options="minuteStart" placeholder="Select first date">
-                </DatePicker>
-                <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
-                <DatePicker name="to" v-model="endDate" @change="search" format="YYYY-MM-DD HH:mm" type="datetime"
-                  :default-value="new Date().setHours(23, 55, 0, 0)" :hour-options="hourEnd" :minute-options="minuteEnd"
-                  placeholder="Select last date">
-                </DatePicker>
+        <!-- -------------------APPROVAL------------------- -->
+        <div v-if="role === 'APPROVAL'">
+          <div v-if="loading_appr" class="d-flex flex-column justify-content-center align-items-center">
+            <div class="content-container">
+              <div class="icon-container">
+                <i class="zmdi zmdi-spinner zmdi-hc-spin"></i>
               </div>
-            </div>
-            <div class="d-flex justify-content-between px-0 py-2 " :class="{ 'px-5': ava_width > 768 }">
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQADaily"
-                style="font-size: 0.8rem">
-                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Data Per Hari
-              </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
-                style="font-size: 0.8rem">
-                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Download Data
-              </button>
-              <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadQAHourly"
-                style="font-size: 0.8rem">
-                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Download Verifikasi
-              </button>
-              <!-- <button class="btn btn-sm btn-primary" type="button" title="Verifikasi" style="font-size: 0.8rem"
-                data-bs-toggle="modal" data-bs-target="#verifikasiData">
-                <i v-if="loading_upload" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Upload Verifikasi
-              </button> -->
-              <!-- <button class="btn btn-sm btn-primary" type="button" @click.prevent="downloadAll"
-                style="font-size: 0.8rem">
-                <i v-if="loading_dw" class="zmdi zmdi-rotate-right zmdi-hc-spin"
-                  style="font-size: 1.2rem; margin-right: 3px"></i>Insidentil
-              </button> -->
+              <p>{{ msgAppr }}</p>
             </div>
           </div>
-          <div class="modal fade" id="verifikasiData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-            aria-labelledby="verifikasiDataLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <form @submit.prevent="verifikasiDataUpload">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="verifikasiDataLabel">
-                      Verifikasi
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <div>
-                      <!-- <p>Verifikasi 24 Jam</p> -->
-                      <label>
-                        <input type="file" id="file" v-on:change="onChangeFileUpload($event)" />
-                      </label>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
-                      @click.prevent="formatVerifikasi">
-                      Download Format
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal">
-                      Upload Verifikasi
-                    </button>
-
-                  </div>
-                </form>
-              </div>
+          <div class="col-md d-flex justify-content-center">
+            <div>
+              <DatePicker name="from" v-model="startDate" @change="searchAppr" format="YYYY-MM-DD HH:mm" type="datetime"
+                :minute-step="5" placeholder="Select first date">
+              </DatePicker>
+              <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">s.d</label>
+              <DatePicker name="to" v-model="endDate" @change="searchAppr" format="YYYY-MM-DD HH:mm" type="datetime"
+                :minute-step="5" placeholder="Select last date">
+              </DatePicker>
             </div>
           </div>
-          <div class="row mt-1">
-            <div class="col-md-12">
-              <div class="table-responsive">
 
-                <table
-                  class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white table-bordered">
-                  <thead class="table-light">
-                    <tr>
-                      <th scope="col" class="thClass">#</th>
-                      <th v-for="(th, index) in colsApproval" :key="th.field" :class="['sort', th.sort]"
-                        @click="click($event, index)" class="thClass">
 
-                        {{ th.name }} <i class="gg-select float-right"></i>
-                      </th>
-                    </tr>
-                  </thead>
-                  <dataset-item tag="tbody">
-                    <template #default="{ row, index }">
+
+          <dataset v-if="dataStationApproval" class="box comShadow px-3" v-slot="{ ds }" :ds-data="dataStationApproval"
+            :ds-sortby="sortBy">
+
+            <div class="row " :data-page-count="ds.dsPagecount">
+
+            </div>
+
+            <div class="row mt-1">
+
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table v-if="dataStationApproval.length > 0"
+                    class="table table-hover table-responsive text-nowrap text-center table-borderless bg-white table-bordered">
+                    <thead class="table-light">
                       <tr>
-                        <td scope="row">{{ index + 1 }}</td>
-                        <!-- <td>{{ formatDate(row.date) }}</td>
-                        <td>{{ row.sum }}</td>
-                        <td>{{ row.percentage }} %</td>
-                        <td>{{ row.maintenance }}</td> -->
-                        <td>{{ formatDate(row.chart[0].time) + ' ' + formatTime(row.chart[0].time) }}</td>
-                        <td>{{ (row.chart[0].sensor_data[0].value) + ' ' + (row.chart[0].sensor_data[0].notation) }}
-                        </td>
-                        <td>{{ (row.chart[0].sensor_data[1].value) + ' ' + (row.chart[0].sensor_data[1].notation) }}
-                        </td>
-                        <td>{{ (row.chart[0].sensor_data[2].value) + ' ' + (row.chart[0].sensor_data[2].notation) }}
-                        </td>
-                        <td>{{ (row.chart[0].sensor_data[3].value) + ' ' + (row.chart[0].sensor_data[3].notation) }}
-                        </td>
-                        <!-- <td>
-                          <button @click="approveSelected(row.station_serial_id, row.chart)">Approve for date {{
-                            row.chart[0].time }}</button>
-                        </td> -->
-                        <td>
-                          <button @click="approveSelected(row.chart)">Approve for date {{ row.chart[0].time }}</button>
-                        </td>
+                        <th scope="col" class="thClass">#</th>
+                        <th v-for="(th, index) in colsApproval" :key="th.field" :class="['sort', th.sort]"
+                          @click="click($event, index)" class="thClass">
 
+                          {{ th.name }} <i class="gg-select float-right"></i>
+                        </th>
                       </tr>
-                    </template>
-                  </dataset-item>
-                </table>
+                    </thead>
+                    <dataset-item tag="tbody">
+                      <template #default="{ row, index }">
+                        <tr class="align-middle">
+                          <td scope="row">{{ index + 1 }}</td>
+                          <td>{{ formatDate(row.time) + ' ' + formatTime(row.time) }}</td>
+                          <td v-for="(sensor, i) in row.sensor_data" :key="i">
+                            {{ sensor.value }} {{ sensor.notation }}
+                          </td>
+                          <td><button class="btn btn-success btn-sm"
+                              @click="approveRange(row.time, row.time)">Approve</button></td>
+                        </tr>
+                      </template>
+                    </dataset-item>
+                  </table>
+                  <div v-else class="px-1">
+                    No Data to Approve
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="d-flex flex-md-row flex-column justify-content-end align-items-center">
-            <dataset-pager style="font-size: 0.9rem" />
-          </div>
-        </dataset>
+            <div class="d-flex flex-md-row flex-column justify-content-end align-items-center">
+              <dataset-pager style="font-size: 0.9rem" />
+            </div>
+          </dataset>
+        </div>
       </div>
     </div>
   </div>
@@ -744,10 +653,12 @@ export default {
       nama: "",
       loading_upload: false,
       loading_dw: false,
+      loading_appr: true,
       uploadVal: null,
       // profile: null,
       ava_width: null,
       msg: "Fetching data, please wait...",
+      msgAppr: "Fetching approval data...",
 
       hourStart: Array.from({ length: 1 }).map((_, i) => i + 0),
       hourEnd: Array.from({ length: 1 }).map((_, i) => i + 23),
@@ -787,6 +698,36 @@ export default {
   },
 
   methods: {
+    async approveRange(fromDate, untilDate) {
+      const from = fromDate ? moment(fromDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = untilDate ? moment(untilDate).format('YYYY-MM-DD HH:mm') : null;
+
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/approve_taksasi/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+      this.$swal({
+        position: "top-end",
+        width: "300px",
+        icon: "success",
+        title: "Approve berhasil",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+
+      this.loadDataApproval()
+
+    },
     formatNumber(num) {
       num = Number(num).toString();
       return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -912,7 +853,9 @@ export default {
       }
     },
     async loadDataApproval(from = null, until = null) {
-      this.loading_data = true;
+      this.loading_appr = true;
+
+
       let result = await axios
         .get(`${this.$baseURL}/pdam/approval/detail/${this.$route.params.id}/`, {
           headers: {
@@ -928,52 +871,44 @@ export default {
         });
 
 
-      // console.log('TableData.vue: ', result.data[0].data);
-      this.dataStationApproval = result.data.data
-      // console.log(this.dataStationApproval);
-      // this.summaryApproval = result.data[0]
 
-      // this.nama = result.data[0].station_name
-
-
-      this.colsApproval = [
-        { name: "Tanggal" },
-        // { name: "Jumlah Data" },
-        // { name: "Persen Data" },
-        // { name: "Jumlah Gangguan" },
-      ];
-
-      // console.log(this.dataStationApproval);
-
-
-      this.dataStationApproval.forEach(chartItem => {
-        chartItem.chart[0].sensor_data.forEach(data => {
-          if (data.value !== null && !isNaN(data.value)) {
-            if (Number.isInteger(Number(data.value))) {
-              data.value = Number(data.value).toString();
-            } else {
-              data.value = parseFloat(Number(data.value).toFixed(2));
-            }
-          }
-        });
-      });
-
-      let sensor_label = this.dataStationApproval[0].chart[0].sensor_data;
-
-
-      for (let i = 0; i < sensor_label.length; i++) {
-        this.colsApproval.push({
-          name: sensor_label[i].sensor_name,
-        });
-      }
-
-      this.colsApproval.push({
-        name: 'Action',
-      });
 
       if (result.status == 200) {
-        this.loading_data = false;
+        this.loading_appr = false;
+        this.dataStationApproval = result.data.data[0].chart
+
+        this.colsApproval = [
+          { name: "Tanggal" },
+        ];
+
+        this.dataStationApproval.forEach(chartItem => {
+          chartItem.sensor_data.forEach(data => {
+            if (data.value !== null && !isNaN(data.value)) {
+              if (Number.isInteger(Number(data.value))) {
+                data.value = Number(data.value).toString();
+              } else {
+                data.value = parseFloat(Number(data.value).toFixed(2));
+              }
+            }
+          });
+        });
+
+        let sensor_label = this.dataStationApproval[0].sensor_data;
+
+        for (let i = 0; i < sensor_label.length; i++) {
+          this.colsApproval.push({
+            name: sensor_label[i].sensor_name,
+          });
+        }
+
+        this.colsApproval.push({
+          name: 'Action',
+        });
+
       }
+
+
+
     },
     search() {
       const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
@@ -1005,54 +940,43 @@ export default {
             this.loadDataApproval(from, until);
           }
         }
-        // this.loadDataQA(from, until);
 
       }
     },
 
-    // async approveSelected(chartData) {
-    //   this.loading_data = true;
+    searchAppr() {
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      const diffDays = moment(this.endDate).diff(moment(this.startDate), 'days');
 
-    //   if (!chartData || chartData.length === 0) {
-    //     console.error("No chart data available.");
-    //     this.loading_data = false;
-    //     return;
-    //   }
+      if (diffDays > 10000) {
+        if (this.role === 'QA') {
+          this.loadDataQA(null, null);
+        } else if (this.role === 'APPROVAL') {
+          this.loadDataApproval(null, null);
+        }
+      } else {
 
-    //   const from = this.dataStationApproval[0].chart[0].time
-    //   const until = this.dataStationApproval[0].chart[0].time
+        if (this.role === 'QA') {
+          this.loadDataQA(from, until);
+        } else if (this.role === 'APPROVAL') {
+          this.loadDataApproval(from, until);
+        }
+      }
 
-    //   console.log("From:", from);
-    //   console.log("Until:", until);
 
-    //   try {
-    //     let result = await axios.get(`${this.$baseURL}/pdam/approve_taksasi/${this.$route.params.id}/`, {
-    //       headers: {
-    //         Authorization: `Bearer ${this.token}`,
-    //       },
-    //       params: { from, until },
-    //     });
-
-    //     if (result.status === 200) {
-    //       console.log("Approval successful:", result.data);
-    //     }
-    //   } catch (error) {
-    //     console.error("API request failed:", error);
-    //   } finally {
-    //     this.loading_data = false;
-    //   }
-    // }
-    async approveSelected(chartData) {
+    },
+    async approveSelected(apprData) {
       this.loading_data = true;
 
-      if (!chartData || chartData.length === 0) {
+      if (!apprData || apprData.length === 0) {
         console.error("No chart data available.");
         this.loading_data = false;
         return;
       }
 
-      // Sort chartData to find the earliest (from) and latest (until) time
-      const sortedChart = [...chartData].sort((a, b) => new Date(a.time) - new Date(b.time));
+      // Sort apprData to find the earliest (from) and latest (until) time
+      const sortedChart = [...apprData].sort((a, b) => new Date(a.time) - new Date(b.time));
 
       const from = sortedChart[0].time; // Earliest time
       const until = sortedChart[sortedChart.length - 1].time; // Latest time
@@ -1060,22 +984,22 @@ export default {
       console.log("From:", from);
       console.log("Until:", until);
 
-      // try {
-      //   let result = await axios.get(`${this.$baseURL}/pdam/approve_taksasi/${this.$route.params.id}/`, {
-      //     headers: {
-      //       Authorization: `Bearer ${this.token}`,
-      //     },
-      //     params: { from, until },
-      //   });
+      try {
+        let result = await axios.get(`${this.$baseURL}/pdam/approve_taksasi/${this.$route.params.id}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: { from, until },
+        });
 
-      //   if (result.status === 200) {
-      //     console.log("Approval successful:", result.data);
-      //   }
-      // } catch (error) {
-      //   console.error("API request failed:", error);
-      // } finally {
-      //   this.loading_data = false;
-      // }
+        if (result.status === 200) {
+          console.log("Approval successful:", result.data);
+        }
+      } catch (error) {
+        console.error("API request failed:", error);
+      } finally {
+        this.loading_data = false;
+      }
     }
 
 
@@ -1161,9 +1085,9 @@ export default {
 
           // Modify filename based on filter
           if (from != null && until != null) {
-            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
+            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}.xlsx`;
           } else {
-            filename = `Laporan Pembacaan Sensor ${this.nama}`;
+            filename = `Laporan Pembacaan Sensor ${this.nama}.xlsx`;
           }
 
           const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
@@ -1418,8 +1342,19 @@ export default {
         .then((r) => {
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
-            location.reload();
+
           }
+          this.$swal({
+            position: "top-end",
+            width: "300px",
+            icon: "success",
+            title: "Upload berhasil",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         })
         .catch((error) => {
           console.log(error);
@@ -1441,8 +1376,22 @@ export default {
         .then((r) => {
           if (r.status == 204) {
             this.csv_code = "File uploaded successfully";
-            location.reload();
+
+
           }
+          // console.log(r.status);
+
+          this.$swal({
+            position: "top-end",
+            width: "300px",
+            icon: "success",
+            title: "Upload berhasil",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         })
         .catch((error) => {
           console.log(error);
@@ -1479,14 +1428,10 @@ export default {
       this.loadDataQA()
     } else if (this.role === 'APPROVAL') {
       this.loadDataApproval()
-
-
     } else {
-
       this.loadData();
     }
     this.ava_width = screen.availWidth;
-
   },
 
 };
@@ -1577,6 +1522,12 @@ td {
   resize: both;
   height: 150px;
   width: 190px;
+}
+
+.imgSZAppr img {
+  resize: both;
+  height: 150px;
+  /* width: 190px; */
 }
 
 @media (max-width: 768px) {

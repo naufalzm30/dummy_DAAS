@@ -59,7 +59,7 @@
           :class="{ h100: ava_width <= 850, tableApproval: role == 'APPROVAL' }" id="tabs-ARR" role="tabpanel"
           aria-labelledby="tabs-ARR-tab">
 
-          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white mx-2">
+          <table class="table table-hover table-responsive text-nowrap text-center table-border bg-white">
             <thead class="table-light">
               <tr>
                 <th v-for="(head, index) in table_headApproval" :key="index"
@@ -87,11 +87,7 @@
                     style="font-size: 0.8rem; padding: 0 5px!important;"
                     :to="{ path: '/station/data/' + station.station_serial_id }">Detail</router-link>
                 </td>
-                <td>
-                  <router-link type="button" class="btn btn-success btn-sm m-0 p-0"
-                    style="font-size: 0.8rem; padding: 0 5px!important;"
-                    :to="{ path: '/station/data/' + station.station_serial_id }">Approve All</router-link>
-                </td>
+               
               </tr>
             </tbody>
           </table>
@@ -330,7 +326,7 @@ export default {
     processStationsApproval() {
       this.st_stationsApproval = [...this.stationsApproval];
       this.total_statApproval = this.stationsApproval.length;
-      this.table_headApproval = ["No", "Nama Stasiun", "Jumlah Data Taksasi", "Detail", "Approve All"];
+      this.table_headApproval = ["No", "Nama Stasiun", "Jumlah Data Taksasi", "Detail"];
     },
     handleScroll() {
       const stickyCol = document.querySelector("th.sticky");
@@ -394,7 +390,7 @@ export default {
 
 .tableApproval {
   overflow-y: scroll;
-  height: 92vh;
+  height: 85vh;
 }
 
 .tableFixHead table {

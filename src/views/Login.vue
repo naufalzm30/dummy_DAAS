@@ -118,7 +118,7 @@ export default {
   created() {
     const d = new Date();
     this.year = d.getFullYear();
-    console.log('x15.1.25');
+    console.log('x12.2.25');
     
   },
 };

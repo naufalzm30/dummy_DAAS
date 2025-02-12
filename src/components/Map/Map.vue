@@ -34,7 +34,7 @@
       </div>
       <div class="row">
 
-        <div class="col" :class="{ 'col-6 pr-0': ava_width > 768, 'col-4': role ==='APPROVAL' }">
+        <div class="col" :class="{ 'col-6 pr-0': ava_width > 768, 'col-4': role === 'APPROVAL' }">
           <div class="row">
             <div class="col-12" v-if="!['QA', 'APPROVAL'].includes(role)">
               <StationMap :stations="stations" :loading_i="loading_i" class="mx-auto mt-2 shadow-sm border"
@@ -42,16 +42,31 @@
             </div>
             <div class="col-12">
 
+              <div v-if="role === 'APPROVAL'" class="col-md d-flex justify-content-center" style="margin-top: 1rem;">
+                <div>
+                  <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
+                  <DatePicker name="from" v-model="startDate" @change="searchApproval" type="datetime"
+                    format="YYYY-MM-DD" :default-value="new Date().setHours(0, 0, 0, 0)"
+                    placeholder="Select first date" :minute-step="5">
+                  </DatePicker>
+                  <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">-</label>
+                  <DatePicker name="to" v-model="endDate" @change="searchApproval" type="datetime"
+                    format="YYYY-MM-DD" :default-value="new Date().setHours(23, 55, 0, 0)"
+                    placeholder="Select last date" :minute-step="5">
+                  </DatePicker>
+                </div>
+              </div>
+
               <Stations :stations.sync="stations" :stationsQA="stationsQA" :stationsApproval="stationsApproval"
                 :loading_i="loading_i" class="shadow-sm border mt-2 bg-white" style="border-radius: 10px"
-                @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA" 
-                @stationapproval-selected="handleStationSelectedApproval"
-                @update:stations="handleStationsUpdate" />
+                @station-selected="handleStationSelected" @stationqa-selected="handleStationSelectedQA"
+                @stationapproval-selected="handleStationSelectedApproval" @update:stations="handleStationsUpdate" />
             </div>
           </div>
         </div>
-        <div class="col px-0" :class="{ 'col-6 px-0': ava_width > 768,'col px-0': role ==='APPROVAL' }">
-          <StationData :station="selectedStation" :stationQA="selectedStationQA" :stationApproval="selectedStationApproval" />
+        <div class="col px-0" :class="{ 'col-6 px-0': ava_width > 768, 'col px-0': role === 'APPROVAL' }">
+          <StationData :station="selectedStation" :stationQA="selectedStationQA"
+            :stationApproval="selectedStationApproval" />
         </div>
       </div>
     </div>
@@ -67,6 +82,7 @@ import Stations from "@/components/Map/Stations";
 import StationData from "./StationData.vue";
 import MarqueeText from "@/components/MarqueeText.vue";
 import logoPDAM from "@/assets/icons/logo-pdam.png";
+import moment from 'moment';
 
 export default {
   name: "Map",
@@ -80,6 +96,10 @@ export default {
   },
   data() {
     return {
+      startDate: null,
+      endDate: null,
+      loading_data: false,
+
       isPaused: false,
       text_duration: null,
       text_repeat: null,
@@ -131,7 +151,7 @@ export default {
         }
       }
     },
-    
+
   },
   methods: {
     handleStationsUpdate(newStations) {
@@ -240,11 +260,16 @@ export default {
           }
         });
     },
-    async loadDataApproval() {
+    async loadDataApproval(from = null, until = null) {
+      
       await axios
         .get(`${this.$baseURL}/pdam/approval/`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
           },
         })
         .then((r) => {
@@ -253,6 +278,24 @@ export default {
             this.loading_i = false;
           }
         });
+    },
+    searchApproval() {
+      
+      const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
+      const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
+      const diffDays = moment(this.endDate).diff(moment(this.startDate), 'days');
+
+      if (diffDays > 10000) {
+        if (this.role === 'APPROVAL') {
+          this.loadDataApproval(null, null);
+        }
+      } else {
+        if (this.role === 'APPROVAL') {
+          this.loadDataApproval(from, until);
+        }
+      }
+
+
     },
   },
   created() {

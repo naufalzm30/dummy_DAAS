@@ -1,7 +1,7 @@
 <template>
   <div class="container px-0">
-    <div v-if="!['QA', 'APPROVAL'].includes(role) && !station" class="d-flex flex-column justify-content-center align-items-center"
-      style="min-height: 70vh">
+    <div v-if="!['QA', 'APPROVAL'].includes(role) && !station"
+      class="d-flex flex-column justify-content-center align-items-center" style="min-height: 70vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
     </div>
     <div v-if="role === 'QA' && !stationQA" class="d-flex flex-column justify-content-center align-items-center"
@@ -9,8 +9,8 @@
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       <div class="py-2">Drawing Chart...</div>
     </div>
-    <div v-if="role === 'APPROVAL' && !stationApproval" class="d-flex flex-column justify-content-center align-items-center"
-      style="min-height: 90vh">
+    <div v-if="role === 'APPROVAL' && !stationApproval"
+      class="d-flex flex-column justify-content-center align-items-center" style="min-height: 90vh">
       <i class="zmdi zmdi-spinner zmdi-hc-spin" style="font-size: 2rem; margin-right: 20px"></i>
       <div class="py-2">Drawing Chart...</div>
     </div>
@@ -116,8 +116,7 @@
             </div>
             <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
               :chart-data="station.chart.sensor_data[0].value"
-              :title="`Debit (${station.chart.sensor_data[0].notation})`"
-              is="LineChart">
+              :title="`Debit (${station.chart.sensor_data[0].notation})`" is="LineChart">
             </Chart>
           </div>
         </div>
@@ -131,8 +130,7 @@
             </div>
             <Chart class="hChart25 p-0 pr-0 pt-0 pb-0" :label="formatAllDates(station.chart.time)"
               :chart-data="station.chart.sensor_data[1].value"
-              :title="`Totalizer (${station.chart.sensor_data[1].notation})`"
-              is="TotalChart">
+              :title="`Totalizer (${station.chart.sensor_data[1].notation})`" is="TotalChart">
             </Chart>
           </div>
         </div>
@@ -202,47 +200,51 @@
     <div v-if="stationApproval && role === 'APPROVAL'">
       <div class="mt-2">
         <div style="border-radius: 5px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
+          <div class="box-sm border mx-1 bg-white comShadow p-1" style="border-radius: 5px">
             <div>
-              <div style="font-weight: 500; font-size: 1rem;margin-left: 7px;"
-                class="mt-1 d-flex justify-content-center">
+              <div style="font-weight: 500; font-size: 1.3rem;margin-left: 7px;"
+                class="mt-1 d-flex justify-content-center py-2">
                 {{ stationApproval.station_name }}
               </div>
-              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
-                Jumlah Data
-              </div>
+
             </div>
-            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
-              :chart-data="stationApproval.data.map(item => item.sum).reverse()" :title="`Jumlah Data`" is="TotalChartBar">
-            </Chart>
+            <div v-if="stationApproval.data.length > 0" class="pt-2 pb-1 d-flex justify-content-between mx-2">
+              <div>Total Data Taksasi {{ stationApproval.sum_approval_data }} </div>
+              <button class="btn btn-success btn-sm py-1"
+                @click="approveAllRanges(stationApproval.station_serial_id)">Approve All </button>
+            </div>
+
+
+            <table v-if="stationApproval.data.length > 0"
+              class="table table-hover table-responsive text-nowrap text-center table-border bg-white">
+              <thead class="table-light">
+                <tr>
+                  <th v-for="(head, index) in table_headApproval" :key="index"
+                    :class="{ thClass: index >= 0, sticky: index === 2 }" style="font-weight: normal;">
+                    {{ head }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(station, index) in stationApproval.data" :key="index">
+                  <td>{{ index + 1 }}</td>
+
+                  <td>{{ station.date }}</td>
+                  <td>{{ station.sum }}</td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm "
+                      @click="approveRange(station.date, station.date, stationApproval.station_serial_id)">Approve</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div v-else class="px-1 py-1">
+              No Data to Approve
+            </div>
+
           </div>
         </div>
-        <!-- <div style="border-radius: 5px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
-            <div>
-              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
-                Persentase Data (%)
-              </div>
-            </div>
-            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
-              :chart-data="stationApproval.data.map(item => item.percentage).reverse()" :title="`Persentase Data (%)`"
-              is="TotalChartBar">
-            </Chart>
-          </div>
-        </div>
-        <div style="border-radius: 5px">
-          <div class="box-sm border mx-1 bg-white comShadow" style="border-radius: 5px">
-            <div>
-              <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
-                Jumlah Gangguan
-              </div>
-            </div>
-            <Chart class="hChartQA p-0 pr-0 pt-0 pb-0" :label="stationApproval.data.map(item => item.date).reverse()"
-              :chart-data="stationApproval.data.map(item => item.maintenance).reverse()" :title="`Jumlah Gangguan`"
-              is="TotalChartBar">
-            </Chart>
-          </div>
-        </div> -->
+
       </div>
     </div>
   </div>
@@ -251,15 +253,14 @@
 <script>
 import LineChart from "@/components/Chart/LineChart";
 import TotalChart from "@/components/Chart/TotalChart";
-// import BarChart from "@/components/Chart/BarChart";
 import TotalChartBar from "@/components/Chart/TotalChartBar";
-
+import axios from "axios";
+import moment from 'moment';
 export default {
   name: "StationData",
   props: ['station', 'stationQA', 'stationApproval'],
   data() {
     return {
-      // stations: [],
       loading_i: true,
       window_loc: "",
       options: {
@@ -269,7 +270,9 @@ export default {
         centralLabel: "70%",
       },
       currentIndex: 0,
-      ava_width: null
+      ava_width: null,
+      table_headApproval: [],
+
     };
   },
   components: {
@@ -309,6 +312,57 @@ export default {
     }
   },
   methods: {
+    async approveAllRanges(stationSerialId) {
+      if (this.stationApproval.data.length === 0) {
+        console.error("No data available to approve.");
+        return;
+      }
+
+      // Get the oldest and newest dates
+      const oldestDate = this.stationApproval.data.reduce((oldest, station) => {
+        const date = moment(station.date);
+        return date.isBefore(oldest) ? date : oldest;
+      }, moment(this.stationApproval.data[0].date));
+
+      const newestDate = this.stationApproval.data.reduce((newest, station) => {
+        const date = moment(station.date);
+        return date.isAfter(newest) ? date : newest;
+      }, moment(this.stationApproval.data[0].date));
+
+      // Call approveRange with the oldest and newest dates
+      await this.approveRange(oldestDate.format('YYYY-MM-DD 00:00'), newestDate.format('YYYY-MM-DD 23:55'), stationSerialId);
+    },
+    async approveRange(fromDate, untilDate, stationSerialId) {
+      const from = fromDate ? moment(fromDate).format('YYYY-MM-DD 00:00') : null;
+      const until = untilDate ? moment(untilDate).format('YYYY-MM-DD 23:55') : null;
+
+      try {
+        const response = await axios.get(`${this.$baseURL}/pdam/approve_taksasi/${stationSerialId}/`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+          params: {
+            from: from,
+            until: until,
+          },
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+      this.$swal({
+        position: "top-end",
+        width: "300px",
+        icon: "success",
+        title: "Approve berhasil",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+    setTimeout(() => {
+      location.reload();
+    }, 1200);
+
+    },
     updateComponentData(newVal) {
       // Logic to update the component's data based on the new prop value
       // For example, you could update 'loading_i', 'window_loc', etc.
@@ -344,6 +398,7 @@ export default {
   created() {
     this.extractUserInfo()
     this.ava_width = screen.availWidth;
+    this.table_headApproval = ["No", "Tanggal", "Jumlah Data Taksasi", "Approve Taksasi"];
   },
 };
 </script>

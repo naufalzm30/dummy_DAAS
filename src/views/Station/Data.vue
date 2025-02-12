@@ -22,25 +22,24 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6 px-1">
+        <div v-if="role === 'APPROVAL'" class="col-md px-3">
           <TableData v-if="!loading_i" :station="station" :loading_i="loading_i"
             @update-filtered-data="updateFilteredData" @update-filtered-dataQA="updateFilteredDataQA" :profile="profile"
             class="mx-auto " style="border-radius: 15px" />
         </div>
-        
-        <!-- debitData: {{ debitData }} <br> <hr>
-        totalData: {{ totalData }} <br> <hr>
-        label: {{ label }} <br> <hr>
-        gainData: {{ gainData }} <br> <hr>
-        gainTotal: {{ gainTotal }} <br> <hr> -->
 
+        <div v-else class="col-md-6 px-1">
+          <TableData v-if="!loading_i" :station="station" :loading_i="loading_i"
+            @update-filtered-data="updateFilteredData" @update-filtered-dataQA="updateFilteredDataQA" :profile="profile"
+            class="mx-auto " style="border-radius: 15px" />
+        </div>
 
         <div v-if="debitData && debitData.length > 0 || percentDataQA && percentDataQA.length > 0"
           class="col-md-6 px-1">
           <ChartData :station="station" :ava_width="ava_width" :debitData="debitData" :totalData="totalData"
             :label="label" :stationQA="stationQA" :percentDataQA="percentDataQA" :sumDataQA="sumDataQA"
-            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :gainData="gainData" :gainTotal="gainTotal" 
-            :profile="profile" :loading_i="loading_i" />
+            :mtcDataQA="mtcDataQA" :labelQA="labelQA" :gainData="gainData" :gainTotal="gainTotal" :profile="profile"
+            :loading_i="loading_i" />
         </div>
       </div>
       <Footer />
@@ -159,8 +158,8 @@ export default {
           },
         })
         .then((r) => {
-          
-          
+
+
           if (r.status == 200) {
             this.loading_i = false;
             this.stationQA = r.data[0].data;
@@ -182,8 +181,8 @@ export default {
           },
         })
         .then((r) => {
-          
-          
+
+
           if (r.status == 200) {
             // this.loading_i = false;
             this.profile = r.data.data;
