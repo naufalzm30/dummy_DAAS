@@ -65,7 +65,7 @@
 <script>
 import bg_pdam from "@/assets/img/bg-pdam.png";
 // import bg_weather_img from "@/assets/img/bweather-bg.jpg";
-import logoPDAM from "@/assets/icons/Logo-PDAM.png";
+import logoPDAM from "@/assets/icons/logo-pdam.png";
 
 export default {
   name: "Login",
