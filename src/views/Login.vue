@@ -2,14 +2,14 @@
   <section>
     <div class="container">
       <div class="row d-flex align-items-center justify-content-center">
-        <div class="img-fluid login100-more" v-bind:style="{ backgroundImage: `url(' ${bg_surabaya_img} ')` }">
+        <div class="img-fluid login100-more" v-bind:style="{ backgroundImage: `url(' ${bg_pdam} ')` }">
           <div class="logo-container m-3">
             <router-link :to="{ name: 'Home', params: { balai_id: balai } }">
               <img :src="logoPDAM" alt="" class="logo-img" />
             </router-link>
             <div>
-              <p class="bws">PDAM SURYA SEMBADA</p>
-              <p class="bws">DATA AS SERVICE</p>
+              <p class="bws">PERUSAHAAN DAERAH AIR MINUM</p>
+              <p class="bws">DATA MONITORING</p>
             </div>
           </div>
         </div>
@@ -63,9 +63,9 @@
 </template>
 
 <script>
-import bg_surabaya_img from "@/assets/img/surabaya-bg2.png";
-import bg_weather_img from "@/assets/img/bweather-bg.jpg";
-import logoPDAM from "@/assets/icons/logo-pdam2.png";
+import bg_pdam from "@/assets/img/bg-pdam.png";
+// import bg_weather_img from "@/assets/img/bweather-bg.jpg";
+import logoPDAM from "@/assets/icons/Logo-PDAM.png";
 
 export default {
   name: "Login",
@@ -76,8 +76,8 @@ export default {
       password: "",
       msg: "",
 
-      bg_surabaya_img,
-      bg_weather_img,
+      bg_pdam,
+      // bg_weather_img,
 
       logoPDAM,
       incorrectAuth: false,
