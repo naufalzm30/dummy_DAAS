@@ -260,12 +260,12 @@ export default {
 
     async loadStations() {
       this.processStations();
-      if (this.$options.name === 'Stations') {
-        this.intervalId = setInterval(async () => {
-          await this.fetchStations();
-          this.processStations();
-        }, 300000);
-      }
+      // if (this.$options.name === 'Stations') {
+      //   this.intervalId = setInterval(async () => {
+      //     await this.fetchStations();
+      //     this.processStations();
+      //   }, 300000);
+      // }
 
 
     },
