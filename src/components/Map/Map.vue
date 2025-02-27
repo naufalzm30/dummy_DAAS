@@ -18,7 +18,8 @@
           @mouseenter="isPaused = !isPaused" @mouseleave="isPaused = false">
           <span v-for="station in stations" :key="station.id" style="font-size: 1.1rem">
             <span style="color: #00B2FF; font-weight: 500">
-              {{ station.station_name }} &bull;
+              <!-- {{ station.station_name }} &bull; -->
+              Water Station {{ station.id }} &bull;
             </span>
             <span>
               <span v-for="(card, index) in [station]" :key="index" class="flex mt-2">
@@ -46,13 +47,12 @@
                 <div>
                   <i v-if="loading_data" class="zmdi zmdi-spinner zmdi-hc-spin mx-2" style="font-size: 1.2rem"></i>
                   <DatePicker name="from" v-model="startDate" @change="searchApproval" type="datetime"
-                    format="YYYY-MM-DD" :default-value="new Date().setHours(0, 0, 0, 0)"
-                    placeholder="Select first date" :minute-step="5">
+                    format="YYYY-MM-DD" :default-value="new Date().setHours(0, 0, 0, 0)" placeholder="Select first date"
+                    :minute-step="5">
                   </DatePicker>
                   <label for="to" class="px-2" style="font-size: 0.8rem; font-weight: normal">-</label>
-                  <DatePicker name="to" v-model="endDate" @change="searchApproval" type="datetime"
-                    format="YYYY-MM-DD" :default-value="new Date().setHours(23, 55, 0, 0)"
-                    placeholder="Select last date" :minute-step="5">
+                  <DatePicker name="to" v-model="endDate" @change="searchApproval" type="datetime" format="YYYY-MM-DD"
+                    :default-value="new Date().setHours(23, 55, 0, 0)" placeholder="Select last date" :minute-step="5">
                   </DatePicker>
                 </div>
               </div>
@@ -166,42 +166,103 @@ export default {
     handleStationSelectedApproval(stationApproval) {
       this.selectedStationApproval = stationApproval;
     },
-    async loadData() {
-      var st_name = [];
-      var sensor = [];
-      var st_name_length = null;
-      var sensor_length = null;
+    // async loadData() {
+    //   var st_name = [];
+    //   var sensor = [];
+    //   var st_name_length = null;
+    //   var sensor_length = null;
 
+    //   await axios
+    //     .get(`${this.$baseURL}/pdam/dashboard/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     })
+
+    //     .then((r) => {
+    //       r.data.data.forEach((e) => {
+    //         st_name.push(e.station_name.length);
+    //         sensor.push(
+    //           e.last_data
+    //             .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
+    //             .reduce((acc, cur) => acc + cur.sensor_name, '')
+    //             .length
+    //         );
+    //         var x =
+    //           e.station_name.length + 1
+    //         e.last_data
+    //           .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
+    //           .reduce((acc, cur) => acc + cur.sensor_name, '')
+    //           .length
+
+    //         e.duration = x * 510;
+    //       });
+    //       st_name_length = st_name.reduce((a, b) => a + b, 0);
+    //       sensor_length = sensor.reduce((a, b) => a + b, 0);
+    //       this.stations = r.data.data.map(station => ({
+    //         ...station,
+    //         last_data: station.last_data.map(data => ({
+    //           ...data,
+    //           value: function formatValue(val) {
+    //             val = parseFloat(val).toFixed(2);
+    //             if (val.endsWith('.00')) {
+    //               val = val.replace('.00', '');
+    //             }
+    //             val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    //             return val;
+    //           }(data.value)
+    //         }))
+    //       }));
+
+    //       this.custom_duration = (st_name_length + sensor_length) / 2;
+    //       this.stations.slice(-1).pop().duration + 200;
+    //       if (r.status == 200) {
+    //         this.loading_i = false;
+    //       }
+
+    //     })
+    //     .catch((error) => {
+    //       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    //         this.logoutUser();
+    //       } else {
+    //         console.error('Error msg: ', error);
+    //       }
+    //     });
+
+
+    //   let currentIndex = 0;
+
+    //   const playSlide = () => {
+    //     setTimeout(() => {
+    //       currentIndex = (currentIndex + 1) % this.stations.length;
+
+    //       if (this.$refs.carousel) {
+    //         this.$refs.carousel.goToPage(currentIndex);
+    //       }
+    //       playSlide();
+    //     }, this.stations[currentIndex].duration);
+    //   };
+
+    //   playSlide();
+    // },
+    async loadData() {
       await axios
         .get(`${this.$baseURL}/pdam/dashboard/`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
         })
-
         .then((r) => {
-          r.data.data.forEach((e) => {
-            st_name.push(e.station_name.length);
-            sensor.push(
-              e.last_data
-                .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
-                .reduce((acc, cur) => acc + cur.sensor_name, '')
-                .length
-            );
-            var x =
-              e.station_name.length + 1
-            e.last_data
-              .filter(item => item.sensor_name === 'Flow Meter' || item.sensor_name === 'Totalizer')
-              .reduce((acc, cur) => acc + cur.sensor_name, '')
-              .length
+          if (!r.data.data.length) {
+            console.error("No data received");
+            return;
+          }
 
-            e.duration = x * 510;
-          });
-          st_name_length = st_name.reduce((a, b) => a + b, 0);
-          sensor_length = sensor.reduce((a, b) => a + b, 0);
-          this.stations = r.data.data.map(station => ({
-            ...station,
-            last_data: station.last_data.map(data => ({
+          const firstData = r.data.data[0]; // Get only the first station
+
+          this.stations = [{
+            ...firstData,
+            last_data: firstData.last_data.map(data => ({
               ...data,
               value: function formatValue(val) {
                 val = parseFloat(val).toFixed(2);
@@ -212,14 +273,11 @@ export default {
                 return val;
               }(data.value)
             }))
-          }));
+          }];
 
-          this.custom_duration = (st_name_length + sensor_length) / 2;
-          this.stations.slice(-1).pop().duration + 200;
-          if (r.status == 200) {
+          if (r.status === 200) {
             this.loading_i = false;
           }
-
         })
         .catch((error) => {
           if (error.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -228,24 +286,40 @@ export default {
             console.error('Error msg: ', error);
           }
         });
-
-
-      let currentIndex = 0;
-
-      const playSlide = () => {
-        setTimeout(() => {
-          currentIndex = (currentIndex + 1) % this.stations.length;
-
-          if (this.$refs.carousel) {
-            this.$refs.carousel.goToPage(currentIndex);
-          }
-          playSlide();
-        }, this.stations[currentIndex].duration);
-      };
-
-      playSlide();
     },
+    // async loadDataQA() {
+    //   await axios
+    //     .get(`${this.$baseURL}/pdam/QA/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //     })
+    //     .then((r) => {
+    //       this.stationsQA = r.data
+    //       if (r.status == 200) {
+    //         this.loading_i = false;
+    //       }
+    //     });
+    // },
+    // async loadDataApproval(from = null, until = null) {
 
+    //   await axios
+    //     .get(`${this.$baseURL}/pdam/approval/`, {
+    //       headers: {
+    //         Authorization: `Bearer ${this.token}`,
+    //       },
+    //       params: {
+    //         from: from,
+    //         until: until,
+    //       },
+    //     })
+    //     .then((r) => {
+    //       this.stationsApproval = r.data
+    //       if (r.status == 200) {
+    //         this.loading_i = false;
+    //       }
+    //     });
+    // },
     async loadDataQA() {
       await axios
         .get(`${this.$baseURL}/pdam/QA/`, {
@@ -254,14 +328,23 @@ export default {
           },
         })
         .then((r) => {
-          this.stationsQA = r.data
+          if (!r.data.length) {
+            console.error("No QA data received");
+            return;
+          }
+
+          this.stationsQA = [r.data[0]]; // Only store the first data inside an array
+
           if (r.status == 200) {
             this.loading_i = false;
           }
+        })
+        .catch((error) => {
+          console.error("Error loading QA data:", error);
         });
     },
+
     async loadDataApproval(from = null, until = null) {
-      
       await axios
         .get(`${this.$baseURL}/pdam/approval/`, {
           headers: {
@@ -273,14 +356,24 @@ export default {
           },
         })
         .then((r) => {
-          this.stationsApproval = r.data
+          if (!r.data.length) {
+            console.error("No Approval data received");
+            return;
+          }
+
+          this.stationsApproval = [r.data[0]]; // Only store the first data inside an array
+
           if (r.status == 200) {
             this.loading_i = false;
           }
+        })
+        .catch((error) => {
+          console.error("Error loading Approval data:", error);
         });
     },
+
     searchApproval() {
-      
+
       const from = this.startDate ? moment(this.startDate).format('YYYY-MM-DD HH:mm') : null;
       const until = this.endDate ? moment(this.endDate).format('YYYY-MM-DD HH:mm') : null;
       const diffDays = moment(this.endDate).diff(moment(this.startDate), 'days');

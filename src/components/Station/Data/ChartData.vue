@@ -14,7 +14,10 @@
           <div class="d-flex align-items-center mx-2">
             <div class="col-md-12 col-10">
               <div style="font-weight: 500; font-size: 1.1rem">
-                {{ station.station_name }}
+                <!-- {{ station.station_name }} -->
+                
+                Water Station {{ station.id }}
+
               </div>
             </div>
           </div>
@@ -23,7 +26,9 @@
             <div class="col-md-6 mx-0">
               <div class="my-1 mx-2">
                 <div class="info-label">Lokasi</div>
-                <div class="info-value">{{ profile.location }}</div>
+                <!-- <div class="info-value">{{ profile.location }}</div> -->
+                <div class="info-value">locs</div>
+
               </div>
               <div v-if="profile.balai.balai_name == 'Distribusi'" class="my-1 mx-2">
                 <div class="info-label">In/Out Interzone</div>

@@ -33,7 +33,9 @@
               <div class="d-flex align-items-center">
                 <div class="col-md-10 col-10">
                   <div style="font-weight: 500; font-size: 1.1rem">
-                    {{ profile.station_name }}
+                    <!-- {{ profile.station_name }} -->
+                    Water Station {{ profile.id }}
+
                   </div>
                 </div>
               </div>
@@ -73,7 +75,9 @@
               <div class="d-flex align-items-center">
                 <div class="col">
                   <div style="font-weight: 500; font-size: 1.1rem" class="py-1">
-                    {{ profile.station_name }}
+                    <!-- {{ profile.station_name }} -->
+                    Water Station {{ profile.id }}
+
                   </div>
                 </div>
               </div>
@@ -764,7 +768,10 @@ export default {
 
 
       if (result.status == 200) {
-        this.nama = result.data.data[0].station_name
+        // this.nama = result.data.data[0].station_name
+        this.nama = 'Water Station' + result.data.data[0].id
+
+// console.log(result.data.data[0]);
 
         this.summary = result.data.data[0]
         this.summary.average_flow = this.formatNumber((this.summary.average_flow).toFixed(2));
@@ -1084,11 +1091,11 @@ export default {
           }
 
           // Modify filename based on filter
-          if (from != null && until != null) {
-            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}.xlsx`;
-          } else {
+          // if (from != null && until != null) {
+          //   filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}.xlsx`;
+          // } else {
             filename = `Laporan Pembacaan Sensor ${this.nama}.xlsx`;
-          }
+          // }
 
           const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
           const a = document.createElement('a');
@@ -1184,11 +1191,11 @@ export default {
           }
 
           // Modify filename based on filter
-          if (from != null && until != null) {
-            filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
-          } else {
+          // if (from != null && until != null) {
+          //   filename = `Laporan Pembacaan Sensor ${this.nama} ${from} sd ${until}`;
+          // } else {
             filename = `Laporan Pembacaan Sensor ${this.nama}`;
-          }
+          // }
 
           const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
           const a = document.createElement('a');

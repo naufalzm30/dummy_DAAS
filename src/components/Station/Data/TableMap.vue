@@ -21,7 +21,10 @@
           <div class="text-center">
             <img :src="st_i" class="imgSZ" />
             <div class="my-1" style="font-weight: 600">
-              {{ profile.station_name }}
+              <!-- {{ profile.station_name }} -->
+              Water Station {{ profile.id }}
+              
+
             </div>
             <router-link type="button" class="btn btn-success d-flex flex-row justify-content-center p-0"
               :to="`/station/update/${profile.station_serial_id}`" v-if="role == 'SuperAdmin'">

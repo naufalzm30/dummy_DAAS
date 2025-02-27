@@ -8,7 +8,9 @@
           {{ $app_title }}
         </div>
         <div>
-          <router-link :to="{ name: 'Station' }" type="button" class="btn btn-light border mt-1 bg-white">
+          <!-- <router-link :to="{ name: 'Station' }" type="button" class="btn btn-light border mt-1 bg-white"> -->
+          <router-link :to="{ name: 'Home' }" type="button" class="btn btn-light border mt-1 bg-white">
+
             Back
           </router-link>
         </div>

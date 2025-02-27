@@ -34,7 +34,8 @@
                         font-size: 1rem;
                         margin-left: 7px;
                       ">
-                    {{ station.station_name }}
+                    <!-- {{ station.station_name }} -->
+                    Water Station {{ station.id }}
                   </div>
                 </div>
                 <!-- <div v-if="station.maintenance" class="col-md-5 col-5 d-flex justify-content-end align-items-center "
@@ -65,7 +66,9 @@
                 <div class="col-md-7 mx-0">
                   <div class="my-1 mx-2">
                     <div class="info-label">Lokasi</div>
-                    <div class="info-value">{{ station.location }}</div>
+                    <!-- <div class="info-value">{{ station.location }}</div> -->
+                    <div class="info-value">locs</div>
+
                   </div>
                   <div v-if="station.balai == 'Distribusi'" class="my-1 mx-2">
                     <div class="info-label">In/Out Interzone</div>
@@ -158,7 +161,9 @@
             <div>
               <div style="font-weight: 500; font-size: 1rem;margin-left: 7px;"
                 class="mt-1 d-flex justify-content-center">
-                {{ stationQA.station_name }}
+                <!-- {{ stationQA.station_name }} -->
+                Water Station {{ stationQA.id }}
+
               </div>
               <div class="px-2 py-1" style="font-weight: 500; font-size: 0.9em">
                 Jumlah Data
@@ -204,7 +209,9 @@
             <div>
               <div style="font-weight: 500; font-size: 1.3rem;margin-left: 7px;"
                 class="mt-1 d-flex justify-content-center py-2">
-                {{ stationApproval.station_name }}
+                <!-- {{ stationApproval.station_name }} -->
+                Water Station {{ stationApproval.id }}
+
               </div>
 
             </div>

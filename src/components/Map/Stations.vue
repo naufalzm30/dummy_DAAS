@@ -29,7 +29,8 @@
                 <td>{{ index + 1 }}</td>
 
                 <td>
-                  {{ station.station_name }}
+                  <!-- {{ station.station_name }} -->
+                  Water Station {{ station.id }}
                 </td>
                 <td>
 
@@ -75,7 +76,8 @@
                 <td>{{ index + 1 }}</td>
 
                 <td>
-                  {{ station.station_name }}
+                  <!-- {{ station.station_name }} -->
+                  Water Station {{ station.id }}
                 </td>
 
                 <td>
@@ -141,7 +143,8 @@
                   </div>
                 </td>
                 <td>
-                  {{ station.station_name }}
+                  <!-- {{ station.station_name }} -->
+                  Water Station {{ station.id }}
                 </td>
                 <td>
                   <router-link v-if="role == 'SuperAdmin'" type="button" class="btn btn-sm btn-primary m-0 p-0"

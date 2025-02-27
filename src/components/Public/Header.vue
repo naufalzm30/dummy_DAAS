@@ -40,51 +40,32 @@
           </router-link>
         </li>
 
-        <!-- <li v-if="accessToken"></li>
-        <div v-else>
-          <li class="my-1">
-            <hr style="color: white" />
-            <router-link :to="{ name: 'Login', params: { balai_id: this.balai } }"
-              style="display: flex; flex-direction: row; z-index: 100;">
-              <img :src="login_i" class="mr-4" /><span>Sign In</span>
-            </router-link>
-          </li>
-        </div> -->
-
-
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'Station',
             params: { balai_id: this.balai, user_id: user_id },
           }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Stasiun</span>
           </router-link>
-        </li>
+        </li> -->
         
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'User',
             params: { balai_id: this.balai },
           }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
-        </li>
-        <!-- <li v-if="accessToken" class="nav-item my-1">
-          <router-link :to="{
-            name: 'Produksi',
-            params: { balai_id: this.balai },
-          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
-            <img :src="stat_i" class="mr-4" /><span>Produksi</span>
-          </router-link>
         </li> -->
+  
         <hr style="color: white" />
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
             name: 'Notification',
           }" style="display: flex; flex-direction: row">
             <img :src="notif_i" class="mr-4" /><span>Notifikasi</span>
           </router-link>
-        </li>
+        </li> -->
         <li v-if="accessToken" class="my-1">
           
           <router-link :to="{ name: 'Logout', params: { balai_id: this.balai } }"
@@ -135,37 +116,31 @@
             </router-link>
           </li>
         </div>
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'Station',
             params: { balai_id: this.balai, user_id: user_id },
           }" style="display: flex; flex-direction: row">
             <img :src="stat_i" class="mr-4" /><span>Stasiun</span>
           </router-link>
-        </li>
+        </li> -->
         
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link :to="{
             name: 'User',
           }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
             <img :src="user_i" class="mr-4" /><span>User</span>
           </router-link>
-        </li>
-        <!-- <li v-if="accessToken" class="nav-item my-1">
-          <router-link :to="{
-            name: 'Produksi',
-          }" style="display: flex; flex-direction: row" v-if="this.user.role.role_name == 'SuperAdmin'">
-            <img :src="stat_i" class="mr-4" /><span>Produksi</span>
-          </router-link>
         </li> -->
+   
         <hr style="color: white" />
-        <li v-if="accessToken" class="nav-item my-1">
+        <!-- <li v-if="accessToken" class="nav-item my-1">
           <router-link v-if="this.user.role.role_name == 'SuperAdmin'" :to="{
             name: 'Notification',
           }" style="display: flex; flex-direction: row">
             <img :src="notif_i" class="mr-4" /><span>Notifikasi</span>
           </router-link>
-        </li>
+        </li> -->
         <li v-if="accessToken" class="my-1">
           <router-link :to="{ name: 'Logout' }" style="display: flex; flex-direction: row">
             <img :src="login_i" class="mr-4" /><span>Sign Out</span>

@@ -22,7 +22,10 @@
       <span v-for="station in stations" :key="station.station_serial_id">
 
         <span>
-          <v-marker v-if="station.latitude" :lat-lng="latLng(station.latitude, station.longitude)">
+          <!-- -1.8022155427550486, 124.5651456642051 -->
+          <!-- <v-marker v-if="station.latitude" :lat-lng="latLng(station.latitude, station.longitude)"> -->
+          <v-marker v-if="station.latitude" :lat-lng="latLng(-1.8022155427550486, 124.5651456642051)">
+
 
             <v-icon :icon-url="icon_st" :icon-size="dynamicSize">
             </v-icon>
@@ -32,7 +35,9 @@
               <div class="text-center">
                 <img :src="st_i" class="imgSZ" />
                 <div class="my-1" style="font-weight: 600">
-                  {{ station.station_name }} <br />
+                  <!-- {{ station.station_name }} <br /> -->
+                  Water Station {{ station.id }}
+
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
@@ -124,7 +129,10 @@ export default {
 
       attribution: "",
       zoom: 11,
-      center: [-7.277016214, 112.708518708],
+      // center: [-7.277016214, 112.708518708],
+      center: [-1.8022155427550486, 124.5651456642051],
+
+      
       iconSize: [20],
       icon_st: st_im,
       st_im,
