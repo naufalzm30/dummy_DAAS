@@ -258,7 +258,10 @@ export default {
             return;
           }
 
-          const firstData = r.data.data[0]; // Get only the first station
+          // const firstData = r.data.data[0]; // Get only the first station
+          const firstData = r.data.data.find(item => item.id === 12); // Get only the first station
+
+          // r.data.data.find(item => item.id === 12);
 
           this.stations = [{
             ...firstData,
